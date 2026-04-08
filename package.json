@@ -6,10 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://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@github.com/gnxrlyqf/synthesizer.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
