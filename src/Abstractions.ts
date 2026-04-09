@@ -1,4 +1,4 @@
-import Patch from "./Patch";
+import Patch from "./Modules/Patch";
 
 abstract class Source {
 	abstract signal: AudioNode;

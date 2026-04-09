@@ -1,5 +1,5 @@
 import context from "../test";
-import {Source} from "./Abstractions";
+import {Source} from "../Abstractions";
 
 class Sync {
 	division: 1 | 2 | 4 | 8 | 16 | 32;

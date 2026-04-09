@@ -1,4 +1,4 @@
-import {Source} from "./Abstractions";
+import {Source} from "../Abstractions";
 import context from "../test";
 
 class Oscillator extends Source {
@@ -22,7 +22,7 @@ class Oscillator extends Source {
 
 	oscillate() {
 		this.signal.start();
-		this.signal.stop(context.audioContext.currentTime + 2);
+		// this.signal.stop(context.audioContext.currentTime + 2);
 	}
 	
 	getSignal(): OscillatorNode {

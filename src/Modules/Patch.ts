@@ -1,9 +1,9 @@
-import {Source, Processor} from "./Abstractions";
+import {Source, Processor} from "../Abstractions";
 
 class Patch {
 	input: Source | Processor | null;
 
-	constructor(input: Source | null) {
+	constructor(input: Source | Processor | null) {
 		this.input = input;
 	}
 

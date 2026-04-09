@@ -2,4 +2,4 @@
 
 npm init -y
 npm i -D vite
-npm vite
+npx vite

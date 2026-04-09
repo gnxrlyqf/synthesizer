@@ -1,13 +1,20 @@
-import { Processor } from "./Abstractions";
+import { Processor } from "../Abstractions";
 import Patch from "./Patch";
 import context from "../test";
 
 class Gain extends Processor {
 	signal = new GainNode(context.audioContext, { gain: 1 });
-
+	modulator: Patch | null = null;
+	
 	setGain(value: number) {
 		this.signal.gain.value = value;
 	}
+
+	setModulator(modulator: Patch | null) {
+		this.modulator?.getSignal()?.disconnect(this.signal.gain);
+		this.modulator = modulator;
+		this.modulator?.getSignal()?.connect(this.signal.gain);
+	} 
 
 	setInput(input: Patch | null) {
 		this.input?.getSignal()?.disconnect(this.signal);
