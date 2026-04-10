@@ -1,0 +1,42 @@
+[
+	{
+		"id": "4f294f9d-1b86-4f57-9a2b-0f84ddca6a31",
+		"type": "oscillator",
+		"x": 160,
+		"y": 120,
+		"params": {
+			"frequency": 440,
+			"wave": "sine"
+		}
+	},
+	{
+		"id": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37",
+		"type": "gain",
+		"x": 416,
+		"y": 120,
+		"params": {
+			"gain": 0
+		}
+	},
+	{
+		"id": "9b3575da-eb79-4fe0-b935-cf20f2d0d10d",
+		"type": "envelope",
+		"x": 672,
+		"y": 120,
+		"params": {
+			"attack": 100,
+			"decay": 200,
+			"sustain": 0.7,
+			"release": 300
+		}
+	},
+	{
+		"id": "f2e449eb-206f-41ce-a958-0f933725d171",
+		"type": "output",
+		"x": 992,
+		"y": 120,
+		"params": {
+			"master": -6
+		}
+	}
+]
