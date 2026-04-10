@@ -4,12 +4,12 @@ import { wouldOverlap } from "../utils/wouldOverlap";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 288;
-const MODULE_HEIGHT = 464;
+const MODULE_HEIGHT = 480;
 const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Envelope(props: {x: number, y: number, a: number, d: number, s: number, r: number}) {
+function Envelope(props: {x: number, y: number, a: number, d: number, s: number, r: number, cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
 
@@ -45,14 +45,15 @@ function Envelope(props: {x: number, y: number, a: number, d: number, s: number,
       return;
     }
 
-    const rect = moduleRef.current.getBoundingClientRect();
-    const start = position ?? { x: rect.left + window.scrollX, y: rect.top + window.scrollY };
-    const offsetX = e.clientX - start.x;
-    const offsetY = e.clientY - start.y;
+    const start = position ?? { x: props.x, y: props.y };
+    const offsetX = e.clientX - props.cameraX - start.x;
+    const offsetY = e.clientY - props.cameraY - start.y;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      const snappedX = Math.round((moveEvent.clientX - offsetX) / GRID_SIZE) * GRID_SIZE;
-      const snappedY = Math.round((moveEvent.clientY - offsetY) / GRID_SIZE) * GRID_SIZE;
+      const worldX = moveEvent.clientX - props.cameraX - offsetX;
+      const worldY = moveEvent.clientY - props.cameraY - offsetY;
+      const snappedX = Math.round(worldX / GRID_SIZE) * GRID_SIZE;
+      const snappedY = Math.round(worldY / GRID_SIZE) * GRID_SIZE;
 
       setPosition((prev) => {
         if (!moduleRef.current || wouldOverlap(snappedX, snappedY, moduleRef.current)) {
@@ -173,7 +174,7 @@ function Envelope(props: {x: number, y: number, a: number, d: number, s: number,
           </span>
           <span className="flex-1" />
         </div>
-        <div className="w-full flex items-center -mt-1">
+        <div className="w-full flex items-center mt-1">
           <span className="flex-1" />
           <span className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none">
             Output

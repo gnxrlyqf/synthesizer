@@ -4,12 +4,12 @@ import { wouldOverlap } from "../utils/wouldOverlap";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
-const MODULE_HEIGHT = 340;
+const MODULE_HEIGHT = 352;
 const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Output(props: {x: number, y: number, m: number}) {
+function Output(props: {x: number, y: number, m: number, cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
   const [master, setMaster] = useState(props.m);
@@ -41,14 +41,15 @@ function Output(props: {x: number, y: number, m: number}) {
       return;
     }
 
-    const rect = moduleRef.current.getBoundingClientRect();
-    const start = position ?? { x: rect.left + window.scrollX, y: rect.top + window.scrollY };
-    const offsetX = e.clientX - start.x;
-    const offsetY = e.clientY - start.y;
+    const start = position ?? { x: props.x, y: props.y };
+    const offsetX = e.clientX - props.cameraX - start.x;
+    const offsetY = e.clientY - props.cameraY - start.y;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      const snappedX = Math.round((moveEvent.clientX - offsetX) / GRID_SIZE) * GRID_SIZE;
-      const snappedY = Math.round((moveEvent.clientY - offsetY) / GRID_SIZE) * GRID_SIZE;
+      const worldX = moveEvent.clientX - props.cameraX - offsetX;
+      const worldY = moveEvent.clientY - props.cameraY - offsetY;
+      const snappedX = Math.round(worldX / GRID_SIZE) * GRID_SIZE;
+      const snappedY = Math.round(worldY / GRID_SIZE) * GRID_SIZE;
 
       setPosition((prev) => {
         if (!moduleRef.current || wouldOverlap(snappedX, snappedY, moduleRef.current)) {

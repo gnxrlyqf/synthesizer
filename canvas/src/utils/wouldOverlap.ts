@@ -8,11 +8,10 @@ export function wouldOverlap(nextX: number, nextY: number, self: HTMLDivElement)
       continue;
     }
 
-    const rect = other.getBoundingClientRect();
-    const otherLeft = rect.left + window.scrollX;
-    const otherTop = rect.top + window.scrollY;
-    const otherRight = otherLeft + rect.width;
-    const otherBottom = otherTop + rect.height;
+    const otherLeft = Number.parseFloat(other.style.left || "0") || other.offsetLeft;
+    const otherTop = Number.parseFloat(other.style.top || "0") || other.offsetTop;
+    const otherRight = otherLeft + other.offsetWidth;
+    const otherBottom = otherTop + other.offsetHeight;
 
     const intersects =
       nextX < otherRight &&

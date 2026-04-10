@@ -4,7 +4,7 @@ import Gain from "./Modules/Gain";
 import Envelope from "./Modules/Envelope";
 import Output from "./Modules/Output";
 import type {Module} from './Modules'
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import sceneData from "./scene.json";
 
 function OscIcon(props: {size: number}) {
@@ -134,7 +134,7 @@ function parseScene(): Module[] {
   });
 }
 
-function RenderModules(props: { modules: Module[] }) {
+function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number }) {
   return (
     <>
       {props.modules.map((m) => {
@@ -147,6 +147,8 @@ function RenderModules(props: { modules: Module[] }) {
                 y={m.y}
                 f={m.params.f}
                 w={m.params.w}
+                cameraX={props.cameraX}
+                cameraY={props.cameraY}
               />
             );
 
@@ -157,6 +159,8 @@ function RenderModules(props: { modules: Module[] }) {
                 x={m.x}
                 y={m.y}
                 g={m.params.g}
+                cameraX={props.cameraX}
+                cameraY={props.cameraY}
               />
             );
 
@@ -170,6 +174,8 @@ function RenderModules(props: { modules: Module[] }) {
                 d={m.params.d}
                 s={m.params.s}
                 r={m.params.r}
+                cameraX={props.cameraX}
+                cameraY={props.cameraY}
               />
             );
 
@@ -180,6 +186,8 @@ function RenderModules(props: { modules: Module[] }) {
                 x={m.x}
                 y={m.y}
                 m={m.params.m}
+                cameraX={props.cameraX}
+                cameraY={props.cameraY}
               />
             );
 
@@ -193,16 +201,83 @@ function RenderModules(props: { modules: Module[] }) {
 
 function Scene() {
   const [modules] = useState<Module[]>(parseScene());
+  const [camera, setCamera] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const panRef = useRef<{ startX: number; startY: number; cameraX: number; cameraY: number } | null>(null);
 
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!panRef.current) {
+        return;
+      }
+
+      const dx = e.clientX - panRef.current.startX;
+      const dy = e.clientY - panRef.current.startY;
+
+      setCamera({
+        x: panRef.current.cameraX + dx,
+        y: panRef.current.cameraY + dy,
+      });
+    };
+
+    const handleMouseUp = () => {
+      panRef.current = null;
+      setIsPanning(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
+  const handleSceneMouseDown = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.button !== 2) {
+      return;
+    }
+
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-patch-module='true']")) {
+      return;
+    }
+
+    e.preventDefault();
+    setIsPanning(true);
+
+    panRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      cameraX: camera.x,
+      cameraY: camera.y,
+    };
+  };
 
 	return (
-		<main className="font-lexend relative h-screen w-screen overflow-hidden bg-zinc-950 text-white">
+		<main
+  className={`font-lexend relative h-screen w-screen overflow-hidden bg-zinc-950 text-white ${isPanning ? "cursor-grabbing" : "cursor-auto"}`}
+      onMouseDown={handleSceneMouseDown}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <section className="absolute inset-0 z-0">
-        <canvas className="h-full w-full bg-zinc-900 bg-[radial-gradient(circle,rgba(255,255,255,0.24)_1px,transparent_1.5px)] bg-size-[16px_16px] bg-position-[8px_8px]" />
+        <div
+          className="h-full w-full bg-zinc-900 bg-[radial-gradient(circle,rgba(255,255,255,0.24)_2px,transparent_1.5px)] bg-size-[32px_32px]"
+          style={{
+            backgroundPosition: `${camera.x}px ${camera.y}px`,
+          }}
+        />
       </section>
 
-      <section className="absolute inset-0 z-10 pointer-events-auto">
-        <RenderModules modules={modules}/>
+      <section
+        className="absolute inset-0 z-10 pointer-events-auto"
+        style={{
+          transform: `translate3d(${camera.x}px, ${camera.y}px, 0)`,
+          transformOrigin: "0 0",
+        }}
+      >
+        <RenderModules modules={modules} cameraX={camera.x} cameraY={camera.y} />
       </section>
 
 			<section className="pointer-events-none absolute inset-0 z-20">
@@ -211,7 +286,7 @@ function Scene() {
 					<div className="text-xs text-zinc-300">{modules.length} modules · 0 cables</div>
 				</header>
 			</section>
-      <div className="pointer-events-auto absolute inset-x-0 bottom-0">
+      <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-30">
         <Dock
           items={items}
           panelHeight={80}
