@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Inputs/Knob";
-import { wouldOverlap } from "../utils/wouldOverlap";
+import { wouldOverlap } from "../Utils/wouldOverlap";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
@@ -9,7 +9,7 @@ const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Gain(props: {x: number, y: number, g: number, cameraX: number, cameraY: number}) {
+function Gain(props: {id: string, x: number, y: number, g: number, cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
   const [gain, setGain] = useState(props.g);
@@ -77,9 +77,11 @@ function Gain(props: {x: number, y: number, g: number, cameraX: number, cameraY:
     <div
       ref={moduleRef}
       data-patch-module="true"
+      data-module-id={props.id}
       style={moduleStyle}
       className="
         absolute
+        m-4
         top-1/3 left-1/3
         flex flex-col
         bg-blue-500
@@ -100,8 +102,14 @@ function Gain(props: {x: number, y: number, g: number, cameraX: number, cameraY:
         className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5"
       >
         <div className="w-full flex items-center">
-          <span className="h-1 bg-blue-500 flex-1" />
-          <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-blue-500 flex flex-col items-center gap-1">
+          <span
+            data-port-id={`${props.id}.gain`}
+            data-port-side="left"
+            className="h-1 bg-blue-500 flex-1"
+          />
+          <div
+            className="px-3 pt-2 pb-1 rounded-xl border-2 border-blue-500 flex flex-col items-center gap-1"
+          >
             <span className="text-xs uppercase tracking-wide text-white">Gain</span>
             <Knob
               max={10}
@@ -116,7 +124,11 @@ function Gain(props: {x: number, y: number, g: number, cameraX: number, cameraY:
           <span className="flex-1" />
         </div>
         <div className="w-full flex items-center mt-1">
-          <span className="h-1 bg-blue-500 flex-1" />
+          <span
+            data-port-id={`${props.id}.input`}
+            data-port-side="left"
+            className="h-1 bg-blue-500 flex-1"
+          />
           <span className="px-4 py-2 rounded-xl border-2 border-blue-500 text-white text-xl uppercase tracking-wide leading-none">
             Input
           </span>
@@ -127,7 +139,11 @@ function Gain(props: {x: number, y: number, g: number, cameraX: number, cameraY:
           <span className="px-4 py-2 rounded-xl border-2 border-blue-500 text-white text-xl uppercase tracking-wide leading-none">
             Output
           </span>
-          <span className="h-1 bg-blue-500 flex-1" />
+          <span
+            data-port-id={`${props.id}.output`}
+            data-port-side="right"
+            className="h-1 bg-blue-500 flex-1"
+          />
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Inputs/Knob";
-import { wouldOverlap } from "../utils/wouldOverlap";
+import { wouldOverlap } from "../Utils/wouldOverlap";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 288;
@@ -9,7 +9,7 @@ const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Envelope(props: {x: number, y: number, a: number, d: number, s: number, r: number, cameraX: number, cameraY: number}) {
+function Envelope(props: {id: string, x: number, y: number, a: number, d: number, s: number, r: number, cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
 
@@ -81,9 +81,11 @@ function Envelope(props: {x: number, y: number, a: number, d: number, s: number,
     <div
       ref={moduleRef}
       data-patch-module="true"
+      data-module-id={props.id}
       style={moduleStyle}
       className="
         absolute
+        m-4
         top-1/5 left-1/4
         flex flex-col
         bg-green-500
@@ -168,7 +170,11 @@ function Envelope(props: {x: number, y: number, a: number, d: number, s: number,
           </div>
         </div>
         <div className="w-full flex items-center">
-          <span className="h-1 bg-green-500 flex-1" />
+          <span
+            data-port-id={`${props.id}.trigger`}
+            data-port-side="left"
+            className="h-1 bg-green-500 flex-1"
+          />
           <span className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none">
             Trigger
           </span>
@@ -179,7 +185,11 @@ function Envelope(props: {x: number, y: number, a: number, d: number, s: number,
           <span className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none">
             Output
           </span>
-          <span className="h-1 bg-green-500 flex-1" />
+          <span
+            data-port-id={`${props.id}.output`}
+            data-port-side="right"
+            className="h-1 bg-green-500 flex-1"
+          />
         </div>
       </div>
     </div>

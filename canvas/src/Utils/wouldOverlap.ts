@@ -1,3 +1,5 @@
+const MODULE_GAP = 16;
+
 export function wouldOverlap(nextX: number, nextY: number, self: HTMLDivElement) {
   const width = self.offsetWidth;
   const height = self.offsetHeight;
@@ -14,10 +16,10 @@ export function wouldOverlap(nextX: number, nextY: number, self: HTMLDivElement)
     const otherBottom = otherTop + other.offsetHeight;
 
     const intersects =
-      nextX < otherRight &&
-      nextX + width > otherLeft &&
-      nextY < otherBottom &&
-      nextY + height > otherTop;
+      nextX < otherRight + MODULE_GAP &&
+      nextX + width + MODULE_GAP > otherLeft &&
+      nextY < otherBottom + MODULE_GAP &&
+      nextY + height + MODULE_GAP > otherTop;
 
     if (intersects) {
       return true;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Inputs/Knob";
-import { wouldOverlap } from "../utils/wouldOverlap";
+import { wouldOverlap } from "../Utils/wouldOverlap";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
@@ -9,7 +9,7 @@ const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Output(props: {x: number, y: number, m: number, cameraX: number, cameraY: number}) {
+function Output(props: {id: string, x: number, y: number, m: number, cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
   const [master, setMaster] = useState(props.m);
@@ -77,9 +77,11 @@ function Output(props: {x: number, y: number, m: number, cameraX: number, camera
     <div
       ref={moduleRef}
       data-patch-module="true"
+      data-module-id={props.id}
       style={moduleStyle}
       className="
         absolute
+        m-4
         top-1/6 left-2/3
         flex flex-col
         bg-yellow-500
@@ -114,7 +116,11 @@ function Output(props: {x: number, y: number, m: number, cameraX: number, camera
           </div>
         </div>
         <div className="w-full flex items-center">
-          <span className="h-1 bg-yellow-500 flex-1" />
+          <span
+            data-port-id={`${props.id}.input`}
+            data-port-side="left"
+            className="h-1 bg-yellow-500 flex-1"
+          />
           <span className="px-4 py-2 rounded-xl border-2 border-yellow-500 text-white text-xl uppercase tracking-wide leading-none">
             Input
           </span>

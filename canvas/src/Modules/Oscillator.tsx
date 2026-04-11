@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Inputs/Knob";
 import Wave from "../Inputs/Wave";
-import { wouldOverlap } from "../utils/wouldOverlap";
+import { wouldOverlap } from "../Utils/wouldOverlap";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
@@ -10,7 +10,7 @@ const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Oscillator(props: {x: number, y: number, f: number, w: 'sine' | 'square' | 'triangle' | 'saw', cameraX: number, cameraY: number}) {
+function Oscillator(props: {id: string, x: number, y: number, f: number, w: 'sine' | 'square' | 'triangle' | 'saw', cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
   const [frequency, setFrequency] = useState(props.f);
@@ -30,18 +30,14 @@ function Oscillator(props: {x: number, y: number, f: number, w: 'sine' | 'square
   };
 
   useEffect(() => {
-    if (!moduleRef.current || position) {
-      return;
-    }
+    if (!moduleRef.current || position) { return; }
 
     const rect = moduleRef.current.getBoundingClientRect();
     setPosition({ x: rect.left + window.scrollX, y: rect.top + window.scrollY });
   }, [position]);
 
   const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!moduleRef.current) {
-      return;
-    }
+    if (!moduleRef.current) { return; }
 
     const start = position ?? { x: props.x, y: props.y };
     const offsetX = e.clientX - props.cameraX - start.x;
@@ -79,9 +75,11 @@ function Oscillator(props: {x: number, y: number, f: number, w: 'sine' | 'square
 		<div
       ref={moduleRef}
       data-patch-module="true"
+    data-module-id={props.id}
       style={moduleStyle}
       className="
         absolute
+        m-4
         top-1/4 left-1/2
         flex flex-col
         bg-red-500
@@ -124,7 +122,11 @@ function Oscillator(props: {x: number, y: number, f: number, w: 'sine' | 'square
             <span className="px-4 py-2 rounded-xl border-2 border-red-500 text-white text-xl uppercase tracking-wide leading-none">
               Output
             </span>
-            <span className="h-1 bg-red-500 flex-1" />
+            <span
+              data-port-id={`${props.id}.output`}
+              data-port-side="right"
+              className="h-1 bg-red-500 flex-1"
+            />
           </div>
         </div>
     </div>

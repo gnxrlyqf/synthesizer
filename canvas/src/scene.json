@@ -1,42 +1,61 @@
-[
-	{
-		"id": "4f294f9d-1b86-4f57-9a2b-0f84ddca6a31",
-		"type": "oscillator",
-		"x": 160,
-		"y": 120,
-		"params": {
-			"frequency": 440,
-			"wave": "sine"
-		}
-	},
-	{
-		"id": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37",
-		"type": "gain",
-		"x": 416,
-		"y": 120,
-		"params": {
-			"gain": 0
-		}
-	},
-	{
-		"id": "9b3575da-eb79-4fe0-b935-cf20f2d0d10d",
-		"type": "envelope",
-		"x": 672,
-		"y": 120,
-		"params": {
-			"attack": 100,
-			"decay": 200,
-			"sustain": 0.7,
-			"release": 300
-		}
-	},
-	{
-		"id": "f2e449eb-206f-41ce-a958-0f933725d171",
-		"type": "output",
-		"x": 992,
-		"y": 120,
-		"params": {
-			"master": -6
-		}
-	}
-]
+{
+  "modules": [
+    {
+      "id": "4f294f9d-1b86-4f57-9a2b-0f84ddca6a31",
+      "type": "oscillator",
+      "x": 160,
+      "y": 120,
+      "params": {
+        "frequency": 440,
+        "wave": "sine"
+      }
+    },
+    {
+      "id": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37",
+      "type": "gain",
+      "x": 416,
+      "y": 120,
+      "params": {
+        "gain": 0
+      }
+    },
+    {
+      "id": "9b3575da-eb79-4fe0-b935-cf20f2d0d10d",
+      "type": "envelope",
+      "x": 672,
+      "y": 120,
+      "params": {
+        "attack": 100,
+        "decay": 200,
+        "sustain": 0.7,
+        "release": 300
+      }
+    },
+    {
+      "id": "f2e449eb-206f-41ce-a958-0f933725d171",
+      "type": "output",
+      "x": 992,
+      "y": 120,
+      "params": {
+        "master": -6
+      }
+    }
+  ],
+  "cables": [
+    {
+      "id": "a3f1f8cc-9bde-4f42-8ec3-3e8c8a4f2d6b",
+      "from": "4f294f9d-1b86-4f57-9a2b-0f84ddca6a31.output",
+      "to": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37.input"
+    },
+    {
+      "id": "6d7b2a41-2cf7-4d16-9f2d-0c0e5b7ab913",
+      "from": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37.output",
+      "to": "f2e449eb-206f-41ce-a958-0f933725d171.input"
+    },
+    {
+      "id": "f4c9d1e7-0f6b-4dc5-8f19-5dd7f3f9412a",
+      "from": "9b3575da-eb79-4fe0-b935-cf20f2d0d10d.output",
+      "to": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37.gain"
+    }
+  ]
+}
