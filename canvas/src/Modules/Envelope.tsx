@@ -109,7 +109,7 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
           <div className="flex flex-1 items-center">
             <span className="h-1 bg-green-500 flex-1" />
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <span className="text-[10px] uppercase tracking-wide text-white">Attack</span>
+              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Attack</button>
               <Knob
                 max={1000}
                 min={0}
@@ -123,7 +123,7 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
           </div>
           <div className="flex flex-1 items-center">
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <span className="text-[10px] uppercase tracking-wide text-white">Decay</span>
+              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Decay</button>
               <Knob
                 max={1000}
                 min={0}
@@ -141,7 +141,7 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
           <div className="flex flex-1 items-center">
             <span className="h-1 bg-green-500 flex-1" />
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <span className="text-[10px] uppercase tracking-wide text-white">Sustain</span>
+              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Sustain</button>
               <Knob
                 max={1}
                 min={0}
@@ -155,7 +155,7 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
           </div>
           <div className="flex flex-1 items-center">
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <span className="text-[10px] uppercase tracking-wide text-white">Release</span>
+              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Release</button>
               <Knob
                 max={1000}
                 min={0}
@@ -175,16 +175,16 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
             data-port-side="left"
             className="h-1 bg-green-500 flex-1"
           />
-          <span className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none">
+          <button className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
             Trigger
-          </span>
+          </button>
           <span className="flex-1" />
         </div>
         <div className="w-full flex items-center mt-1">
           <span className="flex-1" />
-          <span className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none">
+          <button className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
             Output
-          </span>
+          </button>
           <span
             data-port-id={`${props.id}.output`}
             data-port-side="right"

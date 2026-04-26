@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Oscillator, Gain, Envelope, Output } from '../Modules/Modules'
 import type { DockItemData } from '../Dock'
 import type { Module } from './Modules'
@@ -77,7 +78,7 @@ function GhostModule(props: { type: ModuleType; x: number; y: number; className?
 }
 
 function instantiateModule(type: ModuleType, x: number, y: number): Module {
-  const id = `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const id = uuidv4();
 
   switch (type) {
     case "oscillator":

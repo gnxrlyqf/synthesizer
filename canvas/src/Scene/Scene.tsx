@@ -120,7 +120,7 @@ function Scene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cableDotCanvasRef = useRef<HTMLCanvasElement>(null);
   const [modules, setModules] = useState<Module[]>(parseScene());
-  const [cables] = useState<Cable[]>(sceneData.cables as Cable[]);
+  const [cables, setCables] = useState<Cable[]>(sceneData.cables as Cable[]);
   const [ghost, setGhost] = useState<{ type: ModuleType; x: number; y: number } | null>(null);
   const [camera, setCamera] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -358,4 +358,5 @@ function Scene() {
 	);
 }
 
+export type {Cable};
 export default Scene;

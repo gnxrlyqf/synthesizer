@@ -103,7 +103,7 @@ function Output(props: {id: string, x: number, y: number, m: number, cameraX: nu
       >
         <div className="w-full flex items-center justify-center">
           <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-yellow-500 flex flex-col items-center gap-1">
-            <span className="text-xs uppercase tracking-wide text-white">Master</span>
+            <button className="cursor-pointer text-xs uppercase tracking-wide text-white">Master</button>
             <Knob
               max={0}
               min={-30}
@@ -121,9 +121,9 @@ function Output(props: {id: string, x: number, y: number, m: number, cameraX: nu
             data-port-side="left"
             className="h-1 bg-yellow-500 flex-1"
           />
-          <span className="px-4 py-2 rounded-xl border-2 border-yellow-500 text-white text-xl uppercase tracking-wide leading-none">
+          <button className="px-4 py-2 rounded-xl border-2 border-yellow-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
             Input
-          </span>
+          </button>
           <span className="flex-1" />
         </div>
       </div>

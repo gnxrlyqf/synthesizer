@@ -101,7 +101,7 @@ function Oscillator(props: {id: string, x: number, y: number, f: number, w: 'sin
           <div className="w-full flex items-center">
             <span className="h-1 bg-red-500 flex-1" />
             <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-red-500 flex flex-col items-center gap-1">
-              <span className="text-xs uppercase tracking-wide text-white">Frequency</span>
+              <button className="text-xs uppercase tracking-wide text-white cursor-pointer">Frequency</button>
               <Knob
                 max={5000}
                 min={20}
@@ -119,9 +119,9 @@ function Oscillator(props: {id: string, x: number, y: number, f: number, w: 'sin
           </div>
           <div className="w-full flex items-center mt-1">
             <span className="flex-1" />
-            <span className="px-4 py-2 rounded-xl border-2 border-red-500 text-white text-xl uppercase tracking-wide leading-none">
+            <button className="px-4 py-2 rounded-xl border-2 border-red-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
               Output
-            </span>
+            </button>
             <span
               data-port-id={`${props.id}.output`}
               data-port-side="right"
