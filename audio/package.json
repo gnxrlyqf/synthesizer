@@ -1,7 +1,6 @@
 {
   "name": "synthesizer",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +18,7 @@
   },
   "homepage": "https://github.com/gnxrlyqf/synthesizer#readme",
   "devDependencies": {
-    "vite": "^8.0.7"
-  }
+    "vite": "^8.0.10"
+  },
+  "description": ""
 }
