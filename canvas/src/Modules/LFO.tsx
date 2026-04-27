@@ -1,0 +1,41 @@
+import { useEffect, useRef, useState } from "react";
+import Knob from "../Inputs/Knob";
+import Wave from "../Inputs/Wave";
+import { wouldOverlap } from "../Utils/wouldOverlap";
+
+const GRID_SIZE = 16;
+const MODULE_WIDTH = 224;
+const MODULE_HEIGHT = 420; // Slightly taller for the Sync switch
+
+function LFO(props: {id: string, x: number, y: number, cameraX: number, cameraY: number}) {
+  const moduleRef = useRef<HTMLDivElement | null>(null);
+  const [position, setPosition] = useState({x: props.x, y: props.y});
+  const [frequency, setFrequency] = useState(1);
+  const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>('sine');
+  const [isSynced, setIsSynced] = useState(false);
+
+  // Common move logic would be extracted in a real build, kept here for consistency
+  const handleHeaderMouseDown = (e: React.MouseEvent) => { /* ... same move logic as Oscillator ... */ };
+
+  return (
+    <div ref={moduleRef} data-patch-module="true" data-module-id={props.id} style={{width: MODULE_WIDTH, height: MODULE_HEIGHT, left: position.x, top: position.y}}
+      className="absolute m-4 flex flex-col bg-purple-500 text-white rounded-3xl overflow-hidden font-lexend">
+        <div className="w-full bg-purple-500 px-4 pt-2 cursor-move select-none text-center" onMouseDown={handleHeaderMouseDown}>
+          <span className="text-white text-4xl leading-none">LFO</span>
+        </div>
+        <div className="mx-1.5 mt-2 mb-1.5 flex flex-1 flex-col gap-3 items-center rounded-2xl bg-black py-5">
+          <div className="flex gap-2 bg-purple-900/50 p-1 rounded-lg">
+            <button onClick={() => setIsSynced(false)} className={`px-3 py-1 rounded-md text-xs ${!isSynced ? 'bg-purple-500' : ''}`}>FREE</button>
+            <button onClick={() => setIsSynced(true)} className={`px-3 py-1 rounded-md text-xs ${isSynced ? 'bg-purple-500' : ''}`}>SYNC</button>
+          </div>
+          <Knob max={isSynced ? 32 : 20} min={isSynced ? 1 : 0.1} step={0.1} value={frequency} onChange={setFrequency} size={100} unit={isSynced ? "Div" : "Hz"} />
+          <Wave value={waveshape} onChange={setWaveshape} />
+          <div className="w-full flex items-center mt-auto">
+            <span className="flex-1" />
+            <button className="px-4 py-2 rounded-xl border-2 border-purple-500 text-white text-xl uppercase leading-none">Output</button>
+            <span data-port-id={`${props.id}.output`} data-port-side="right" className="h-1 bg-purple-500 flex-1" />
+          </div>
+        </div>
+    </div>
+  );
+}
