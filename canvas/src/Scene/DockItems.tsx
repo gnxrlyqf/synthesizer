@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Oscillator, Gain, Envelope, Output } from '../Modules/Modules'
+import { Oscillator, Gain, Envelope, Output, Distortion, LFO, VCF, Modulator } from '../Modules/Modules'
 import type { DockItemData } from '../Dock'
 import type { Module } from './Modules'
 
@@ -57,13 +57,81 @@ function OutputIcon(props: {size: number}) {
   )
 }
 
-type ModuleType = "oscillator" | "gain" | "envelope" | "output";
+function LfoIcon(props: { size: number }) {
+  return (
+    <svg width={props.size} height={props.size} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M50 200C50 200 80 130 125 130C170 130 180 270 225 270C270 270 300 200 350 200"
+        stroke="white"
+        strokeWidth="30"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function VcfIcon(props: { size: number }) {
+  return (
+    <svg width={props.size} height={props.size} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M80 120V280H240L320 120"
+        stroke="white"
+        strokeWidth="25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="160" cy="200" r="30" fill="white" />
+    </svg>
+  );
+}
+
+function DistIcon(props: { size: number }) {
+  return (
+    <svg width={props.size} height={props.size} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M60 280L140 120H260L340 280"
+        stroke="white"
+        strokeWidth="30"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M140 200H260" stroke="white" strokeWidth="20" strokeDasharray="40 40" />
+    </svg>
+  );
+}
+
+function ModIcon(props: { size: number }) {
+  return (
+    <svg width={props.size} height={props.size} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="80" y="80" width="240" height="240" rx="20" stroke="white" strokeWidth="25" />
+      <path d="M80 200H320M200 80V320" stroke="white" strokeWidth="20" />
+      <circle cx="140" cy="140" r="15" fill="white" />
+      <circle cx="260" cy="260" r="15" fill="white" />
+    </svg>
+  );
+}
+
+// type ModuleType = "oscillator" | "gain" | "envelope" | "output";
+type ModuleType = 
+  | "oscillator" 
+  | "gain" 
+  | "envelope" 
+  | "output" 
+  | "lfo" 
+  | "vcf" 
+  | "distortion" 
+  | "modulator";
 
 const objects: Record<ModuleType, { component: unknown; w: number; h: number }> = {
   "oscillator": { component: Oscillator, w: 224, h: 384 },
   "gain": { component: Gain, w: 224, h: 384 },
   "envelope": { component: Envelope, w: 288, h: 480 },
-  "output": { component: Output, w: 224, h: 352 }
+  "output": { component: Output, w: 224, h: 352 },
+  "lfo": { component: LFO, w: 224, h: 420 },
+  "vcf": { component: VCF, w: 224, h: 440 },
+  "distortion": { component: Distortion, w: 240, h: 460 },
+  "modulator": { component: Modulator, w: 224, h: 440 }
 };
 
 function GhostModule(props: { type: ModuleType; x: number; y: number; className?: string }) {
@@ -89,6 +157,14 @@ function instantiateModule(type: ModuleType, x: number, y: number): Module {
       return { id, type: "envelope", x, y, params: { a: 100, d: 200, s: 0.7, r: 300 } };
     case "output":
       return { id, type: "output", x, y, params: { m: -6 } };
+    case "lfo":
+      return { id, type: "lfo", x, y, params: { f: 1, w: "sine", s: false } };
+    case "vcf":
+      return { id, type: "vcf", x, y, params: { f: 1000, r: 1, t: "lowpass" } };
+    case "distortion":
+      return { id, type: "distortion", x, y, params: { a: 50, t: "saturation" } };
+    case "modulator":
+      return { id, type: "modulator", x, y, params: { m: "AM", d: 50 } };
     default:
       return { id, type: "gain", x, y, params: { g: 0 } };
   }
@@ -115,6 +191,26 @@ function createDockItems(onInstantiate: (type: ModuleType) => void): DockItemDat
       icon: <OutputIcon size={40} />,
       label: 'Output',
       onClick: () => onInstantiate("output")
+    },
+    {
+      icon: <LfoIcon size={45} />, // You'll need to import or define these
+      label: 'LFO',
+      onClick: () => onInstantiate("lfo")
+    },
+    {
+      icon: <VcfIcon size={40} />,
+      label: 'Filter',
+      onClick: () => onInstantiate("vcf")
+    },
+    {
+      icon: <DistIcon size={35} />,
+      label: 'Distortion',
+      onClick: () => onInstantiate("distortion")
+    },
+    {
+      icon: <ModIcon size={40} />,
+      label: 'Modulator',
+      onClick: () => onInstantiate("modulator")
     },
   ];
 }

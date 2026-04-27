@@ -1,5 +1,12 @@
-function VCF(props: {id: string, x: number, y: number, cameraX: number, cameraY: number}) {
-  const [frequency, setFrequency] = useState(1000);
+import { useEffect, useRef, useState } from "react";
+import Knob from "../Inputs/Knob";
+
+function VCF(props: {
+  id: string, x: number, y: number,
+  f: number, r: number, t: string,
+  cameraX: number, cameraY: number
+}) {
+  const [frequency, setFrequency] = useState(props.f);
   const [resonance, setResonance] = useState(1);
   const [filterType, setFilterType] = useState('lowpass');
 
@@ -31,3 +38,5 @@ function VCF(props: {id: string, x: number, y: number, cameraX: number, cameraY:
     </div>
   );
 }
+
+export default VCF;

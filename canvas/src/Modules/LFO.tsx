@@ -7,10 +7,14 @@ const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 420; // Slightly taller for the Sync switch
 
-function LFO(props: {id: string, x: number, y: number, cameraX: number, cameraY: number}) {
+function LFO(props: {
+  id: string, x: number, y: number,
+  f: number, w: "sine" | "square" | "triangle" | "saw", s: boolean,
+  cameraX: number, cameraY: number
+}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({x: props.x, y: props.y});
-  const [frequency, setFrequency] = useState(1);
+  const [frequency, setFrequency] = useState(props.f);
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>('sine');
   const [isSynced, setIsSynced] = useState(false);
 
@@ -39,3 +43,5 @@ function LFO(props: {id: string, x: number, y: number, cameraX: number, cameraY:
     </div>
   );
 }
+
+export default LFO;

@@ -7,7 +7,7 @@ import { snapToGrid } from "../Utils/snapToGrid";
 import { getAllPortViewportCoordinates, type ModulePorts } from "../Utils/portViewportCoordinates";
 import { drawCable, drawCableEndpointDots } from "../Patch/Cable";
 
-import { Oscillator, Gain, Envelope, Output } from '../Modules/Modules'
+import { Oscillator, Gain, Envelope, Output, LFO, VCF, Distortion, Modulator } from '../Modules/Modules'
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 
 type PortKey = "input" | "output" | "gain" | "trigger";
@@ -39,6 +39,21 @@ const PORT_OFFSETS: Record<ModuleType, SceneModulePorts> = {
   },
   output: {
     input: { x: 4, y: moduleObjects.output.h - 68 },
+  },
+  lfo: {
+    output: { x: moduleObjects.lfo.w - 4, y: moduleObjects.lfo.h - 56 },
+  },
+  vcf: {
+    input: { x: 4, y: moduleObjects.vcf.h - 120 },
+    output: { x: moduleObjects.vcf.w - 4, y: moduleObjects.vcf.h - 56 },
+  },
+  distortion: {
+    input: { x: 4, y: moduleObjects.distortion.h - 120 },
+    output: { x: moduleObjects.distortion.w - 4, y: moduleObjects.distortion.h - 56 },
+  },
+  modulator: {
+    input: { x: 4, y: moduleObjects.modulator.h - 120 }, // Carrier
+    output: { x: moduleObjects.modulator.w - 4, y: moduleObjects.modulator.h - 56 },
   },
 };
 
@@ -80,7 +95,51 @@ function parseScene(): Module[] {
         },
       });
     }
+    if (m.type === "lfo") {
+      const p = m.params as any;
+      return { 
+        id: m.id, type: "lfo", x: m.x, y: m.y, 
+        params: { 
+          f: p.frequency ?? 1, 
+          w: (p.wave ?? 'sine') as 'sine' | 'square' | 'triangle' | 'saw',
+          s: p.sync ?? false 
+        } 
+      };
+    }
 
+    if (m.type === "vcf") {
+      const p = m.params as any;
+      return { 
+        id: m.id, type: "vcf", x: m.x, y: m.y, 
+        params: { 
+          f: p.frequency ?? 1000, 
+          r: p.resonance ?? 1, 
+          t: p.type ?? "lowpass" 
+        } 
+      };
+    }
+
+    if (m.type === "distortion") {
+      const p = m.params as any;
+      return { 
+        id: m.id, type: "distortion", x: m.x, y: m.y, 
+        params: { 
+          a: p.amount ?? 50, 
+          t: p.type ?? "saturation" 
+        } 
+      };
+    }
+
+    if (m.type === "modulator") {
+      const p = m.params as any;
+      return { 
+        id: m.id, type: "modulator", x: m.x, y: m.y, 
+        params: { 
+          m: (p.mode ?? "AM") as "AM" | "FM" | "PM" | "RING", 
+          d: p.depth ?? 50 
+        } 
+      };
+    }
     return ({ id: m.id, type: "output" as const, x: m.x, y: m.y, params: {
         m: m.params.master ?? -6,
       },
@@ -89,6 +148,7 @@ function parseScene(): Module[] {
 }
 
 function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number }) {
+  console.log("Checking VCF component:", VCF);
   return (
     <>
       {props.modules.map((m) => {
@@ -108,6 +168,22 @@ function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: num
           case "output":
             return (
               <Output key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} cameraX={props.cameraX} cameraY={props.cameraY} />
+            );
+          case "lfo":
+            return (
+              <LFO key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} w={m.params.w} s={m.params.s}  cameraX={props.cameraX} cameraY={props.cameraY} />
+            );
+          case "vcf":
+            return (
+              <VCF key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} r={m.params.r} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
+            );
+          case "distortion":
+            return (
+              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} a={m.params.a} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
+            );
+          case "modulator":
+            return (
+              <Modulator key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} d={m.params.d} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           default: return null;
         }

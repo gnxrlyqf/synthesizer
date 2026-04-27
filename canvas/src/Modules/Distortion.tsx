@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Inputs/Knob";
 
-function Distortion(props: {id: string, x: number, y: number, cameraX: number, cameraY: number}) {
+function Distortion(props: {
+  id: string,
+  x: number,
+  y: number,
+  a: number,
+  t: string,
+  cameraX: number,
+  cameraY: number}) {
   const [position, setPosition] = useState({ x: props.x, y: props.y });
-  const [amount, setAmount] = useState(50);
-  const [type, setType] = useState('saturation');
+  const [amount, setAmount] = useState(props.a);
+  const [type, setType] = useState(props.t ?? "saturation"  );
 
   const modes = ['saturation', 'hard', 'overdrive', 'phase'];
 

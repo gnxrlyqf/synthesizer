@@ -6,11 +6,18 @@ const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 440;
 
-function Modulator(props: {id: string, x: number, y: number, cameraX: number, cameraY: number}) {
+function Modulator(props: {
+  id: string,
+  x: number,
+  y: number,
+  m: "AM" | "FM" | "PM" | "RING",
+  d: number,
+  cameraX: number,
+  cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({ x: props.x, y: props.y });
-  const [mode, setMode] = useState<'AM' | 'FM' | 'PM' | 'RING'>('AM');
-  const [depth, setDepth] = useState(50);
+  const [mode, setMode] = useState(props.m);
+  const [depth, setDepth] = useState(props.d)
 
   const handleHeaderMouseDown = (e: React.MouseEvent) => {
     if (!moduleRef.current) return;

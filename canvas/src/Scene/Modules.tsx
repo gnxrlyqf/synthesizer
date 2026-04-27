@@ -1,6 +1,6 @@
 type BaseModule = {
   id: string;
-  type: 'oscillator' | 'gain' | 'envelope' | 'output';
+  type: 'oscillator' | 'gain' | 'envelope' | 'output' | 'lfo' | 'vcf' | 'distortion' | 'modulator';
   x: number;
   y: number;
 }
@@ -37,6 +37,28 @@ type OutModule = BaseModule & {
 	};
 }
 
-type Module = OscModule | EnvModule | GainModule | OutModule;
+type LfoModule = BaseModule & {
+    type: "lfo";
+    params: { f: number; w: "sine" | "square" | "triangle" | "saw"; s: boolean };
+}
 
-export type {BaseModule, OscModule, EnvModule, GainModule, OutModule, Module};
+type VcfModule = BaseModule & {
+    type: "vcf";
+    params: { f: number; r: number; t: string };
+}
+
+type DistortModule = BaseModule & {
+    type: "distortion";
+    params: { a: number; t: string };
+}
+
+type ModulateModule = BaseModule & {
+    type: "modulator";
+    params: { m: "AM" | "FM" | "PM" | "RING"; d: number };
+}
+
+type Module = OscModule | EnvModule | GainModule | OutModule | LfoModule | VcfModule | DistortModule | ModulateModule;
+
+export type {BaseModule, OscModule, EnvModule, GainModule, OutModule, Module,
+			LfoModule, VcfModule, DistortModule, ModulateModule 
+};
