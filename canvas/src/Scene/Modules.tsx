@@ -49,12 +49,12 @@ type VcfModule = BaseModule & {
 
 type DistortModule = BaseModule & {
     type: "distortion";
-    params: { a: number; t: string };
+    params: { a: number; t: string, w: "sine" | "square" | "triangle" | "saw"};
 }
 
 type ModulateModule = BaseModule & {
     type: "modulator";
-    params: { m: "AM" | "FM" | "PM" | "RING"; d: number };
+    params: { m: "AM" | "FM" | "PM" | "RING"; d: number, w: "sine" | "square" | "triangle" | "saw" };
 }
 
 type Module = OscModule | EnvModule | GainModule | OutModule | LfoModule | VcfModule | DistortModule | ModulateModule;

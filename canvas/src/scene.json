@@ -11,6 +11,28 @@
       }
     },
     {
+      "id": "dist-1",
+      "type": "distortion",
+      "x": 160,
+      "y": 700,
+      "params": {
+        "a": 50,
+        "t": "saturation",
+        "w": "sine" 
+      }
+    },
+    {
+      "id": "mod-1",
+      "type": "modulator",
+      "x": 450,
+      "y": 700,
+      "params": {
+        "m": "FM",
+        "d": 50,
+        "w": "sine"
+      }
+    },
+    {
       "id": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37",
       "type": "gain",
       "x": 416,
@@ -39,8 +61,29 @@
       "params": {
         "master": -6
       }
+    },
+    {
+      "id": "lfo-1",
+      "type": "lfo",
+      "x": 1250,
+      "y": 120,
+      "params": {
+        "f": 5,
+        "w": "sine",
+        "s": false
+      }
+    },
+    {
+      "id": "vcf-1",
+      "type": "vcf",
+      "x": 800,
+      "y": 700,
+      "params": {
+        "f": 1000,
+        "r": 1,
+        "t": "lowpass"
+      }
     }
   ],
-  "cables": [
-  ]
+  "cables": []
 }
