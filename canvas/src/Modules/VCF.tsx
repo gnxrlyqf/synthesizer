@@ -55,7 +55,7 @@ function VCF(props: {
             {/* Cutoff Circle */}
             <div className="flex-1 max-w-[110px] px-1 pt-2 pb-1 rounded-xl border-2 border-orange-500 flex flex-col items-center gap-1">
               <span className="text-[14px] uppercase text-white font-bold">Cutoff</span>
-              <Knob max={10000} min={20} step={1} value={frequency} onChange={setFrequency} size={70} unit="Hz" />
+              <Knob max={15000} min={20} step={1} value={frequency} onChange={setFrequency} size={70} unit="Hz" />
             </div>
 
             {/* Resonance Circle */}

@@ -63,7 +63,7 @@ function Distortion(props: {
         
         {/* PARAMETER KNOB */}
         <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-yellow-500 flex flex-col items-center">
-          <span className="text-[12px] uppercase mb-1 text-white">Amount</span>
+          <span className="text-[12px] uppercase mb-1 text-white">Drive</span>
           <Knob max={100} min={0} step={1} value={amount} onChange={setAmount} size={90} unit="%" />
         </div>
 
