@@ -4,6 +4,8 @@ import {useDrag} from "../Interactions/useDrag";
 import { useConnection } from "../ConnectionContext";
 import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
+import { ModuleMenu } from '../Interactions/ContextMenu';
+import { useContextMenu } from "../Utils/useContextMenu";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 384;
@@ -21,6 +23,7 @@ function Gain(props: GainProps) {
   const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [gain, setGain] = useState(props.g);
   const {mode} = useConnection();
+  const { menu, setMenu, handleContextMenu } = useContextMenu();
 
   const moduleStyle = {
     width: `${MODULE_WIDTH}px`,
@@ -57,7 +60,17 @@ function Gain(props: GainProps) {
       <div
         className="w-full bg-blue-500 px-4 pt-2 cursor-move select-none text-center"
         onMouseDown={onMouseDown}
+        onContextMenu={handleContextMenu}
       >
+        {menu && (
+        <ModuleMenu 
+          id={props.id} 
+          x={menu.x} 
+          y={menu.y}
+          color="#3684ff"
+          onDelete={(id:string) => { console.log("Deleting", id); setMenu(null); }} 
+        />
+      )}
         <span className="text-white text-4xl leading-none">Gain</span>
       </div>
       <div

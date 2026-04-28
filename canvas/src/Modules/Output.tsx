@@ -3,7 +3,8 @@ import Knob from "../Interactions/Knob";
 import { type ModuleProps } from "./Modules";
 import {useDrag} from "../Interactions/useDrag";
 import { KnobParam, Param } from "../Interactions/Params";
-
+import { ModuleMenu } from '../Interactions/ContextMenu';
+import { useContextMenu } from "../Utils/useContextMenu";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 352;
@@ -17,6 +18,7 @@ function Output(props: OutputProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [master, setMaster] = useState(props.m);
+  const { menu, setMenu, handleContextMenu } = useContextMenu();
 
   const moduleStyle = {
     width: `${MODULE_WIDTH}px`,
@@ -46,6 +48,7 @@ function Output(props: OutputProps) {
       data-patch-module="true"
       data-module-id={props.id}
       style={moduleStyle}
+      onContextMenu={handleContextMenu}
       className="
         absolute
         m-4
@@ -58,10 +61,20 @@ function Output(props: OutputProps) {
         font-lexend
       "
     >
+      {menu && (
+        <ModuleMenu 
+          id={props.id} 
+          x={menu.x} 
+          y={menu.y}
+          color="#eeaf00"
+          onDelete={(id:string) => {console.log("Deleting", id);setMenu(null);}} 
+        />
+      )}
       <div
         className="w-full bg-yellow-500 px-4 pt-2 cursor-move select-none text-center"
         onMouseDown={onMouseDown}
       >
+        
         <span className="text-white text-4xl leading-none">Output</span>
       </div>
       <div

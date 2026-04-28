@@ -3,6 +3,8 @@ import Knob from "../Interactions/Knob";
 import {useDrag} from "../Interactions/useDrag";
 import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
+import { ModuleMenu } from '../Interactions/ContextMenu';
+import { useContextMenu } from "../Utils/useContextMenu";
 
 const MODULE_WIDTH = 288;
 const MODULE_HEIGHT = 480;
@@ -25,6 +27,7 @@ function Envelope(props: EnvelopeProps) {
   const [decay, setDecay] = useState(props.d);
   const [sustain, setSustain] = useState(props.s);
   const [release, setRelease] = useState(props.r);
+  const { menu, setMenu, handleContextMenu } = useContextMenu();
 
   const moduleStyle = {
     width: `${MODULE_WIDTH}px`,
@@ -71,7 +74,17 @@ function Envelope(props: EnvelopeProps) {
       <div
         className="w-full bg-green-500 px-4 pt-2 cursor-move select-none text-center"
         onMouseDown={onMouseDown}
+        onContextMenu={handleContextMenu}
       >
+        {menu && (
+        <ModuleMenu 
+          id={props.id} 
+          x={menu.x} 
+          y={menu.y}
+          color="#00c658"
+          onDelete={(id:string) => {console.log("Deleting", id);setMenu(null); }} 
+        />
+      )}
         <span className="text-white text-4xl leading-none">Envelope</span>
       </div>
       <div

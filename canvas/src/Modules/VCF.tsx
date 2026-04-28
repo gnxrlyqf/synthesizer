@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import {useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import Wave from "../Interactions/Wave";
 import { useDrag } from "../Interactions/useDrag";
+import { ModuleMenu } from '../Interactions/ContextMenu';
+import { useContextMenu } from "../Utils/useContextMenu";
 
 const MODULE_WIDTH = 300;
 const MODULE_HEIGHT = 440;
@@ -17,6 +19,7 @@ function VCF(props: {
   const [frequency, setFrequency] = useState(props.f);
   const [resonance, setResonance] = useState(props.r);
   const [filterType, setFilterType] = useState(props.t ?? 'lowpass');
+  const { menu, setMenu, handleContextMenu } = useContextMenu();
 
   // --- DRAG LOGIC ---
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
@@ -26,9 +29,19 @@ function VCF(props: {
       ref={moduleRef}
       data-patch-module="true"
       data-module-id={props.id}
+      onContextMenu={handleContextMenu}
       style={{ width: MODULE_WIDTH, height: MODULE_HEIGHT, left: position.x, top: position.y }}
       className="absolute m-4 flex flex-col bg-orange-500 text-white rounded-3xl overflow-hidden font-lexend"
     >
+      {menu && (
+      <ModuleMenu 
+        id={props.id} 
+        x={menu.x} 
+        y={menu.y}
+        color="#ff6a00"
+        onDelete={(id: string) => { console.log("Deleting", id); setMenu(null); }} 
+      />
+      )}
         {/* MODULE HEADER */}
         <div className="w-full bg-orange-500 px-4 pt-2 text-center cursor-move select-none" onMouseDown={onMouseDown}>
           <span className="text-white text-4xl leading-none">VCF</span>

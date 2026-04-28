@@ -5,6 +5,8 @@ import {useDrag} from "../Interactions/useDrag";
 import { useConnection } from "../ConnectionContext";
 import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
+import { ModuleMenu } from '../Interactions/ContextMenu';
+import { useContextMenu } from "../Utils/useContextMenu";
 
 interface OscillatorProps extends ModuleProps {
   f: number;
@@ -17,6 +19,7 @@ function Oscillator(props: OscillatorProps) {
   const [frequency, setFrequency] = useState(props.f);
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
   const {mode} = useConnection();
+  const { menu, setMenu, handleContextMenu } = useContextMenu();
 
   useEffect(() => {
     if (!moduleRef.current || position) { return; }
@@ -36,17 +39,17 @@ function Oscillator(props: OscillatorProps) {
         width: "224px", height: "384px",
         ...(position ? { left: `${position.x}px`, top: `${position.y}px` } : {}),
       }}
-      className="
-        absolute
-        m-4
-        top-1/4 left-1/2
-        flex flex-col
-        bg-red-500
-        text-white
-        rounded-3xl
-        overflow-hidden
-        font-lexend
-      ">
+      onContextMenu={handleContextMenu}
+      className=" absolute m-4 top-1/4 left-1/2 flex flex-col bg-red-500 text-white rounded-3xl overflow-hidden font-lexend">
+        {menu && (
+        <ModuleMenu 
+          id={props.id} 
+          x={menu.x} 
+          y={menu.y}
+          color="#f93340"
+          onDelete={(id:string) => { console.log("Deleting", id); setMenu(null); }} 
+        />
+        )}
         <div
           className="w-full bg-red-500 px-4 pt-2 cursor-move select-none text-center"
           onMouseDown={onMouseDown}
