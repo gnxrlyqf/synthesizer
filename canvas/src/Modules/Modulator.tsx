@@ -6,7 +6,7 @@ import { wouldOverlap } from "../Utils/wouldOverlap";
 // Configuration for grid snapping and module dimensions
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 225;
-const MODULE_HEIGHT = 450;
+const MODULE_HEIGHT = 460;
 
 function Modulator(props: {
   id: string,
@@ -70,7 +70,7 @@ function Modulator(props: {
 
           {/* PARAMETER KNOB: Depth / Modulation Index */}
           <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-cyan-500 flex flex-col items-center">
-            <span className="text-[10px] uppercase mb-1 text-white">Depth / Index</span>
+            <span className="text-[11px] uppercase mb-1 text-white">Depth / Index</span>
             <Knob max={100} min={0} step={1} value={depth} onChange={setDepth} size={90} unit="%" />
           </div>
 
@@ -85,7 +85,7 @@ function Modulator(props: {
              {/* CARRIER INPUT: Left side port */}
              <div className="flex items-center w-full">
                 <span data-port-id={`${props.id}.carrier`} data-port-side="left" className="h-1 bg-cyan-500 flex-1" />
-                <button className="px-3 py-1 border-2 border-cyan-500 rounded-lg text-[10px] uppercase bg-transparent text-white">
+                <button className="px-3 py-1 border-2 border-cyan-500 rounded-lg text-[12px] uppercase bg-transparent text-white">
                   Carrier
                 </button>
                 <span className="flex-1" />
@@ -94,7 +94,7 @@ function Modulator(props: {
              {/* MODULATOR INPUT: Left side port */}
              <div className="flex items-center w-full">
                 <span data-port-id={`${props.id}.modulator`} data-port-side="left" className="h-1 bg-cyan-500 flex-1" />
-                <button className="px-3 py-1 border-2 border-cyan-500 rounded-lg text-[10px] uppercase bg-transparent text-white">
+                <button className="px-3 py-1 border-2 border-cyan-500 rounded-lg text-[12px] uppercase bg-transparent text-white">
                   Mod In
                 </button>
                 <span className="flex-1" />
