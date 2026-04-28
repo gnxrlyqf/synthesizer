@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import { wouldOverlap } from "../Utils/wouldOverlap";
+import { KnobParam } from "../Interactions/Params";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 288;
@@ -105,37 +106,24 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
         style={panelStyle}
         className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-4"
       >
-        <div className="w-full flex items-start gap-3">
-          <div className="flex flex-1 items-center">
-            <span className="h-1 bg-green-500 flex-1" />
-            <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Attack</button>
+        <div className="flex flex-row w-full">
+          <div className="w-full flex flex-col gap-3 ">
+            <KnobParam id={props.id} name="gain" side="left" color="green-500">
               <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
-            </div>
+            </KnobParam>
+            <KnobParam id={props.id} name="gain" side="left" color="green-500">
+              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
+            </KnobParam>
           </div>
-          <div className="flex flex-1 items-center">
-            <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Decay</button>
-              <Knob max={1000} min={0} step={1} value={decay} onChange={setDecay} size={68} unit="ms" />
-            </div>
-            <span className="h-1 bg-green-500 flex-1" />
+          <div className="w-full flex flex-col gap-3">
+            <KnobParam id={props.id} name="gain" side="right" color="green-500">
+              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
+            </KnobParam>
+            <KnobParam id={props.id} name="gain" side="right" color="green-500">
+              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
+            </KnobParam>
           </div>
-        </div>
-        <div className="w-full flex items-start gap-3">
-          <div className="flex flex-1 items-center">
-            <span className="h-1 bg-green-500 flex-1" />
-            <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Sustain</button>
-              <Knob max={1} min={0} step={0.01} value={sustain} onChange={setSustain} size={68} unit="dB" />
-            </div>
-          </div>
-          <div className="flex flex-1 items-center">
-            <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
-              <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Release</button>
-              <Knob max={1000} min={0} step={1} value={release} onChange={setRelease} size={68} unit="ms" />
-            </div>
-            <span className="h-1 bg-green-500 flex-1" />
-          </div>
+
         </div>
         <div className="w-full flex items-center">
           <span

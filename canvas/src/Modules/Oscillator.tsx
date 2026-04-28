@@ -85,31 +85,15 @@ function Oscillator(props: {id: string, x: number, y: number, f: number, w: 'sin
         <div className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5 m-2">
           <div className="w-full flex items-center">
             <span className="h-1 bg-red-500 flex-1" />
-            <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-red-500 flex flex-col items-center gap-1">
-              <button
-                disabled={mode == "selecting-target"}
-                onClick={() => handleParamSelect("frequency", "target")}
-                className={`text-xs uppercase tracking-wide ${mode == "selecting-target" ? "text-gray-500 cursor-not-allowed" : "text-white cursor-pointer"}`}
-              >
-                Frequency
-              </button>
-              <Knob
-              max={5000}
-              min={20}
-              step={1}
-              value={frequency}
-              onChange={setFrequency}
-              size={100}
-              unit="Hz"
-              disabled={mode != "idle"}
-            />
-            </div>
+            <KnobParam id={props.id} name="frequency" side="left" color="red-500">
+              <Knob max={5000} min={20} step={1} value={frequency} onChange={setFrequency} size={100} unit="Hz" disabled={mode != "idle"} />
+            </KnobParam>
             <span className="flex-1" />
           </div>
           <div className="mt-1">
             <Wave value={waveshape} onChange={setWaveshape} />
           </div>
-          <Param name="output" id={props.id} polarity="source" color="bg-red-500"/>
+          <Param name="output" id={props.id} polarity="source" color="red-500"/>
         </div>
     </div>
 	)

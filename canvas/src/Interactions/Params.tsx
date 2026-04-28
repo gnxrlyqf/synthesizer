@@ -16,7 +16,7 @@ function KnobParam(props: {id: string; name: string; side: "left" | "right"; col
 		  />
 		}
 		{props.side == "right" && <span className="flex-1" />}
-		<div className={`px-3 pt-1 pb-1 rounded-xl border-2 ${border} flex flex-col items-center gap-1`}>
+		<div className={`px-3 py-1 rounded-xl border-2 ${border} flex flex-col items-center gap-1`}>
 		  <button
 		  className={`text-md uppercase tracking-wide ${mode == "selecting-source" || id == props.id ? "text-gray-500 cursor-not-allowed border-gray-400" : "text-white cursor-pointer"}`}
 		  onClick={() => selectTarget(props.id, props.name)}
