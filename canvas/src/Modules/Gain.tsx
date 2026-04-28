@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
-import { wouldOverlap } from "../Utils/wouldOverlap";
 import { useConnection } from "../ConnectionContext";
 import { KnobParam, Param } from "../Interactions/Params";
-
+import { useDrag } from "../Interactions/useDrag";
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 384;
@@ -13,7 +12,7 @@ const FRAME_INSET_BOTTOM = 6;
 
 function Gain(props: {id: string, x: number, y: number, g: number, cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
+  const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [gain, setGain] = useState(props.g);
   const {mode} = useConnection();
 
@@ -39,42 +38,7 @@ function Gain(props: {id: string, x: number, y: number, g: number, cameraX: numb
     setPosition({ x: rect.left + window.scrollX, y: rect.top + window.scrollY });
   }, [position]);
 
-  const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!moduleRef.current) {
-      return;
-    }
-
-    const start = position ?? { x: props.x, y: props.y };
-    const offsetX = e.clientX - props.cameraX - start.x;
-    const offsetY = e.clientY - props.cameraY - start.y;
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const worldX = moveEvent.clientX - props.cameraX - offsetX;
-      const worldY = moveEvent.clientY - props.cameraY - offsetY;
-      const snappedX = Math.round(worldX / GRID_SIZE) * GRID_SIZE;
-      const snappedY = Math.round(worldY / GRID_SIZE) * GRID_SIZE;
-
-      setPosition((prev) => {
-        if (!moduleRef.current || wouldOverlap(snappedX, snappedY, moduleRef.current)) {
-          return prev ?? start;
-        }
-
-        return {
-          x: snappedX,
-          y: snappedY,
-        };
-      });
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-    e.preventDefault();
-  };
+  const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
     <div
@@ -86,7 +50,7 @@ function Gain(props: {id: string, x: number, y: number, g: number, cameraX: numb
     >
       <div
         className="w-full bg-blue-500 px-4 pt-2 cursor-move select-none text-center"
-        onMouseDown={handleHeaderMouseDown}
+        onMouseDown={onMouseDown}
       >
         <span className="text-white text-4xl leading-none">Gain</span>
       </div>

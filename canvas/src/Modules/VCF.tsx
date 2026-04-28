@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import Wave from "../Interactions/Wave";
-import { wouldOverlap } from "../Utils/wouldOverlap";
+import { useDrag } from "../Interactions/useDrag";
 
-const GRID_SIZE = 16;
 const MODULE_WIDTH = 300;
 const MODULE_HEIGHT = 440;
 
@@ -20,27 +19,7 @@ function VCF(props: {
   const [filterType, setFilterType] = useState(props.t ?? 'lowpass');
 
   // --- DRAG LOGIC ---
-  const handleHeaderMouseDown = (e: React.MouseEvent) => {
-    if (!moduleRef.current) return;
-    const start = position;
-    const offsetX = e.clientX - props.cameraX - start.x;
-    const offsetY = e.clientY - props.cameraY - start.y;
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const worldX = moveEvent.clientX - props.cameraX - offsetX;
-      const worldY = moveEvent.clientY - props.cameraY - offsetY;
-      const snappedX = Math.round(worldX / GRID_SIZE) * GRID_SIZE;
-      const snappedY = Math.round(worldY / GRID_SIZE) * GRID_SIZE;
-      setPosition(prev => wouldOverlap(snappedX, snappedY, moduleRef.current!) ? prev : { x: snappedX, y: snappedY });
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
+  const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
     <div 
@@ -51,7 +30,7 @@ function VCF(props: {
       className="absolute m-4 flex flex-col bg-orange-500 text-white rounded-3xl overflow-hidden font-lexend"
     >
         {/* MODULE HEADER */}
-        <div className="w-full bg-orange-500 px-4 pt-2 text-center cursor-move select-none" onMouseDown={handleHeaderMouseDown}>
+        <div className="w-full bg-orange-500 px-4 pt-2 text-center cursor-move select-none" onMouseDown={onMouseDown}>
           <span className="text-white text-4xl leading-none">VCF</span>
         </div>
 

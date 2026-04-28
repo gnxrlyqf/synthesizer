@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import Wave from "../Interactions/Wave";
-import { wouldOverlap } from "../Utils/wouldOverlap";
+import { useDrag } from "../Interactions/useDrag";
 
 // Configuration for grid snapping and module dimensions
-const GRID_SIZE = 16;
 const MODULE_WIDTH = 225;
 const MODULE_HEIGHT = 460;
 
@@ -19,38 +18,14 @@ function Modulator(props: {
   cameraY: number}) {
   
   // --- STATE & REFS ---
-  const moduleRef = useRef<HTMLDivElement | null>(null);
+  const moduleRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: props.x, y: props.y });
   const [mode, setMode] = useState(props.m);
   const [depth, setDepth] = useState(props.d);
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
 
   // --- DRAG LOGIC ---
-  const handleHeaderMouseDown = (e: React.MouseEvent) => {
-    if (!moduleRef.current) return;
-    const start = position;
-    const offsetX = e.clientX - props.cameraX - start.x;
-    const offsetY = e.clientY - props.cameraY - start.y;
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const worldX = moveEvent.clientX - props.cameraX - offsetX;
-      const worldY = moveEvent.clientY - props.cameraY - offsetY;
-      
-      // Snap to grid
-      const snappedX = Math.round(worldX / GRID_SIZE) * GRID_SIZE;
-      const snappedY = Math.round(worldY / GRID_SIZE) * GRID_SIZE;
-      
-      // Collision detection check
-      setPosition(prev => wouldOverlap(snappedX, snappedY, moduleRef.current!) ? prev : { x: snappedX, y: snappedY });
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
+  const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
     <div 
@@ -61,7 +36,7 @@ function Modulator(props: {
       className="absolute m-4 flex flex-col bg-cyan-600 text-white rounded-3xl overflow-hidden font-lexend"
     >
         {/* MODULE HEADER: Draggable area */}
-        <div className="w-full bg-cyan-600 px-4 pt-2 cursor-move select-none text-center" onMouseDown={handleHeaderMouseDown}>
+        <div className="w-full bg-cyan-600 px-4 pt-2 cursor-move select-none text-center" onMouseDown={onMouseDown}>
           <span className="text-white text-4xl leading-none">Modulator</span>
         </div>
 
