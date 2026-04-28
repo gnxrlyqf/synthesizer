@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
-import { moveModule } from "../Utils/wouldOverlap";
+import {useDrag} from "../Interactions/useDrag";
 import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
 

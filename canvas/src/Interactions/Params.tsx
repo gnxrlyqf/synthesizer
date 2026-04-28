@@ -1,6 +1,6 @@
 import { useConnection } from "../ConnectionContext";
 
-function KnobParam(props: {id: string; name: string; side: "left" | "right" | "none"; color: string; children: React.ReactNode}) {
+function KnobParam(props: {id: string; name: string; side: "left" | "right"; color: string; children: React.ReactNode}) {
   const {mode, id, selectTarget} = useConnection();
   const border = `border-${props.color}`;
   const bg = `bg-${props.color}`;

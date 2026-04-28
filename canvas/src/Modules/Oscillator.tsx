@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import Wave from "../Interactions/Wave";
-import { moveModule } from "../Utils/wouldOverlap";
+import {useDrag} from "../Interactions/useDrag";
 import { useConnection } from "../ConnectionContext";
 import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";

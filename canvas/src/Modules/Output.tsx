@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import { type ModuleProps } from "./Modules";
-import { moveModule} from "../Utils/wouldOverlap";
+import {useDrag} from "../Interactions/useDrag";
 import { KnobParam, Param } from "../Interactions/Params";
 
 
@@ -15,7 +15,7 @@ interface OutputProps extends ModuleProps { m: number; }
 
 function Output(props: OutputProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
+  const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [master, setMaster] = useState(props.m);
 
   const moduleStyle = {
