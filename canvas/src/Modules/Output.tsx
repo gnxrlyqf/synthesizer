@@ -38,9 +38,7 @@ function Output(props: OutputProps) {
     setPosition({ x: rect.left + window.scrollX, y: rect.top + window.scrollY });
   }, [position]);
 
-  const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    moveModule(props, moduleRef, position, setPosition, e)
-  };
+  const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
     <div
@@ -62,7 +60,7 @@ function Output(props: OutputProps) {
     >
       <div
         className="w-full bg-yellow-500 px-4 pt-2 cursor-move select-none text-center"
-        onMouseDown={handleHeaderMouseDown}
+        onMouseDown={onMouseDown}
       >
         <span className="text-white text-4xl leading-none">Output</span>
       </div>

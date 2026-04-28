@@ -18,7 +18,7 @@ interface GainProps extends ModuleProps {
 
 function Gain(props: GainProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
+  const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [gain, setGain] = useState(props.g);
   const {mode} = useConnection();
 
@@ -44,9 +44,7 @@ function Gain(props: GainProps) {
     setPosition({ x: rect.left + window.scrollX, y: rect.top + window.scrollY });
   }, [position]);
 
-  const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    moveModule(props, moduleRef, position, setPosition, e)
-  };
+  const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
     <div
@@ -58,7 +56,7 @@ function Gain(props: GainProps) {
     >
       <div
         className="w-full bg-blue-500 px-4 pt-2 cursor-move select-none text-center"
-        onMouseDown={handleHeaderMouseDown}
+        onMouseDown={onMouseDown}
       >
         <span className="text-white text-4xl leading-none">Gain</span>
       </div>

@@ -107,25 +107,31 @@ function parseScene(): Module[] {
     }
 
     if (m.type === "distortion") {
-      const p = m.params as any;
-      return { 
-        id: m.id, type: "distortion", x: m.x, y: m.y, 
-        params: { 
-          a: p.amount ?? 50, 
-          t: p.type ?? "saturation" 
-        } 
-      };
+      return ({ 
+        id: m.id, 
+        type: "distortion" as const, 
+        x: m.x, 
+        y: m.y, 
+        params: {
+          a: m.params.a ?? 50,
+          t: m.params.t ?? "saturation",
+          w: (m.params.w ?? 'sine') as 'sine' | 'square' | 'triangle' | 'saw',
+        },
+      });
     }
 
     if (m.type === "modulator") {
-      const p = m.params as any;
-      return { 
-        id: m.id, type: "modulator", x: m.x, y: m.y, 
-        params: { 
-          m: (p.mode ?? "AM") as "AM" | "FM" | "PM" | "RING", 
-          d: p.depth ?? 50 
-        } 
-      };
+      return ({ 
+        id: m.id, 
+        type: "modulator" as const, 
+        x: m.x, 
+        y: m.y, 
+        params: {
+          m: (m.params.m ?? "FM") as "AM" | "FM" | "PM" | "RING",
+          d: m.params.d ?? 50,
+          w: (m.params.w ?? 'sine') as 'sine' | 'square' | 'triangle' | 'saw',
+        },
+      });
     }
     return ({ id: m.id, type: "output" as const, x: m.x, y: m.y, params: {
         m: m.params.master ?? -6,
@@ -166,11 +172,11 @@ function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: num
             );
           case "distortion":
             return (
-              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} a={m.params.a} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
+              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} a={m.params.a} t={m.params.t} w={m.params.w} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           case "modulator":
             return (
-              <Modulator key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} d={m.params.d} cameraX={props.cameraX} cameraY={props.cameraY} />
+              <Modulator key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} d={m.params.d} w={m.params.w} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           default: return null;
         }

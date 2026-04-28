@@ -13,7 +13,7 @@ interface OscillatorProps extends ModuleProps {
 
 function Oscillator(props: OscillatorProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
+  const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [frequency, setFrequency] = useState(props.f);
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
   const {mode} = useConnection();
@@ -25,9 +25,7 @@ function Oscillator(props: OscillatorProps) {
     setPosition({ x: rect.left + window.scrollX, y: rect.top + window.scrollY });
   }, [position]);
 
-  const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    moveModule(props, moduleRef, position, setPosition, e)
-  };
+  const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
 	return (
 		<div
@@ -51,7 +49,7 @@ function Oscillator(props: OscillatorProps) {
       ">
         <div
           className="w-full bg-red-500 px-4 pt-2 cursor-move select-none text-center"
-          onMouseDown={handleHeaderMouseDown}
+          onMouseDown={onMouseDown}
         >
           <span className="text-white text-4xl leading-none">Oscillator</span>
         </div>

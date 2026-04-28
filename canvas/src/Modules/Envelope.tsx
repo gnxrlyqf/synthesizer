@@ -19,7 +19,7 @@ interface EnvelopeProps extends ModuleProps {
 
 function Envelope(props: EnvelopeProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
+  const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
 
   const [attack, setAttack] = useState(props.a);
   const [decay, setDecay] = useState(props.d);
@@ -48,9 +48,7 @@ function Envelope(props: EnvelopeProps) {
     setPosition({ x: rect.left + window.scrollX, y: rect.top + window.scrollY });
   }, [position]);
 
-  const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    moveModule(props, moduleRef, position, setPosition, e)
-  };
+  const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
     <div
@@ -72,7 +70,7 @@ function Envelope(props: EnvelopeProps) {
     >
       <div
         className="w-full bg-green-500 px-4 pt-2 cursor-move select-none text-center"
-        onMouseDown={handleHeaderMouseDown}
+        onMouseDown={onMouseDown}
       >
         <span className="text-white text-4xl leading-none">Envelope</span>
       </div>
