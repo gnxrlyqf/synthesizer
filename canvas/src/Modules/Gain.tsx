@@ -1,17 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
-import { wouldOverlap } from "../Utils/wouldOverlap";
+import { moveModule } from "../Utils/wouldOverlap";
 import { useConnection } from "../ConnectionContext";
 import { KnobParam, Param } from "../Interactions/Params";
+import type { ModuleProps } from "./Modules";
 
-const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 384;
 const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Gain(props: {id: string, x: number, y: number, g: number, cameraX: number, cameraY: number}) {
+
+interface GainProps extends ModuleProps {
+  g: number;
+}
+
+function Gain(props: GainProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
   const [gain, setGain] = useState(props.g);
@@ -40,40 +45,7 @@ function Gain(props: {id: string, x: number, y: number, g: number, cameraX: numb
   }, [position]);
 
   const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!moduleRef.current) {
-      return;
-    }
-
-    const start = position ?? { x: props.x, y: props.y };
-    const offsetX = e.clientX - props.cameraX - start.x;
-    const offsetY = e.clientY - props.cameraY - start.y;
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const worldX = moveEvent.clientX - props.cameraX - offsetX;
-      const worldY = moveEvent.clientY - props.cameraY - offsetY;
-      const snappedX = Math.round(worldX / GRID_SIZE) * GRID_SIZE;
-      const snappedY = Math.round(worldY / GRID_SIZE) * GRID_SIZE;
-
-      setPosition((prev) => {
-        if (!moduleRef.current || wouldOverlap(snappedX, snappedY, moduleRef.current)) {
-          return prev ?? start;
-        }
-
-        return {
-          x: snappedX,
-          y: snappedY,
-        };
-      });
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-    e.preventDefault();
+    moveModule(props, moduleRef, position, setPosition, e)
   };
 
   return (

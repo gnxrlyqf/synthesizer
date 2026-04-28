@@ -1,16 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
-import { wouldOverlap } from "../Utils/wouldOverlap";
-import { KnobParam } from "../Interactions/Params";
+import { moveModule } from "../Utils/wouldOverlap";
+import { KnobParam, Param } from "../Interactions/Params";
+import type { ModuleProps } from "./Modules";
 
-const GRID_SIZE = 16;
 const MODULE_WIDTH = 288;
 const MODULE_HEIGHT = 480;
 const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
 
-function Envelope(props: {id: string, x: number, y: number, a: number, d: number, s: number, r: number, cameraX: number, cameraY: number}) {
+interface EnvelopeProps extends ModuleProps {
+  a: number;
+  d: number;
+  s: number;
+  r: number;
+}
+
+function Envelope(props: EnvelopeProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
 
@@ -42,40 +49,7 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
   }, [position]);
 
   const handleHeaderMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!moduleRef.current) {
-      return;
-    }
-
-    const start = position ?? { x: props.x, y: props.y };
-    const offsetX = e.clientX - props.cameraX - start.x;
-    const offsetY = e.clientY - props.cameraY - start.y;
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const worldX = moveEvent.clientX - props.cameraX - offsetX;
-      const worldY = moveEvent.clientY - props.cameraY - offsetY;
-      const snappedX = Math.round(worldX / GRID_SIZE) * GRID_SIZE;
-      const snappedY = Math.round(worldY / GRID_SIZE) * GRID_SIZE;
-
-      setPosition((prev) => {
-        if (!moduleRef.current || wouldOverlap(snappedX, snappedY, moduleRef.current)) {
-          return prev ?? start;
-        }
-
-        return {
-          x: snappedX,
-          y: snappedY,
-        };
-      });
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-    e.preventDefault();
+    moveModule(props, moduleRef, position, setPosition, e)
   };
 
   return (
@@ -108,45 +82,24 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
       >
         <div className="flex flex-row w-full">
           <div className="w-full flex flex-col gap-3 ">
-            <KnobParam id={props.id} name="gain" side="left" color="green-500">
+            <KnobParam id={props.id} name="attack" side="left" color="green-500">
               <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
             </KnobParam>
-            <KnobParam id={props.id} name="gain" side="left" color="green-500">
-              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
+            <KnobParam id={props.id} name="sustain" side="left" color="green-500">
+              <Knob max={10} min={0} step={1} value={sustain} onChange={setSustain} size={68} unit="dB" />
             </KnobParam>
           </div>
           <div className="w-full flex flex-col gap-3">
-            <KnobParam id={props.id} name="gain" side="right" color="green-500">
-              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
+            <KnobParam id={props.id} name="decay" side="right" color="green-500">
+              <Knob max={1000} min={0} step={1} value={decay} onChange={setDecay} size={68} unit="ms" />
             </KnobParam>
-            <KnobParam id={props.id} name="gain" side="right" color="green-500">
-              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
+            <KnobParam id={props.id} name="release" side="right" color="green-500">
+              <Knob max={1000} min={0} step={1} value={release} onChange={setRelease} size={68} unit="ms" />
             </KnobParam>
           </div>
-
         </div>
-        <div className="w-full flex items-center">
-          <span
-            data-port-id={`${props.id}.trigger`}
-            data-port-side="left"
-            className="h-1 bg-green-500 flex-1"
-          />
-          <button className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
-            Trigger
-          </button>
-          <span className="flex-1" />
-        </div>
-        <div className="w-full flex items-center mt-1">
-          <span className="flex-1" />
-          <button className="px-4 py-2 rounded-xl border-2 border-green-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
-            Output
-          </button>
-          <span
-            data-port-id={`${props.id}.output`}
-            data-port-side="right"
-            className="h-1 bg-green-500 flex-1"
-          />
-        </div>
+        <Param id={props.id} name="trigger" polarity="target" color="green-500"/>
+        <Param id={props.id} name="output" polarity="source" color="green-500"/>
       </div>
     </div>
   );

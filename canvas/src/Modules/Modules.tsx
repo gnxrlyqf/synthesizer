@@ -7,4 +7,12 @@ import VCF from "../Modules/VCF";
 import Distortion from "../Modules/Distortion";
 import Modulator from "../Modules/Modulator";
 
+export interface ModuleProps {
+  id: string;
+  x: number;
+  y: number;
+  cameraX: number;
+  cameraY: number;
+}
+
 export { Oscillator, Gain, Envelope, Output, LFO, VCF, Distortion, Modulator };
