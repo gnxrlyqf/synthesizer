@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Knob from "../Inputs/Knob";
+import Knob from "../Interactions/Knob";
 import { wouldOverlap } from "../Utils/wouldOverlap";
 
 const GRID_SIZE = 16;
@@ -104,15 +104,7 @@ function Output(props: {id: string, x: number, y: number, m: number, cameraX: nu
         <div className="w-full flex items-center justify-center">
           <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-yellow-500 flex flex-col items-center gap-1">
             <button className="cursor-pointer text-xs uppercase tracking-wide text-white">Master</button>
-            <Knob
-              max={0}
-              min={-30}
-              step={0.1}
-              value={master}
-              onChange={setMaster}
-              size={100}
-              unit="dB"
-            />
+            <Knob max={0} min={-30} step={0.1} value={master} onChange={setMaster} size={100} unit="dB" />
           </div>
         </div>
         <div className="w-full flex items-center">

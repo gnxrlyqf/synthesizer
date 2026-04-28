@@ -11,6 +11,7 @@ interface KnobProps {
   step: number
   unit?: string
   value: number
+  disabled?: boolean;
 }
 
 const DRAGGING_DENOMINATOR = 200
@@ -21,24 +22,24 @@ interface Coords {
 }
 
 // TODO Directly change values using double click
-const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, min, max, size = 40, unit }) => {
+const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, min, max, size = 40, unit, disabled = false}) => {
   const touchCoords = useRef<Coords | null>(null)
-
   const [value, setValue] = useState(inputValue)
 
   const handleChange = useCallback(
     (v: number) => {
-      onChange?.(v)
+      if (!disabled) onChange?.(v)
     },
-    [onChange]
+    [onChange, disabled]
   )
 
   const handleDrag = useCallback(
     (e: MouseEvent) => {
+      if (disabled) return;
       e.preventDefault()
       setValue((prev) => Math.max(min, Math.min(max, prev + -e.movementY * ((max - min) / DRAGGING_DENOMINATOR))))
     },
-    [max, min]
+    [max, min, disabled]
   )
 
   const handleMouseUp = useCallback(() => {
@@ -49,14 +50,16 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   }, [handleDrag])
 
   const handleMouseDown = useCallback(() => {
+    if (disabled) return;
     document.addEventListener('mousemove', handleDrag)
     document.addEventListener('mouseup', handleMouseUp)
     document.addEventListener('mouseleave', handleMouseUp)
     window.addEventListener('blur', handleMouseUp)
-  }, [handleDrag, handleMouseUp])
+  }, [handleDrag, handleMouseUp, disabled])
 
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
+      if (disabled) return;
       if (!touchCoords.current) {
         return
       }
@@ -64,7 +67,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
       touchCoords.current = { x: e.touches[0].screenX, y: e.touches[0].screenY }
       setValue((prev) => Math.max(min, Math.min(max, prev + delta * ((max - min) / DRAGGING_DENOMINATOR))))
     },
-    [max, min]
+    [max, min, disabled]
   )
 
   const handleTouchEnd = useCallback(() => {
@@ -75,16 +78,20 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
 
   const handleTouchStart = useCallback<TouchEventHandler<HTMLDivElement>>(
     (e) => {
+      if (disabled) return;
       touchCoords.current = { x: e.touches[0].screenX, y: e.touches[0].screenY }
       document.addEventListener('touchmove', handleTouchMove)
       document.addEventListener('touchend', handleTouchEnd)
     },
-    [handleTouchEnd, handleTouchMove]
+    [handleTouchEnd, handleTouchMove, disabled]
   )
 
   const handleMouseWheel = useCallback<WheelEventHandler<HTMLDivElement>>(
-    (e) => setValue(e.deltaY < 0 ? Math.max(min, value - step) : Math.min(max, value + step)),
-    [max, min, step, value]
+    (e) => {
+      if (disabled) return;
+      setValue(e.deltaY < 0 ? Math.max(min, value - step) : Math.min(max, value + step))
+    },
+    [max, min, step, value, disabled]
   )
 
   useEffect(() => {
@@ -95,7 +102,15 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   const position = (value - min) / (max - min)
 
   return (
-    <KnobWrapper $size={size} onWheel={handleMouseWheel} onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}>
+    <KnobWrapper
+      $size={size}
+      onWheel={disabled ? undefined : handleMouseWheel}
+      onMouseDown={disabled ? undefined : handleMouseDown}
+      onTouchStart={disabled ? undefined : handleTouchStart}
+      style={disabled ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'auto' } : {}}
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+    >
       <KnobDial $size={size}>
         <KnobMain position={position} />
       </KnobDial>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Knob from "../Inputs/Knob";
+import Knob from "../Interactions/Knob";
 import { wouldOverlap } from "../Utils/wouldOverlap";
 
 const GRID_SIZE = 16;
@@ -110,29 +110,13 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
             <span className="h-1 bg-green-500 flex-1" />
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
               <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Attack</button>
-              <Knob
-                max={1000}
-                min={0}
-                step={1}
-                value={attack}
-                onChange={setAttack}
-                size={68}
-                unit="ms"
-              />
+              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
             </div>
           </div>
           <div className="flex flex-1 items-center">
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
               <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Decay</button>
-              <Knob
-                max={1000}
-                min={0}
-                step={1}
-                value={decay}
-                onChange={setDecay}
-                size={68}
-                unit="ms"
-              />
+              <Knob max={1000} min={0} step={1} value={decay} onChange={setDecay} size={68} unit="ms" />
             </div>
             <span className="h-1 bg-green-500 flex-1" />
           </div>
@@ -142,29 +126,13 @@ function Envelope(props: {id: string, x: number, y: number, a: number, d: number
             <span className="h-1 bg-green-500 flex-1" />
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
               <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Sustain</button>
-              <Knob
-                max={1}
-                min={0}
-                step={0.01}
-                value={sustain}
-                onChange={setSustain}
-                size={68}
-                unit="dB"
-              />
+              <Knob max={1} min={0} step={0.01} value={sustain} onChange={setSustain} size={68} unit="dB" />
             </div>
           </div>
           <div className="flex flex-1 items-center">
             <div className="px-2 pt-2 pb-1 rounded-xl border-2 border-green-500 flex flex-col items-center gap-1">
               <button className="text-[10px] uppercase tracking-wide text-white cursor-pointer">Release</button>
-              <Knob
-                max={1000}
-                min={0}
-                step={1}
-                value={release}
-                onChange={setRelease}
-                size={68}
-                unit="ms"
-              />
+              <Knob max={1000} min={0} step={1} value={release} onChange={setRelease} size={68} unit="ms" />
             </div>
             <span className="h-1 bg-green-500 flex-1" />
           </div>

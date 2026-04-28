@@ -4,11 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import sceneData from "../scene.json";
 import { wouldGhostOverlap } from "../Utils/wouldGhostOverlap";
 import { snapToGrid } from "../Utils/snapToGrid";
-import { getAllPortViewportCoordinates, type ModulePorts } from "../Utils/portViewportCoordinates";
-import { drawCable, drawCableEndpointDots } from "../Patch/Cable";
-
+import { ConnectionProvider } from "../ConnectionContext";
 import { Oscillator, Gain, Envelope, Output, LFO, VCF, Distortion, Modulator } from '../Modules/Modules'
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
+import { drawFrame } from "../Patch/Cable";
 
 type PortKey = "input" | "output" | "gain" | "trigger";
 type PortPoint = { x: number; y: number };
@@ -56,18 +55,6 @@ const PORT_OFFSETS: Record<ModuleType, SceneModulePorts> = {
     output: { x: moduleObjects.modulator.w - 4, y: moduleObjects.modulator.h - 56 },
   },
 };
-
-function parseCableEndpoint(endpoint: string): { moduleId: string; port: string } | null {
-  const splitIndex = endpoint.lastIndexOf(".");
-  if (splitIndex <= 0 || splitIndex === endpoint.length - 1) {
-    return null;
-  }
-
-  return {
-    moduleId: endpoint.slice(0, splitIndex),
-    port: endpoint.slice(splitIndex + 1),
-  };
-}
 
 function parseScene(): Module[] {
   return sceneData.modules.map((m) => {
@@ -147,10 +134,10 @@ function parseScene(): Module[] {
   });
 }
 
-function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number }) {
+function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number; f: React.Dispatch<React.SetStateAction<Cable[]>>}) {
   console.log("Checking VCF component:", VCF);
   return (
-    <>
+    <ConnectionProvider setCables={props.f}>
       {props.modules.map((m) => {
         switch (m.type) {
           case "oscillator":
@@ -188,7 +175,7 @@ function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: num
           default: return null;
         }
       })}
-    </>
+    </ConnectionProvider>
   );
 }
 
@@ -210,84 +197,19 @@ function Scene() {
   useEffect(() => {
     let rafId = 0;
 
-    const drawFrame = () => {
-      const canvas = canvasRef.current;
-      const dotCanvas = cableDotCanvasRef.current;
-      if (!canvas || !dotCanvas) {
-        rafId = requestAnimationFrame(drawFrame);
-        return;
-      }
-
-      const ctx = canvas.getContext("2d");
-      const dotCtx = dotCanvas.getContext("2d");
-      if (!ctx || !dotCtx) {
-        rafId = requestAnimationFrame(drawFrame);
-        return;
-      }
-
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-
-      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, rect.width, rect.height);
-
-      dotCanvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      dotCanvas.height = Math.max(1, Math.floor(rect.height * dpr));
-      dotCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      dotCtx.clearRect(0, 0, rect.width, rect.height);
-
-      const portViewportCoordinates = getAllPortViewportCoordinates(
+    const frame = () => {
+      drawFrame({
+        canvas: canvasRef.current,
+        dotCanvas: cableDotCanvasRef.current,
         modules,
+        cables,
         camera,
-        PORT_OFFSETS as Record<ModuleType, ModulePorts>
-      );
-
-      const portsByModule = new Map(
-        portViewportCoordinates.map((entry) => [entry.moduleId, entry.ports])
-      );
-
-      for (const cable of cables) {
-        const from = parseCableEndpoint(cable.from);
-        const to = parseCableEndpoint(cable.to);
-
-        if (!from || !to) {
-          continue;
-        }
-
-        const fromPoint = portsByModule.get(from.moduleId)?.[from.port];
-        const toPoint = portsByModule.get(to.moduleId)?.[to.port];
-
-        if (!fromPoint || !toPoint) {
-          continue;
-        }
-
-        drawCable(
-          ctx,
-          fromPoint.x,
-          fromPoint.y,
-          toPoint.x,
-          toPoint.y,
-          cableColors.get(cable.id) ?? "#FFFFFF",
-          6
-        );
-
-        drawCableEndpointDots(
-          dotCtx,
-          fromPoint.x,
-          fromPoint.y,
-          toPoint.x,
-          toPoint.y,
-          cableColors.get(cable.id) ?? "#FFFFFF",
-          12
-        );
-      }
-
-      rafId = requestAnimationFrame(drawFrame);
+        cableColors,
+        PORT_OFFSETS,
+      });
+      rafId = requestAnimationFrame(frame);
     };
-
-    rafId = requestAnimationFrame(drawFrame);
+    rafId = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(rafId);
   }, [cables, modules, camera, cableColors]);
 
@@ -405,7 +327,7 @@ function Scene() {
           transformOrigin: "0 0",
         }}
       >
-        <RenderModules modules={modules} cameraX={camera.x} cameraY={camera.y} />
+        <RenderModules modules={modules} cameraX={camera.x} cameraY={camera.y} f={setCables}/>
         {ghost && (
           <GhostModule
             type={ghost.type}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Knob from "../Inputs/Knob";
+import Knob from "../Interactions/Knob";
 import { wouldOverlap } from "../Utils/wouldOverlap";
 
 const GRID_SIZE = 16;

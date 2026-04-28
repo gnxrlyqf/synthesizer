@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Knob from "../Inputs/Knob";
+import Knob from "../Interactions/Knob";
 
 function VCF(props: {
   id: string, x: number, y: number,

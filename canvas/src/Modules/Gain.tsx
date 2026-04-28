@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import Knob from "../Inputs/Knob";
+import Knob from "../Interactions/Knob";
 import { wouldOverlap } from "../Utils/wouldOverlap";
+import { useConnection } from "../ConnectionContext";
+import { KnobParam, Param } from "../Interactions/Params";
 
 const GRID_SIZE = 16;
 const MODULE_WIDTH = 224;
@@ -13,6 +15,7 @@ function Gain(props: {id: string, x: number, y: number, g: number, cameraX: numb
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
   const [gain, setGain] = useState(props.g);
+  const {mode} = useConnection();
 
   const moduleStyle = {
     width: `${MODULE_WIDTH}px`,
@@ -79,17 +82,7 @@ function Gain(props: {id: string, x: number, y: number, g: number, cameraX: numb
       data-patch-module="true"
       data-module-id={props.id}
       style={moduleStyle}
-      className="
-        absolute
-        m-4
-        top-1/3 left-1/3
-        flex flex-col
-        bg-blue-500
-        text-white
-        rounded-3xl
-        overflow-hidden
-        font-lexend
-      "
+      className=" absolute m-4 top-1/3 left-1/3 flex flex-col bg-blue-500 text-white rounded-3xl overflow-hidden font-lexend"
     >
       <div
         className="w-full bg-blue-500 px-4 pt-2 cursor-move select-none text-center"
@@ -101,50 +94,11 @@ function Gain(props: {id: string, x: number, y: number, g: number, cameraX: numb
         style={panelStyle}
         className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5"
       >
-        <div className="w-full flex items-center">
-          <span
-            data-port-id={`${props.id}.gain`}
-            data-port-side="left"
-            className="h-1 bg-blue-500 flex-1"
-          />
-          <div
-            className="px-3 pt-2 pb-1 rounded-xl border-2 border-blue-500 flex flex-col items-center gap-1"
-           >
-            <button className="cursor-pointer text-xs uppercase tracking-wide text-white ">Gain</button>
-            <Knob
-              max={10}
-              min={-10}
-              step={0.1}
-              value={gain}
-              onChange={setGain}
-              size={100}
-              unit="dB"
-            />
-          </div>
-          <span className="flex-1" />
-        </div>
-        <div className="w-full flex items-center mt-1">
-          <span
-            data-port-id={`${props.id}.input`}
-            data-port-side="left"
-            className="h-1 bg-blue-500 flex-1"
-          />
-          <button className="px-4 py-2 rounded-xl border-2 border-blue-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
-            Input
-          </button>
-          <span className="flex-1" />
-        </div>
-        <div className="w-full flex items-center mt-1">
-          <span className="flex-1" />
-          <button className="px-4 py-2 rounded-xl border-2 border-blue-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
-            Output
-          </button>
-          <span
-            data-port-id={`${props.id}.output`}
-            data-port-side="right"
-            className="h-1 bg-blue-500 flex-1"
-          />
-        </div>
+        <KnobParam id={props.id} name="gain" side="left" color="blue-500">
+          <Knob max={10} min={-10} step={0.1} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
+        </KnobParam>
+        <Param id={props.id} name="input" polarity="target" color="blue-500"/>
+        <Param id={props.id} name="output" polarity="source" color="blue-500"/>
       </div>
     </div>
   );

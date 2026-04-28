@@ -1,33 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import Knob from "../Inputs/Knob";
-import Wave from "../Inputs/Wave";
+import Knob from "../Interactions/Knob";
+import Wave from "../Interactions/Wave";
 import { wouldOverlap } from "../Utils/wouldOverlap";
+import { useConnection } from "../ConnectionContext";
+import { KnobParam, Param } from "../Interactions/Params";
 
 const GRID_SIZE = 16;
-const MODULE_WIDTH = 224;
-const MODULE_HEIGHT = 384;
-const FRAME_INSET_X = 6;
-const FRAME_INSET_TOP = 8;
-const FRAME_INSET_BOTTOM = 6;
 
 function Oscillator(props: {id: string, x: number, y: number, f: number, w: 'sine' | 'square' | 'triangle' | 'saw', cameraX: number, cameraY: number}) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number } | null>({x: props.x, y: props.y});
   const [frequency, setFrequency] = useState(props.f);
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
-
-  const moduleStyle = {
-    width: `${MODULE_WIDTH}px`,
-    height: `${MODULE_HEIGHT}px`,
-    ...(position ? { left: `${position.x}px`, top: `${position.y}px` } : {}),
-  };
-
-  const panelStyle = {
-    marginLeft: `${FRAME_INSET_X}px`,
-    marginRight: `${FRAME_INSET_X}px`,
-    marginTop: `${FRAME_INSET_TOP}px`,
-    marginBottom: `${FRAME_INSET_BOTTOM}px`,
-  };
+  const {mode} = useConnection();
 
   useEffect(() => {
     if (!moduleRef.current || position) { return; }
@@ -75,8 +60,11 @@ function Oscillator(props: {id: string, x: number, y: number, f: number, w: 'sin
 		<div
       ref={moduleRef}
       data-patch-module="true"
-    data-module-id={props.id}
-      style={moduleStyle}
+      data-module-id={props.id}
+      style={{
+        width: "224px", height: "384px",
+        ...(position ? { left: `${position.x}px`, top: `${position.y}px` } : {}),
+      }}
       className="
         absolute
         m-4
@@ -94,40 +82,34 @@ function Oscillator(props: {id: string, x: number, y: number, f: number, w: 'sin
         >
           <span className="text-white text-4xl leading-none">Oscillator</span>
         </div>
-        <div
-          style={panelStyle}
-          className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5"
-        >
+        <div className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5 m-2">
           <div className="w-full flex items-center">
             <span className="h-1 bg-red-500 flex-1" />
             <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-red-500 flex flex-col items-center gap-1">
-              <button className="text-xs uppercase tracking-wide text-white cursor-pointer">Frequency</button>
+              <button
+                disabled={mode == "selecting-target"}
+                onClick={() => handleParamSelect("frequency", "target")}
+                className={`text-xs uppercase tracking-wide ${mode == "selecting-target" ? "text-gray-500 cursor-not-allowed" : "text-white cursor-pointer"}`}
+              >
+                Frequency
+              </button>
               <Knob
-                max={5000}
-                min={20}
-                step={1}
-                value={frequency}
-                onChange={setFrequency}
-                size={100}
-                unit="Hz"
-              />
+              max={5000}
+              min={20}
+              step={1}
+              value={frequency}
+              onChange={setFrequency}
+              size={100}
+              unit="Hz"
+              disabled={mode != "idle"}
+            />
             </div>
             <span className="flex-1" />
           </div>
           <div className="mt-1">
             <Wave value={waveshape} onChange={setWaveshape} />
           </div>
-          <div className="w-full flex items-center mt-1">
-            <span className="flex-1" />
-            <button className="px-4 py-2 rounded-xl border-2 border-red-500 text-white text-xl uppercase tracking-wide leading-none cursor-pointer">
-              Output
-            </button>
-            <span
-              data-port-id={`${props.id}.output`}
-              data-port-side="right"
-              className="h-1 bg-red-500 flex-1"
-            />
-          </div>
+          <Param name="output" id={props.id} polarity="source" color="bg-red-500"/>
         </div>
     </div>
 	)

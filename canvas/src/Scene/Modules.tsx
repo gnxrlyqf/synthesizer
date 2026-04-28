@@ -59,6 +59,16 @@ type ModulateModule = BaseModule & {
 
 type Module = OscModule | EnvModule | GainModule | OutModule | LfoModule | VcfModule | DistortModule | ModulateModule;
 
+type ModuleType =
+	| "oscillator"
+	| "gain"
+	| "envelope"
+	| "output"
+	| "lfo"
+	| "vcf"
+	| "distortion"
+	| "modulator";
+
 export type {BaseModule, OscModule, EnvModule, GainModule, OutModule, Module,
-			LfoModule, VcfModule, DistortModule, ModulateModule 
+						LfoModule, VcfModule, DistortModule, ModulateModule, ModuleType
 };
