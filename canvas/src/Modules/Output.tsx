@@ -81,7 +81,7 @@ function Output(props: OutputProps) {
         style={panelStyle}
         className="flex flex-1 min-h-0 flex-col gap-6 items-center rounded-2xl bg-black py-5"
       >
-        <KnobParam id={props.id} name="decay" side="left" color="yellow-500">
+        <KnobParam id={props.id} name="master" side="left" color="yellow-500">
           <Knob max={0} min={-30} step={0.1} value={master} onChange={setMaster} size={100} unit="dB" />
         </KnobParam>
         <Param id={props.id} name="input" polarity="target" color="yellow-500"/>

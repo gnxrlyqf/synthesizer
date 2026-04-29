@@ -9,9 +9,6 @@ import { Oscillator, Gain, Envelope, Output, LFO, VCF, Distortion, Modulator } f
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
 
-type PortKey = "input" | "output" | "gain" | "trigger";
-type PortPoint = { x: number; y: number };
-type SceneModulePorts = Partial<Record<PortKey, PortPoint>>;
 type Cable = {
   id: string;
   from: string;
@@ -23,9 +20,10 @@ function randomCableColor() {
   return `hsl(${hue} 85% 65%)`;
 }
 
-const PORT_OFFSETS: Record<ModuleType, SceneModulePorts> = {
+const PORT_OFFSETS = {
   oscillator: {
     output: { x: moduleObjects.oscillator.w - 4, y: moduleObjects.oscillator.h - 56 },
+    frequency: { x: moduleObjects.oscillator.w / 2, y: 110 },
   },
   gain: {
     input: { x: 4, y: moduleObjects.gain.h - 120 },
@@ -35,9 +33,14 @@ const PORT_OFFSETS: Record<ModuleType, SceneModulePorts> = {
   envelope: {
     trigger: { x: 4, y: moduleObjects.envelope.h - 120 },
     output: { x: moduleObjects.envelope.w - 4, y: moduleObjects.envelope.h - 56 },
+    attack: { x: moduleObjects.envelope.w / 2, y: 110 },
+    sustain: { x: moduleObjects.envelope.w / 2, y: 110 },
+    decay: { x: moduleObjects.envelope.w / 2, y: 110 },
+    release: { x: moduleObjects.envelope.w / 2, y: 110 },
   },
   output: {
     input: { x: 4, y: moduleObjects.output.h - 68 },
+    master: { x: moduleObjects.output.w / 2, y: 110 },
   },
   lfo: {
     output: { x: moduleObjects.lfo.w - 4, y: moduleObjects.lfo.h - 56 },
@@ -51,7 +54,7 @@ const PORT_OFFSETS: Record<ModuleType, SceneModulePorts> = {
     output: { x: moduleObjects.distortion.w - 4, y: moduleObjects.distortion.h - 56 },
   },
   modulator: {
-    input: { x: 4, y: moduleObjects.modulator.h - 120 }, // Carrier
+    input: { x: 4, y: moduleObjects.modulator.h - 120 },
     output: { x: moduleObjects.modulator.w - 4, y: moduleObjects.modulator.h - 56 },
   },
 };

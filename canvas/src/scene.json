@@ -11,7 +11,7 @@
       }
     },
     {
-      "id": "dist-1",
+      "id": "b7e2c8e2-1a2b-4c3d-9e4f-5a6b7c8d9e0f",
       "type": "distortion",
       "x": 160,
       "y": 700,
@@ -22,7 +22,7 @@
       }
     },
     {
-      "id": "mod-1",
+      "id": "c1d2e3f4-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
       "type": "modulator",
       "x": 450,
       "y": 700,
@@ -63,7 +63,7 @@
       }
     },
     {
-      "id": "lfo-1",
+      "id": "d9e8c7b6-a5f4-3e2d-1c0b-9a8b7c6d5e4f",
       "type": "lfo",
       "x": 1250,
       "y": 120,
@@ -74,7 +74,7 @@
       }
     },
     {
-      "id": "vcf-1",
+      "id": "e1f2d3c4-b5a6-7d8e-9f0a-1b2c3d4e5f6a",
       "type": "vcf",
       "x": 800,
       "y": 700,
