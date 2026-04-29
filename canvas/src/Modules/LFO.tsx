@@ -4,16 +4,27 @@ import Wave from "../Interactions/Wave";
 import { useDrag } from "../Interactions/useDrag";
 import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
-
+import { KnobParam, Param } from "../Interactions/Params";
 
 const MODULE_WIDTH = 224;
-const MODULE_HEIGHT = 440;
+const MODULE_HEIGHT = 416;
+const FRAME_INSET_X = 6;
+const FRAME_INSET_TOP = 8;
+const FRAME_INSET_BOTTOM = 6;
 
 function LFO(props: {
   id: string, x: number, y: number,
   f: number, w: "sine" | "square" | "triangle" | "saw", s: boolean,
   cameraX: number, cameraY: number
 }) {
+
+  const panelStyle = {
+    marginLeft: `${FRAME_INSET_X}px`,
+    marginRight: `${FRAME_INSET_X}px`,
+    marginTop: `${FRAME_INSET_TOP}px`,
+    marginBottom: `${FRAME_INSET_BOTTOM}px`,
+  };
+
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({x: props.x, y: props.y});
   const [frequency, setFrequency] = useState(props.f);
@@ -39,41 +50,32 @@ function LFO(props: {
         onDelete={(id: string) => { console.log("Deleting", id); setMenu(null); }} 
       />
     )}
-        <div className="w-full bg-purple-500 px-4 pt-2 cursor-move select-none text-center" onMouseDown={onMouseDown}>
-          <span className="text-white text-4xl leading-none">LFO</span>
+      <div
+        className="w-full bg-purple-500 px-4 pt-2 cursor-move select-none text-center"
+        onMouseDown={onMouseDown}
+      >
+        <span className="text-white text-4xl leading-none">LFO</span>
+      </div>
+      <div
+        style={panelStyle}
+        className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-3"
+      >
+        <div className="flex gap-2 bg-purple-900/50 p-1 rounded-lg">
+          <button onClick={() => setIsSynced(false)} className={`px-3 py-1 rounded-md cursor-pointer text-xs ${!isSynced ? 'bg-purple-500' : ''}`}>FREE</button>
+          <button onClick={() => setIsSynced(true)} className={`px-3 py-1 rounded-md cursor-pointer text-xs ${isSynced ? 'bg-purple-500' : ''}`}>SYNC</button>
         </div>
-        <div className="mx-1.5 mt-2 mb-1.5 flex flex-1 flex-col gap-3 items-center rounded-2xl bg-black py-5">
-          <div className="flex gap-2 bg-purple-900/50 p-1 rounded-lg">
-            <button onClick={() => setIsSynced(false)} className={`px-3 py-1 rounded-md text-xs ${!isSynced ? 'bg-purple-500' : ''}`}>FREE</button>
-            <button onClick={() => setIsSynced(true)} className={`px-3 py-1 rounded-md text-xs ${isSynced ? 'bg-purple-500' : ''}`}>SYNC</button>
-          </div>
-          <div className="w-full flex items-center">
-            <span className="h-1 bg-purple-500 flex-1" />
-            <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-purple-500 flex flex-col items-center gap-1">
-              <span className="text-[13px] uppercase tracking-wide text-white">
-                {isSynced ? "Rate" : "Frequency"}
-              </span>
-              <Knob
-                max={isSynced ? 32 : 20}
-                min={isSynced ? 1 : 0.1}
-                step={0.1}
-                value={frequency}
-                onChange={setFrequency}
-                size={90}
-                unit={isSynced ? "Div" : "Hz"}
-              />
-            </div>
-            <span className="flex-1" />
-          </div>
-          <div className="mt-3 mb-3">
+        <div className="w-full flex items-center">
+          <span className="h-1 bg-purple-500 flex-1" />
+          <KnobParam id={props.id} name={isSynced ? "sync" : "freq" } side="left" color="purple-500">
+            <Knob max={isSynced ? 32 : 20} min={isSynced ? 1 : 0.1} step={0.1} value={frequency} onChange={setFrequency} size={100} unit={isSynced ? "Div" : "Hz"} />
+          </KnobParam>
+          <span className="flex-1" />
+        </div>
+        <div className="mt-0">
           <Wave value={waveshape} onChange={setWaveshape} />
-          </div>
-          <div className="w-full flex items-center mt-auto">
-            <span className="flex-1" />
-            <button className="px-4 py-2 rounded-xl border-2 border-purple-500 text-white text-xl uppercase leading-none">Output</button>
-            <span data-port-id={`${props.id}.output`} data-port-side="right" className="h-1 bg-purple-500 flex-1" />
-          </div>
         </div>
+        <Param name="output" id={props.id} polarity="source" color="purple-500"/>
+      </div>
     </div>
   );
 }

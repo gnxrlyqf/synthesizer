@@ -144,7 +144,7 @@ function parseScene(): Module[] {
 }
 
 function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number; f: React.Dispatch<React.SetStateAction<Cable[]>>}) {
-  console.log("Checking VCF component:", VCF);
+  console.log(props.modules);
   return (
     <ConnectionProvider setCables={props.f}>
       {props.modules.map((m) => {
@@ -299,6 +299,7 @@ function Scene() {
       if (e.key === "Escape") setGhost(null);
     };
 
+    console.log(modules);
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);

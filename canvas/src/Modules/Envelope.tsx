@@ -6,8 +6,8 @@ import type { ModuleProps } from "./Modules";
 import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
 
-const MODULE_WIDTH = 192;
-const MODULE_HEIGHT = 784;
+const MODULE_WIDTH = 224;
+const MODULE_HEIGHT = 800;
 const FRAME_INSET_X = 6;
 const FRAME_INSET_TOP = 8;
 const FRAME_INSET_BOTTOM = 6;
@@ -89,23 +89,23 @@ function Envelope(props: EnvelopeProps) {
       </div>
       <div
         style={panelStyle}
-        className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-4"
+        className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5"
       >
         <div className="flex flex-row w-full">
-          <div className="w-full flex flex-col gap-3 ">
+          <div className="w-full flex flex-col gap-3">
             <KnobParam id={props.id} name="attack" side="left" color="green-500">
-              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={68} unit="ms" />
+              <Knob max={1000} min={0} step={1} value={attack} onChange={setAttack} size={70} unit="ms" />
             </KnobParam>
             <KnobParam id={props.id} name="decay" side="left" color="green-500">
-              <Knob max={1000} min={0} step={1} value={decay} onChange={setDecay} size={68} unit="ms" />
+              <Knob max={1000} min={0} step={1} value={decay} onChange={setDecay} size={70} unit="ms" />
             </KnobParam>
             <KnobParam id={props.id} name="sustain" side="left" color="green-500">
-              <Knob max={10} min={0} step={1} value={sustain} onChange={setSustain} size={68} unit="dB" />
+              <Knob max={10} min={0} step={1} value={sustain} onChange={setSustain} size={70} unit="dB" />
             </KnobParam>
             <KnobParam id={props.id} name="release" side="left" color="green-500">
-              <Knob max={1000} min={0} step={1} value={release} onChange={setRelease} size={68} unit="ms" />
+              <Knob max={1000} min={0} step={1} value={release} onChange={setRelease} size={70} unit="ms" />
             </KnobParam>
-          </div>
+          </div> 
         </div>
         <Param id={props.id} name="trigger" polarity="target" color="green-500"/>
         <Param id={props.id} name="output" polarity="source" color="green-500"/>

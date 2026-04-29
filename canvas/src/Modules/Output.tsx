@@ -54,7 +54,7 @@ function Output(props: OutputProps) {
         m-4
         top-1/6 left-2/3
         flex flex-col
-        bg-yellow-500
+        bg-slate-500
         text-white
         rounded-3xl
         overflow-hidden
@@ -71,7 +71,7 @@ function Output(props: OutputProps) {
         />
       )}
       <div
-        className="w-full bg-yellow-500 px-4 pt-2 cursor-move select-none text-center"
+        className="w-full bg-slate-500 px-4 pt-2 cursor-move select-none text-center"
         onMouseDown={onMouseDown}
       >
         
@@ -81,10 +81,10 @@ function Output(props: OutputProps) {
         style={panelStyle}
         className="flex flex-1 min-h-0 flex-col gap-6 items-center rounded-2xl bg-black py-5"
       >
-        <KnobParam id={props.id} name="master" side="left" color="yellow-500">
+        <KnobParam id={props.id} name="master" side="left" color="slate-500">
           <Knob max={0} min={-30} step={0.1} value={master} onChange={setMaster} size={100} unit="dB" />
         </KnobParam>
-        <Param id={props.id} name="input" polarity="target" color="yellow-500"/>
+        <Param id={props.id} name="input" polarity="target" color="slate-500"/>
       </div>
     </div>
   );

@@ -4,9 +4,10 @@ import Wave from "../Interactions/Wave";
 import { useDrag } from "../Interactions/useDrag";
 import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
+import { KnobParam, Param } from "../Interactions/Params";
 
-const MODULE_WIDTH = 225;
-const MODULE_HEIGHT = 450;
+const MODULE_WIDTH = 224;
+const MODULE_HEIGHT = 448 ;
 
 function Distortion(props: {
   id: string,
@@ -62,29 +63,19 @@ function Distortion(props: {
         {/* ... (The rest of your knobs, waves, and ports stay exactly the same) ... */}
         
         {/* PARAMETER KNOB */}
-        <div className="px-3 pt-2 pb-1 rounded-xl border-2 border-yellow-500 flex flex-col items-center">
-          <span className="text-[12px] uppercase mb-1 text-white">Drive</span>
-          <Knob max={100} min={0} step={1} value={amount} onChange={setAmount} size={90} unit="%" />
-        </div>
+        <KnobParam id={props.id} name="drive" side="left" color="yellow-500">
+          <Knob max={100} min={0} step={1} value={amount} onChange={setAmount} size={100} unit="%" />
+        </KnobParam>
 
         {/* WAVESHAPING */}
-        <div className="mt-1 mt-3">
+        <div className="my-2">
           <Wave value={waveshape} onChange={setWaveshape} />
         </div>
 
         {/* PORTS */}
-        <div className="w-full flex flex-col gap-2 mt-auto">
-          <div className="flex items-center w-full">
-            <span data-port-id={`${props.id}.input`} data-port-side="left" className="h-1 bg-yellow-500 flex-1" />
-            <button className="px-4 py-2 border-2 mb-2 border-yellow-600 rounded-xl text-white text-xl uppercase leading-none bg-transparent">Input</button>
-            <span className="flex-1" />
-          </div>
-          <div className="flex items-center w-full mt-1">
-            <span className="flex-1" />
-            <button className="px-4 py-2 border-2 border-yellow-600 rounded-xl text-white text-xl uppercase leading-none bg-transparent">Output</button>
-            <span data-port-id={`${props.id}.output`} data-port-side="right" className="h-1 bg-yellow-500 flex-1" />
-          </div>
-        </div>
+        {/* <div className="mt-1"></div> */}
+        <Param id={props.id} name="input" polarity="target" color="yellow-500"/>
+        <Param id={props.id} name="output" polarity="source" color="yellow-500"/>
       </div>
     </div>
   );

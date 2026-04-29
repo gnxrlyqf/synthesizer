@@ -1,89 +1,89 @@
 {
   "modules": [
-    {
-      "id": "4f294f9d-1b86-4f57-9a2b-0f84ddca6a31",
-      "type": "oscillator",
-      "x": 160,
-      "y": 120,
-      "params": {
-        "frequency": 440,
-        "wave": "sine"
-      }
-    },
-    {
-      "id": "b7e2c8e2-1a2b-4c3d-9e4f-5a6b7c8d9e0f",
-      "type": "distortion",
-      "x": 160,
-      "y": 700,
-      "params": {
-        "a": 50,
-        "t": "saturation",
-        "w": "sine" 
-      }
-    },
-    {
-      "id": "c1d2e3f4-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
-      "type": "modulator",
-      "x": 450,
-      "y": 700,
-      "params": {
-        "m": "FM",
-        "d": 50,
-        "w": "sine"
-      }
-    },
-    {
-      "id": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37",
-      "type": "gain",
-      "x": 416,
-      "y": 120,
-      "params": {
-        "gain": 0
-      }
-    },
-    {
-      "id": "9b3575da-eb79-4fe0-b935-cf20f2d0d10d",
-      "type": "envelope",
-      "x": 672,
-      "y": 120,
-      "params": {
-        "attack": 100,
-        "decay": 200,
-        "sustain": 0.7,
-        "release": 300
-      }
-    },
-    {
-      "id": "f2e449eb-206f-41ce-a958-0f933725d171",
-      "type": "output",
-      "x": 992,
-      "y": 120,
-      "params": {
-        "master": -6
-      }
-    },
-    {
-      "id": "d9e8c7b6-a5f4-3e2d-1c0b-9a8b7c6d5e4f",
-      "type": "lfo",
-      "x": 1250,
-      "y": 120,
-      "params": {
-        "f": 5,
-        "w": "sine",
-        "s": false
-      }
-    },
-    {
-      "id": "e1f2d3c4-b5a6-7d8e-9f0a-1b2c3d4e5f6a",
-      "type": "vcf",
-      "x": 800,
-      "y": 700,
-      "params": {
-        "f": 1000,
-        "r": 1,
-        "t": "lowpass"
-      }
+  {
+    "id": "4f294f9d-1b86-4f57-9a2b-0f84ddca6a31",
+    "type": "oscillator",
+    "x": 160,
+    "y": 120,
+    "params": {
+      "f": 440,
+      "w": "sine"
     }
-  ],
+  },
+  {
+    "id": "b7e2c8e2-1a2b-4c3d-9e4f-5a6b7c8d9e0f",
+    "type": "distortion",
+    "x": 160,
+    "y": 700,
+    "params": {
+      "a": 50,
+      "t": "saturation",
+      "w": "sine"
+    }
+  },
+  {
+    "id": "c1d2e3f4-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
+    "type": "modulator",
+    "x": 450,
+    "y": 700,
+    "params": {
+      "m": "FM",
+      "d": 50,
+      "w": "sine"
+    }
+  },
+  {
+    "id": "89fb7cac-9d4c-4a8d-811b-3fca2e766f37",
+    "type": "gain",
+    "x": 416,
+    "y": 120,
+    "params": {
+      "g": 0
+    }
+  },
+  {
+    "id": "9b3575da-eb79-4fe0-b935-cf20f2d0d10d",
+    "type": "envelope",
+    "x": 672,
+    "y": 120,
+    "params": {
+      "a": 100,
+      "d": 200,
+      "s": 0.7,
+      "r": 300
+    }
+  },
+  {
+    "id": "f2e449eb-206f-41ce-a958-0f933725d171",
+    "type": "output",
+    "x": 992,
+    "y": 120,
+    "params": {
+      "m": -6
+    }
+  },
+  {
+    "id": "d9e8c7b6-a5f4-3e2d-1c0b-9a8b7c6d5e4f",
+    "type": "lfo",
+    "x": 1250,
+    "y": 120,
+    "params": {
+      "f": 1,
+      "w": "sine",
+      "s": false
+    }
+  },
+  {
+    "id": "e1f2d3c4-b5a6-7d8e-9f0a-1b2c3d4e5f6a",
+    "type": "vcf",
+    "x": 800,
+    "y": 700,
+    "params": {
+      "f": 1000,
+      "r": 1,
+      "t": "lowpass"
+    }
+  }
+],
   "cables": []
 }

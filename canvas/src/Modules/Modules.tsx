@@ -3,7 +3,7 @@ import Gain from "../Modules/Gain";
 import Envelope from "../Modules/Envelope";
 import Output from "../Modules/Output";
 import LFO from "../Modules/LFO";
-import VCF from "../Modules/VCF";
+import VCF from "./Filter";
 import Distortion from "../Modules/Distortion";
 import Modulator from "../Modules/Modulator";
 
