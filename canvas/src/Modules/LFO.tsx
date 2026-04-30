@@ -73,7 +73,7 @@ function LFO(props: {
       data-module-id={props.id}
       style={{width: MODULE_WIDTH, height: MODULE_HEIGHT, left: position.x, top: position.y}}
       onContextMenu={handleContextMenu}
-      className="absolute m-4 flex flex-col bg-purple-500 text-white rounded-3xl overflow-hidden font-lexend">
+      className="absolute m-4 flex flex-col bg-purple-500 text-white rounded-3xl overflow-visible font-lexend">
       {menu && (
       <ModuleMenu 
         id={props.id} 

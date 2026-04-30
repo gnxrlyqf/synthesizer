@@ -55,22 +55,22 @@ function Gain(props: GainProps) {
       data-patch-module="true"
       data-module-id={props.id}
       style={moduleStyle}
-      className=" absolute m-4 top-1/3 left-1/3 flex flex-col bg-blue-500 text-white rounded-3xl overflow-hidden font-lexend"
+      onMouseDown={onMouseDown}
+      onContextMenu={handleContextMenu}
+      className="absolute m-4 top-1/3 left-1/3 flex flex-col bg-blue-500 text-white rounded-3xl overflow-visible font-lexend"
     >
+    {menu && (
+      <ModuleMenu 
+        id={props.id} 
+        x={menu.x} 
+        y={menu.y}
+        color="#3684ff"
+        onDelete={(id:string) => { console.log("Deleting", id); setMenu(null); }} 
+      />
+    )}
       <div
         className="w-full bg-blue-500 px-4 pt-2 cursor-move select-none text-center"
-        onMouseDown={onMouseDown}
-        onContextMenu={handleContextMenu}
       >
-        {menu && (
-        <ModuleMenu 
-          id={props.id} 
-          x={menu.x} 
-          y={menu.y}
-          color="#3684ff"
-          onDelete={(id:string) => { console.log("Deleting", id); setMenu(null); }} 
-        />
-      )}
         <span className="text-white text-4xl leading-none">Gain</span>
       </div>
       <div

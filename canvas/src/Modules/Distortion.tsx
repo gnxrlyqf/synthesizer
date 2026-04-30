@@ -155,7 +155,6 @@ function Distortion(props: {
       
       {/* MAIN BODY */}
       <div className="mx-2 mt-2 mb-1.5 flex flex-1 flex-col gap-3 items-center rounded-2xl bg-black py-5 overflow-hidden">
-        {/* ... (The rest of your knobs, waves, and ports stay exactly the same) ... */}
         
         {/* PARAMETER KNOB */}
         <KnobParam id={props.id} name="drive" side="left" color="yellow-500">

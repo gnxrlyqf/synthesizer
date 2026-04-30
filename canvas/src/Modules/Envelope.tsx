@@ -59,6 +59,8 @@ function Envelope(props: EnvelopeProps) {
       data-patch-module="true"
       data-module-id={props.id}
       style={moduleStyle}
+      onMouseDown={onMouseDown}
+      onContextMenu={handleContextMenu}
       className="
         absolute
         m-4
@@ -67,16 +69,11 @@ function Envelope(props: EnvelopeProps) {
         bg-green-500
         text-white
         rounded-3xl
-        overflow-hidden
+        overflow-visible
         font-lexend
       "
     >
-      <div
-        className="w-full bg-green-500 px-4 pt-2 cursor-move select-none text-center"
-        onMouseDown={onMouseDown}
-        onContextMenu={handleContextMenu}
-      >
-        {menu && (
+      {menu && (
         <ModuleMenu 
           id={props.id} 
           x={menu.x} 
@@ -85,6 +82,9 @@ function Envelope(props: EnvelopeProps) {
           onDelete={(id:string) => {console.log("Deleting", id);setMenu(null); }} 
         />
       )}
+      <div
+        className="w-full bg-green-500 px-4 pt-2 cursor-move select-none text-center"
+      >
         <span className="text-white text-4xl leading-none">Envelope</span>
       </div>
       <div

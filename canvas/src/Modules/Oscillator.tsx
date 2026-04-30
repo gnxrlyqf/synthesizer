@@ -74,7 +74,7 @@ function Oscillator(props: OscillatorProps) {
         ...(position ? { left: `${position.x}px`, top: `${position.y}px` } : {}),
       }}
       onContextMenu={handleContextMenu}
-      className=" absolute m-4 top-1/4 left-1/2 flex flex-col bg-red-500 text-white rounded-3xl overflow-hidden font-lexend">
+      className=" absolute m-4 top-1/4 left-1/2 flex flex-col bg-red-500 text-white rounded-3xl overflow-visible font-lexend">
         {menu && (
         <ModuleMenu 
           id={props.id} 

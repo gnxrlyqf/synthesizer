@@ -57,7 +57,7 @@ function Output(props: OutputProps) {
         bg-slate-500
         text-white
         rounded-3xl
-        overflow-hidden
+        overflow-visible
         font-lexend
       "
     >
@@ -66,7 +66,7 @@ function Output(props: OutputProps) {
           id={props.id} 
           x={menu.x} 
           y={menu.y}
-          color="#eeaf00"
+          color="#63748dhandleContextMenu"
           onDelete={(id:string) => {console.log("Deleting", id);setMenu(null);}} 
         />
       )}

@@ -33,7 +33,7 @@ function Modulator(props: {
       data-module-id={props.id}
       onContextMenu={handleContextMenu}
       style={{ width: MODULE_WIDTH, height: MODULE_HEIGHT, left: position.x, top: position.y }}
-      className="absolute m-4 flex flex-col bg-cyan-500 text-white rounded-3xl overflow-hidden font-lexend"
+      className="absolute m-4 flex flex-col bg-cyan-500 text-white rounded-3xl overflow-visible font-lexend"
     >
       {menu && (
       <ModuleMenu 
