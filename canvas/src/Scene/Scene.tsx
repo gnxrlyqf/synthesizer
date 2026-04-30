@@ -250,10 +250,10 @@ function Scene() {
     : false;
 
   const items = useMemo(
-    () => createDockItems((type) => {
-      const spawnX = snapToGrid(320 - camera.x);
-      const spawnY = snapToGrid(120 - camera.y);
-      setGhost({ type, x: spawnX, y: spawnY });
+    () => createDockItems((type, e) => {
+      const spawnX = e.clientX - camera.x;
+      const spawnY = e.clientY - camera.y;
+      setGhost({ type, x: snapToGrid(spawnX), y: snapToGrid(spawnY) });
     }),
     [camera.x, camera.y]
   );

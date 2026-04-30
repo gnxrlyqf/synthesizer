@@ -14,7 +14,7 @@ import React, { Children, cloneElement, useEffect, useMemo, useRef, useState } f
 export type DockItemData = {
   icon: React.ReactNode;
   label: React.ReactNode;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
   className?: string;
 };
 
@@ -32,7 +32,7 @@ export type DockProps = {
 type DockItemProps = {
   className?: string;
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   mouseX: MotionValue<number>;
   spring: SpringOptions;
   distance: number;
@@ -172,7 +172,7 @@ export default function Dock({
         {items.map((item, index) => (
           <DockItem
             key={index}
-            onClick={item.onClick}
+            onClick={(e: React.MouseEvent) => item.onClick(e)}
             className={item.className}
             mouseX={mouseX}
             spring={spring}

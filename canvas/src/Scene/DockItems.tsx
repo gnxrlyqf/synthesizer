@@ -162,7 +162,7 @@ function instantiateModule(type: ModuleType, x: number, y: number): Module {
     case "filter":
       return { id, type: "filter", x, y, params: { f: 1000, r: 1, t: "lowpass" } };
     case "distortion":
-      return { id, type: "distortion", x, y, params: { a: 50, t: "saturation" } };
+      return { id, type: "distortion", x, y, params: { a: 50, t: "soft" } };
     case "modulator":
       return { id, type: "modulator", x, y, params: { m: "AM", d: 50 } };
     default:
@@ -170,47 +170,47 @@ function instantiateModule(type: ModuleType, x: number, y: number): Module {
   }
 }
 
-function createDockItems(onInstantiate: (type: ModuleType) => void): DockItemData[] {
+function createDockItems(onInstantiate: (type: ModuleType, e:React.MouseEvent) => void): DockItemData[] {
   return [
     {
       icon: <OscIcon size={50} />,
       label: 'Oscillator',
-      onClick: () => onInstantiate("oscillator")
+      onClick: (e: React.MouseEvent) => onInstantiate("oscillator", e)
     },
     {
       icon: <GainIcon size={30} />,
       label: 'Gain',
-      onClick: () => onInstantiate("gain")
+      onClick: (e: React.MouseEvent) => onInstantiate("gain", e)
     },
     {
       icon: <EnvelopeIcon size={40} />,
       label: 'Envelope',
-      onClick: () => onInstantiate("envelope")
+      onClick: (e: React.MouseEvent) => onInstantiate("envelope", e)
     },
     {
       icon: <OutputIcon size={40} />,
       label: 'Output',
-      onClick: () => onInstantiate("output")
+      onClick: (e: React.MouseEvent) => onInstantiate("output", e)
     },
     {
-      icon: <LfoIcon size={45} />, // You'll need to import or define these
+      icon: <LfoIcon size={50} />,
       label: 'LFO',
-      onClick: () => onInstantiate("lfo")
+      onClick: (e: React.MouseEvent) => onInstantiate("lfo", e)
     },
     {
-      icon: <FilterIcon size={40} />,
+      icon: <FilterIcon size={50} />,
       label: 'Filter',
-      onClick: () => onInstantiate("filter")
+      onClick: (e: React.MouseEvent) => onInstantiate("filter", e)
     },
     {
-      icon: <DistIcon size={35} />,
+      icon: <DistIcon size={45} />,
       label: 'Distortion',
-      onClick: () => onInstantiate("distortion")
+      onClick: (e: React.MouseEvent) => onInstantiate("distortion", e)
     },
     {
       icon: <ModIcon size={40} />,
       label: 'Modulator',
-      onClick: () => onInstantiate("modulator")
+      onClick: (e: React.MouseEvent) => onInstantiate("modulator", e)
     },
   ];
 }
