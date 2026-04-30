@@ -10,7 +10,7 @@ interface ModuleMenuProps {
 
 export function ModuleMenu({ id, x, y, color, onDelete }: ModuleMenuProps) {
   const menuStyle: React.CSSProperties = {
-    position: 'fixed',
+    position: 'absolute',
     top: y,
     left: x,
     zIndex: 9999,
@@ -20,7 +20,8 @@ export function ModuleMenu({ id, x, y, color, onDelete }: ModuleMenuProps) {
   return (
     <div 
       style={menuStyle}
-      className="w-48 bg-black border-2 rounded-xl shadow-2xl overflow-hidden font-lexend flex flex-col"
+      className="w-48 bg-black border-2 rounded-xl shadow-2xl overflow-visible font-lexend flex flex-col"
+      onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()} 
       onContextMenu={(e) => { 
         e.preventDefault(); 

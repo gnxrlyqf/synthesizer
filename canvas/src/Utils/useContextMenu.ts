@@ -26,7 +26,10 @@ export function useContextMenu() {
     // 2. Wait for the next tick to open this specific menu.
     // This prevents the current module from closing its own menu 
     // immediately after opening it.
-    const { clientX: x, clientY: y } = e;
+    // Calculate position RELATIVE to the module container
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     requestAnimationFrame(() => {
       setMenu({ x, y });
     });
