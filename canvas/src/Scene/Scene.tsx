@@ -362,12 +362,14 @@ function Scene() {
       >
         <RenderModules modules={modules} cameraX={camera.x} cameraY={camera.y} f={setCables}/>
         {ghost && (
+          <div className="pointer-events-none"> {/* this one solves the ghost preventing the module instantiation */}
           <GhostModule
             type={ghost.type}
             x={ghost.x}
             y={ghost.y}
             className={canPlaceGhost ? "opacity-80" : "border-red-500/90 bg-red-500/10 opacity-90"}
           />
+          </div>
         )}
       </section>
 
