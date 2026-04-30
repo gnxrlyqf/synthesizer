@@ -163,7 +163,7 @@ function Distortion(props: {
 
         {/* WAVESHAPING */}
         <div className="my-2">
-          <RadioSelect value={type} onChange={setType}>
+          <RadioSelect name={`${props.id}-radio`} value={type} onChange={setType}>
             <RadioSelectOption value="soft"><SoftIcon/></RadioSelectOption>
             <RadioSelectOption value="hard"><HardIcon/></RadioSelectOption>
             <RadioSelectOption value="sine"><SineIcon/></RadioSelectOption>

@@ -52,7 +52,7 @@ function Modulator(props: {
               <Knob max={15000} min={20} step={1} value={depth} onChange={setDepth} size={100} unit="Hz" />
             </KnobParam>
           <div className="mt-0">
-            <RadioSelect value={modType} onChange={setModType}>
+            <RadioSelect name={`${props.id}-radio`} value={modType} onChange={setModType}>
               <RadioSelectOption value="FM">FM</RadioSelectOption>
               <RadioSelectOption value="AM">AM</RadioSelectOption>
               <RadioSelectOption value="PM">PM</RadioSelectOption>

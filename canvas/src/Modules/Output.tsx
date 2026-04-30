@@ -66,7 +66,7 @@ function Output(props: OutputProps) {
           id={props.id} 
           x={menu.x} 
           y={menu.y}
-          color="#63748dhandleContextMenu"
+          color="#63748d"
           onDelete={(id:string) => {console.log("Deleting", id);setMenu(null);}} 
         />
       )}

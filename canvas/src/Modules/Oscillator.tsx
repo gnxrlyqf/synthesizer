@@ -99,7 +99,7 @@ function Oscillator(props: OscillatorProps) {
             <span className="flex-1" />
           </div>
           <div className="mt-1">
-            <RadioSelect value={waveshape} onChange={setWaveshape}>
+            <RadioSelect name={`${props.id}-radio`} value={waveshape} onChange={setWaveshape}>
               <RadioSelectOption value="sine"><SineIcon /></RadioSelectOption>
               <RadioSelectOption value="triangle"><TriangleIcon /></RadioSelectOption>
               <RadioSelectOption value="square"><SquareIcon/></RadioSelectOption>

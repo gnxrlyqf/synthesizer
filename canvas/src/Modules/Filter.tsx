@@ -95,7 +95,7 @@ function Filter(props: {
 
           {/* WAVE-STYLE SELECTOR: Using the Wave component for Filter Types */}
           <div className="mt-1">
-          <RadioSelect value={filterType} onChange={setFilterType}>
+          <RadioSelect name={`${props.id}-radio`} value={filterType} onChange={setFilterType}>
             <RadioSelectOption value="lowpass"><Lowpass /></RadioSelectOption>
             <RadioSelectOption value="highpass"><Highpass/></RadioSelectOption>
             <RadioSelectOption value="bandpass"><Bandpass /></RadioSelectOption>
