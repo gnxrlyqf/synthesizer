@@ -110,5 +110,6 @@ function Filter(props: {
     </div>
   );
 }
-
+export const FLT_W = MODULE_WIDTH;
+export const FLT_H = MODULE_HEIGHT;
 export default Filter;

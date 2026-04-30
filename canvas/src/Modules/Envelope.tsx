@@ -113,5 +113,6 @@ function Envelope(props: EnvelopeProps) {
     </div>
   );
 }
-
+export const ENV_W = MODULE_WIDTH;
+export const ENV_H = MODULE_HEIGHT;
 export default Envelope;

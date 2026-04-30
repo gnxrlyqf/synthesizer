@@ -8,6 +8,9 @@ import type { ModuleProps } from "./Modules";
 import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
 
+const MODULE_WIDTH = 224
+const MODULE_HEIGHT = 384
+
 function SineIcon() {
     return (
       <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10">
@@ -111,5 +114,6 @@ function Oscillator(props: OscillatorProps) {
     </div>
 	)
 }
-
+export const OSC_W = MODULE_WIDTH;
+export const OSC_H = MODULE_HEIGHT;
 export default Oscillator;

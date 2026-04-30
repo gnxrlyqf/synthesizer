@@ -86,5 +86,6 @@ function Gain(props: GainProps) {
     </div>
   );
 }
-
+export const GAIN_W = MODULE_WIDTH;
+export const GAIN_H = MODULE_HEIGHT;
 export default Gain;

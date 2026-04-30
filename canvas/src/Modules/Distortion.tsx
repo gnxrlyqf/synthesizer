@@ -134,7 +134,7 @@ function Distortion(props: {
       style={{ width: MODULE_WIDTH, height: MODULE_HEIGHT, left: position.x, top: position.y }}
       onContextMenu={handleContextMenu}
       className="absolute m-4 flex flex-col bg-yellow-500 text-white rounded-3xl overflow-visible font-lexend z-10" 
-      // Note: Changed overflow-hidden to overflow-visible so the menu doesn't get cut off!
+      // changed overflow-hidden to overflow-visible so the menu doesn't get cut off but the edges of l module
     >
       
       {/* CONDITIONALLY RENDER THE MENU */}
@@ -179,5 +179,6 @@ function Distortion(props: {
     </div>
   );
 }
-
+export const DIST_W = MODULE_WIDTH;
+export const DIST_H = MODULE_HEIGHT;
 export default Distortion;

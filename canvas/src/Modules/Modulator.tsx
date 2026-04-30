@@ -66,5 +66,6 @@ function Modulator(props: {
     </div>
   );
 }
-
+export const MOD_W = MODULE_WIDTH;
+export const MOD_H = MODULE_HEIGHT;
 export default Modulator;

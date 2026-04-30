@@ -89,5 +89,6 @@ function Output(props: OutputProps) {
     </div>
   );
 }
-
+export const OUT_W = MODULE_WIDTH;
+export const OUT_H = MODULE_HEIGHT;
 export default Output;

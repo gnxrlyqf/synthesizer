@@ -117,5 +117,6 @@ function LFO(props: {
     </div>
   );
 }
-
+export const LFO_W = MODULE_WIDTH;
+export const LFO_H = MODULE_HEIGHT;
 export default LFO;

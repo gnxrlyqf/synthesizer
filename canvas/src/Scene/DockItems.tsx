@@ -1,7 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
-import { Oscillator, Gain, Envelope, Output, Distortion, LFO, Filter, Modulator } from '../Modules/Modules'
 import type { DockItemData } from '../Dock'
 import type { Module } from './Modules'
+
+import Oscillator, { OSC_W, OSC_H } from '../Modules/Oscillator';
+import Gain, { GAIN_W, GAIN_H } from '../Modules/Gain';
+import Envelope, { ENV_W, ENV_H } from '../Modules/Envelope';
+import Output, { OUT_W, OUT_H } from '../Modules/Output';
+import LFO, { LFO_W, LFO_H } from '../Modules/LFO';
+import Filter, { FLT_W, FLT_H } from '../Modules/Filter';
+import Distortion, { DIST_W, DIST_H } from '../Modules/Distortion';
+import Modulator, { MOD_W, MOD_H } from '../Modules/Modulator';
 
 function OscIcon(props: {size: number}) {
   return (
@@ -124,14 +132,15 @@ type ModuleType =
   | "modulator";
 
 const objects: Record<ModuleType, { component: unknown; w: number; h: number }> = {
-  "oscillator": { component: Oscillator, w: 224, h: 384 },
-  "gain": { component: Gain, w: 224, h: 384 },
-  "envelope": { component: Envelope, w: 288, h: 480 },
-  "output": { component: Output, w: 224, h: 352 },
-  "lfo": { component: LFO, w: 224, h: 420 },
-  "filter": { component: Filter, w: 224, h: 440 },
-  "distortion": { component: Distortion, w: 240, h: 460 },
-  "modulator": { component: Modulator, w: 224, h: 440 }
+  // here is the issue of the ghost not taking the true dimensions
+  "oscillator": { component: Oscillator, w: OSC_W, h: OSC_H },
+  "gain":       { component: Gain,       w: GAIN_W, h: GAIN_H },
+  "envelope":   { component: Envelope,   w: ENV_W,  h: ENV_H },
+  "output":     { component: Output,     w: OUT_W,  h: OUT_H },
+  "lfo":        { component: LFO,        w: LFO_W,  h: LFO_H },
+  "filter":     { component: Filter,     w: FLT_W,  h: FLT_H },
+  "distortion": { component: Distortion, w: DIST_W, h: DIST_H },
+  "modulator":  { component: Modulator,  w: MOD_W,  h: MOD_H }
 };
 
 function GhostModule(props: { type: ModuleType; x: number; y: number; className?: string }) {
