@@ -1,6 +1,6 @@
 type BaseModule = {
   id: string;
-  type: 'oscillator' | 'gain' | 'envelope' | 'output' | 'lfo' | 'vcf' | 'distortion' | 'modulator';
+  type: 'oscillator' | 'gain' | 'envelope' | 'output' | 'lfo' | 'filter' | 'distortion' | 'modulator';
   x: number;
   y: number;
 }
@@ -42,22 +42,22 @@ type LfoModule = BaseModule & {
     params: { f: number; w: "sine" | "square" | "triangle" | "saw"; s: boolean };
 }
 
-type VcfModule = BaseModule & {
-    type: "vcf";
+type FilterModule = BaseModule & {
+    type: "filter";
     params: { f: number; r: number; t: string };
 }
 
 type DistortModule = BaseModule & {
     type: "distortion";
-    params: { a: number; t: string, w: "sine" | "square" | "triangle" | "saw"};
+    params: { a: number; t: "soft" | "hard" | "sine" | "downsample" };
 }
 
 type ModulateModule = BaseModule & {
     type: "modulator";
-    params: { m: "AM" | "FM" | "PM" | "RING"; d: number, w: "sine" | "square" | "triangle" | "saw" };
+    params: { m: "AM" | "FM" | "PM" | "RM"; d: number };
 }
 
-type Module = OscModule | EnvModule | GainModule | OutModule | LfoModule | VcfModule | DistortModule | ModulateModule;
+type Module = OscModule | EnvModule | GainModule | OutModule | LfoModule | FilterModule | DistortModule | ModulateModule;
 
 type ModuleType =
 	| "oscillator"
@@ -65,10 +65,10 @@ type ModuleType =
 	| "envelope"
 	| "output"
 	| "lfo"
-	| "vcf"
+	| "filter"
 	| "distortion"
 	| "modulator";
 
 export type {BaseModule, OscModule, EnvModule, GainModule, OutModule, Module,
-						LfoModule, VcfModule, DistortModule, ModulateModule, ModuleType
+						LfoModule, FilterModule, DistortModule, ModulateModule, ModuleType
 };

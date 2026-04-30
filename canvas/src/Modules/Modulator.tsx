@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
-import Wave from "../Interactions/Wave";
+import {RadioSelect, RadioSelectOption} from "../Interactions/RadioSelect";
 import { useDrag } from "../Interactions/useDrag";
 import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
@@ -13,8 +13,7 @@ function Modulator(props: {
   id: string,
   x: number,
   y: number,
-  m: "AM" | "FM" | "PM" | "RING",
-  w: 'sine' | 'square' | 'triangle' | 'saw',
+  m: "AM" | "FM" | "PM" | "RM",
   d: number,
   cameraX: number,
   cameraY: number}) {
@@ -22,7 +21,7 @@ function Modulator(props: {
   const moduleRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: props.x, y: props.y });
   const [depth, setDepth] = useState(props.d);
-  const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
+  const [modType, setModType] = useState<"AM" | "FM" | "PM" | "RM">(props.m);
 
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
   const { menu, setMenu, handleContextMenu } = useContextMenu();
@@ -53,7 +52,12 @@ function Modulator(props: {
               <Knob max={15000} min={20} step={1} value={depth} onChange={setDepth} size={100} unit="Hz" />
             </KnobParam>
           <div className="mt-0">
-            <Wave value={waveshape} onChange={setWaveshape} />
+            <RadioSelect value={modType} onChange={setModType}>
+              <RadioSelectOption value="FM">FM</RadioSelectOption>
+              <RadioSelectOption value="AM">AM</RadioSelectOption>
+              <RadioSelectOption value="PM">PM</RadioSelectOption>
+              <RadioSelectOption value="RM">RM</RadioSelectOption>
+            </RadioSelect>
           </div>
           <Param id={props.id} name="mod in" polarity="target" color="cyan-500"/>
           <Param id={props.id} name="carrier" polarity="target" color="cyan-500"/>

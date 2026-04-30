@@ -53,7 +53,13 @@ export const ConnectionProvider = (props: { children: React.ReactNode; setCables
 
   useEffect(() => {
     if (source && target) {
-      props.setCables((prev) => [...prev, {id: uuidv4(), from: source, to: target}]);
+      props.setCables((prev) => {
+        const cable = {id: uuidv4(), from: source, to: target};
+
+        if (prev.find(obj => obj.from === cable.from && obj.to === cable.to))
+          return prev;
+        return [...prev, {id: uuidv4(), from: source, to: target}]
+      });
       reset();
     }
   }, [source, target]);

@@ -5,7 +5,7 @@ import sceneData from "../scene.json";
 import { wouldGhostOverlap } from "../Utils/wouldGhostOverlap";
 import { snapToGrid } from "../Utils/snapToGrid";
 import { ConnectionProvider } from "../ConnectionContext";
-import { Oscillator, Gain, Envelope, Output, LFO, VCF, Distortion, Modulator } from '../Modules/Modules'
+import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator } from '../Modules/Modules'
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
 
@@ -44,102 +44,125 @@ const PORT_OFFSETS = {
   },
   lfo: {
     output: { x: moduleObjects.lfo.w - 4, y: moduleObjects.lfo.h - 56 },
+    freq: { x: moduleObjects.lfo.w / 2, y: 110 },
   },
-  vcf: {
-    input: { x: 4, y: moduleObjects.vcf.h - 120 },
-    output: { x: moduleObjects.vcf.w - 4, y: moduleObjects.vcf.h - 56 },
+  filter: {
+    input: { x: 4, y: moduleObjects.filter.h - 120 },
+    output: { x: moduleObjects.filter.w - 4, y: moduleObjects.filter.h - 56 },
+    cutoff: { x: moduleObjects.filter.w / 2, y: 110 },
+    q: { x: moduleObjects.filter.w / 2, y: 110 },
   },
   distortion: {
     input: { x: 4, y: moduleObjects.distortion.h - 120 },
     output: { x: moduleObjects.distortion.w - 4, y: moduleObjects.distortion.h - 56 },
+    drive: { x: moduleObjects.distortion.w / 2, y: 110 },
   },
   modulator: {
-    input: { x: 4, y: moduleObjects.modulator.h - 120 },
+    "mod in": { x: 4, y: moduleObjects.modulator.h - 120 },
+    carrier: { x: 4, y: moduleObjects.modulator.h - 120 },
     output: { x: moduleObjects.modulator.w - 4, y: moduleObjects.modulator.h - 56 },
+    depth: { x: moduleObjects.modulator.w / 2, y: 110 },
   },
 };
 
 function parseScene(): Module[] {
-  return sceneData.modules.map((m) => {
-    if (m.type === "oscillator") {
-      return ({ id: m.id, type: "oscillator" as const, x: m.x, y: m.y, params: {
-          f: m.params.frequency ?? 440,
-          w: (m.params.wave ?? 'sine') as 'sine' | 'square' | 'triangle' | 'saw',
-        },
-      });
+  return sceneData.modules.map((m: any) => {
+    switch (m.type) {
+      case "oscillator":
+        return {
+          id: m.id,
+          type: "oscillator",
+          x: m.x,
+          y: m.y,
+          params: {
+            f: m.params.frequency ?? 440,
+            w: (m.params.wave ?? "sine") as "sine" | "square" | "triangle" | "saw",
+          },
+        };
+      case "gain":
+        return {
+          id: m.id,
+          type: "gain",
+          x: m.x,
+          y: m.y,
+          params: {
+            g: m.params.gain ?? 0,
+          },
+        };
+      case "envelope":
+        return {
+          id: m.id,
+          type: "envelope",
+          x: m.x,
+          y: m.y,
+          params: {
+            a: m.params.attack ?? 100,
+            d: m.params.decay ?? 200,
+            s: m.params.sustain ?? 0.7,
+            r: m.params.release ?? 300,
+          },
+        };
+      case "lfo":
+        return {
+          id: m.id,
+          type: "lfo",
+          x: m.x,
+          y: m.y,
+          params: {
+            f: m.params.frequency ?? 1,
+            w: (m.params.wave ?? "sine") as "sine" | "square" | "triangle" | "saw",
+            s: m.params.sync ?? false,
+          },
+        };
+      case "filter":
+        return {
+          id: m.id,
+          type: "filter",
+          x: m.x,
+          y: m.y,
+          params: {
+            f: m.params.frequency ?? 1000,
+            r: m.params.resonance ?? 1,
+            t: m.params.type ?? "lowpass",
+          },
+        };
+      case "distortion":
+        return {
+          id: m.id,
+          type: "distortion",
+          x: m.x,
+          y: m.y,
+          params: {
+            a: m.params.a ?? 50,
+            t: m.params.t ?? "saturation",
+            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "saw",
+          },
+        };
+      case "modulator":
+        return {
+          id: m.id,
+          type: "modulator",
+          x: m.x,
+          y: m.y,
+          params: {
+            m: (m.params.m ?? "FM") as "AM" | "FM" | "PM" | "RM",
+            d: m.params.d ?? 50,
+            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "saw",
+          },
+        };
+      case "output":
+        return {
+          id: m.id,
+          type: "output",
+          x: m.x,
+          y: m.y,
+          params: {
+            m: m.params.master ?? -6,
+          },
+        };
+      default:
+        throw new Error(`Unknown module type: ${m.type}`);
     }
-
-    if (m.type === "gain") {
-      return ({ id: m.id, type: "gain" as const, x: m.x, y: m.y, params: {
-          g: m.params.gain ?? 0,
-        },
-      });
-    }
-
-    if (m.type === "envelope") {
-      return ({ id: m.id, type: "envelope" as const, x: m.x, y: m.y, params: {
-          a: m.params.attack ?? 100,
-          d: m.params.decay ?? 200,
-          s: m.params.sustain ?? 0.7,
-          r: m.params.release ?? 300,
-        },
-      });
-    }
-    if (m.type === "lfo") {
-      const p = m.params as any;
-      return { 
-        id: m.id, type: "lfo", x: m.x, y: m.y, 
-        params: { 
-          f: p.frequency ?? 1, 
-          w: (p.wave ?? 'sine') as 'sine' | 'square' | 'triangle' | 'saw',
-          s: p.sync ?? false 
-        } 
-      };
-    }
-
-    if (m.type === "vcf") {
-      const p = m.params as any;
-      return { 
-        id: m.id, type: "vcf", x: m.x, y: m.y, 
-        params: { 
-          f: p.frequency ?? 1000, 
-          r: p.resonance ?? 1, 
-          t: p.type ?? "lowpass" 
-        } 
-      };
-    }
-
-    if (m.type === "distortion") {
-      return ({ 
-        id: m.id, 
-        type: "distortion" as const, 
-        x: m.x, 
-        y: m.y, 
-        params: {
-          a: m.params.a ?? 50,
-          t: m.params.t ?? "saturation",
-          w: (m.params.w ?? 'sine') as 'sine' | 'square' | 'triangle' | 'saw',
-        },
-      });
-    }
-
-    if (m.type === "modulator") {
-      return ({ 
-        id: m.id, 
-        type: "modulator" as const, 
-        x: m.x, 
-        y: m.y, 
-        params: {
-          m: (m.params.m ?? "FM") as "AM" | "FM" | "PM" | "RING",
-          d: m.params.d ?? 50,
-          w: (m.params.w ?? 'sine') as 'sine' | 'square' | 'triangle' | 'saw',
-        },
-      });
-    }
-    return ({ id: m.id, type: "output" as const, x: m.x, y: m.y, params: {
-        m: m.params.master ?? -6,
-      },
-    });
   });
 }
 
@@ -169,17 +192,17 @@ function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: num
             return (
               <LFO key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} w={m.params.w} s={m.params.s}  cameraX={props.cameraX} cameraY={props.cameraY} />
             );
-          case "vcf":
+          case "filter":
             return (
-              <VCF key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} r={m.params.r} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
+              <Filter key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} r={m.params.r} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           case "distortion":
             return (
-              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} a={m.params.a} t={m.params.t} w={m.params.w} cameraX={props.cameraX} cameraY={props.cameraY} />
+              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} a={m.params.a} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           case "modulator":
             return (
-              <Modulator key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} d={m.params.d} w={m.params.w} cameraX={props.cameraX} cameraY={props.cameraY} />
+              <Modulator key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} d={m.params.d} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           default: return null;
         }

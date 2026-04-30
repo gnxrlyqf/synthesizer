@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Oscillator, Gain, Envelope, Output, Distortion, LFO, VCF, Modulator } from '../Modules/Modules'
+import { Oscillator, Gain, Envelope, Output, Distortion, LFO, Filter, Modulator } from '../Modules/Modules'
 import type { DockItemData } from '../Dock'
 import type { Module } from './Modules'
 
@@ -71,7 +71,7 @@ function LfoIcon(props: { size: number }) {
   );
 }
 
-function VcfIcon(props: { size: number }) {
+function FilterIcon(props: { size: number }) {
   return (
     <svg width={props.size} height={props.size} viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -119,7 +119,7 @@ type ModuleType =
   | "envelope" 
   | "output" 
   | "lfo" 
-  | "vcf" 
+  | "filter" 
   | "distortion" 
   | "modulator";
 
@@ -129,7 +129,7 @@ const objects: Record<ModuleType, { component: unknown; w: number; h: number }> 
   "envelope": { component: Envelope, w: 288, h: 480 },
   "output": { component: Output, w: 224, h: 352 },
   "lfo": { component: LFO, w: 224, h: 420 },
-  "vcf": { component: VCF, w: 224, h: 440 },
+  "filter": { component: Filter, w: 224, h: 440 },
   "distortion": { component: Distortion, w: 240, h: 460 },
   "modulator": { component: Modulator, w: 224, h: 440 }
 };
@@ -159,8 +159,8 @@ function instantiateModule(type: ModuleType, x: number, y: number): Module {
       return { id, type: "output", x, y, params: { m: -6 } };
     case "lfo":
       return { id, type: "lfo", x, y, params: { f: 1, w: "sine", s: false } };
-    case "vcf":
-      return { id, type: "vcf", x, y, params: { f: 1000, r: 1, t: "lowpass" } };
+    case "filter":
+      return { id, type: "filter", x, y, params: { f: 1000, r: 1, t: "lowpass" } };
     case "distortion":
       return { id, type: "distortion", x, y, params: { a: 50, t: "saturation" } };
     case "modulator":
@@ -198,9 +198,9 @@ function createDockItems(onInstantiate: (type: ModuleType) => void): DockItemDat
       onClick: () => onInstantiate("lfo")
     },
     {
-      icon: <VcfIcon size={40} />,
+      icon: <FilterIcon size={40} />,
       label: 'Filter',
-      onClick: () => onInstantiate("vcf")
+      onClick: () => onInstantiate("filter")
     },
     {
       icon: <DistIcon size={35} />,

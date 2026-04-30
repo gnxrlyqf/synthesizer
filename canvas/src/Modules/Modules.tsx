@@ -3,7 +3,7 @@ import Gain from "../Modules/Gain";
 import Envelope from "../Modules/Envelope";
 import Output from "../Modules/Output";
 import LFO from "../Modules/LFO";
-import VCF from "./Filter";
+import Filter from "./Filter";
 import Distortion from "../Modules/Distortion";
 import Modulator from "../Modules/Modulator";
 
@@ -15,4 +15,4 @@ export interface ModuleProps {
   cameraY: number;
 }
 
-export { Oscillator, Gain, Envelope, Output, LFO, VCF, Distortion, Modulator };
+export { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator };
