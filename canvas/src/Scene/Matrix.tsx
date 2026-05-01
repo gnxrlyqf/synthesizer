@@ -1,17 +1,46 @@
-import React, { useRef, useState, useEffect, useCallback, type ReactNode, type MouseEventHandler, type UIEvent } from 'react';
+import React, { useRef, useState, useEffect, useCallback, type ReactNode, type MouseEventHandler, type UIEvent, type JSX } from 'react';
 import { motion, useInView } from 'motion/react';
 import type {Cable} from './Scene';
 import type {Module} from './Modules'
+import { OscIcon, GainIcon, EnvelopeIcon, OutputIcon, LfoIcon, FilterIcon, DistIcon, ModIcon } from './DockItems';
 
-const colors: {[key: string]: string} = {
-  distortion: "#DDBA7D",
-  envelope: "#6FAF4F",
-  filter: "#F68048",
-  gain: "#3852B4",
-  lfo: "#8F0177",
-  modulator: "#456882",
-  oscillator: "#C44A3A",
-  output: "#63748d"
+const modules: {
+  [key: string]: {
+    color: string;
+    icon: JSX.Element;
+  }
+} = {
+  oscillator: { color: "#C44A3A", icon: <OscIcon size={35} />},
+  gain: { color: "#3852B4", icon: <GainIcon size={23} />},
+  envelope: { color: "#6FAF4F", icon: <EnvelopeIcon size={32} />},
+  output: { color: "#63748d", icon: <OutputIcon size={30} />},
+  distortion: { color: "#DDBA7D", icon: <DistIcon size={35} />},
+  filter: { color: "#F68048", icon: <FilterIcon size={40} />},
+  lfo: { color: "#8F0177", icon: <LfoIcon size={35} />},
+  modulator: { color: "#456882", icon: <ModIcon size={40} />}
+}
+
+function Arrow() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 12H20M20 12L16 8M20 12L16 16" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+  )
+}
+
+function Delete() {
+  return (
+    <svg
+      fill="currentColor"
+      width="24"
+      height="24"
+      viewBox="0 0 32 32"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'block' }}
+    >
+      <path d="M18.8,16l5.5-5.5c0.8-0.8,0.8-2,0-2.8l0,0C24,7.3,23.5,7,23,7c-0.5,0-1,0.2-1.4,0.6L16,13.2l-5.5-5.5
+        c-0.8-0.8-2.1-0.8-2.8,0C7.3,8,7,8.5,7,9.1s0.2,1,0.6,1.4l5.5,5.5l-5.5,5.5C7.3,21.9,7,22.4,7,23c0,0.5,0.2,1,0.6,1.4
+        C8,24.8,8.5,25,9,25c0.5,0,1-0.2,1.4-0.6l5.5-5.5l5.5,5.5c0.8,0.8,2.1,0.8,2.8,0c0.8-0.8,0.8-2.1,0-2.8L18.8,16z"/>
+    </svg>
+  );
 }
 
 interface AnimatedItemProps {
@@ -137,7 +166,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
   }, [selectedIndex, keyboardNav]);
 
   return (
-    <div className={`relative w-100 ${className}`}>
+    <div className={`relative w-120 ${className}`}>
       <div
         ref={listRef}
         className={`h-255 overflow-y-auto p-4 ${
@@ -159,7 +188,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
             onMouseEnter={() => handleItemMouseEnter(index)}
             onClick={() => handleItemClick(item, index)}
           >
-            <div className={`p-3 bg-zinc-600/50 rounded-xl ${itemClassName}`}>
+            <div className={`p-2 bg-zinc-800 rounded-xl ${itemClassName}`}>
               {item}
             </div>
           </AnimatedItem>
@@ -195,34 +224,34 @@ function CableMatrix(props: {cables: Cable[], modules: Module[], setCables: Reac
       <div className="text-white flex flex-row items-center justify-between">
         <div className="flex flex-row gap-1">
           <span
-            className="rounded-l-md py-1 px-2"
-            style={{ background: colors[from.type]}}>
-            {from.type}
+            className="rounded-l-md w-10 h-10 flex items-center justify-center"
+            style={{ background: modules[from.type].color}}>
+            {modules[from.type].icon}
           </span>
           <span
-            className="rounded-r-md py-1 px-2"
-            style={{ background: colors[from.type]}}>
+            className="rounded-r-md py-1 px-2 w-25 flex justify-center items-center"
+            style={{ background: modules[from.type].color}}>
             {from.param}
           </span>
         </div>
-        {"->"}
+        <div className='w-10 text-white'><Arrow /></div>
         <div className="flex flex-row gap-1">
           <span
-            className="rounded-l-md py-1 px-2"
-            style={{ background: colors[to.type]}}>
-            {to.type}
+            className="rounded-l-md py-1 px-2 w-25 flex justify-center items-center"
+            style={{ background: modules[to.type].color}}>
+            {to.param}
           </span>
           <span
-            className="rounded-r-md py-1 px-2"
-            style={{ background: colors[to.type]}}>
-            {to.param}
+            className="rounded-r-md w-10 h-10 flex items-center justify-center"
+            style={{ background: modules[to.type].color}}>
+            {modules[to.type].icon}
           </span>
         </div>
         <button
-        className='cursor-pointer'
+        className='mr-2 p-1 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
         onClick={() => props.setCables(cables => cables.filter((_, i) => i !== idx))}
         >
-          del
+          <Delete />
         </button>
       </div>
     );
