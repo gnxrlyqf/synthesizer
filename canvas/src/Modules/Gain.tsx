@@ -4,15 +4,11 @@ import {useDrag} from "../Interactions/useDrag";
 import { useConnection } from "../ConnectionContext";
 import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
-import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
+import ModuleFrame from "./ModuleFrame";
 
 const MODULE_WIDTH = 224;
-const MODULE_HEIGHT = 384;
-const FRAME_INSET_X = 6;
-const FRAME_INSET_TOP = 8;
-const FRAME_INSET_BOTTOM = 6;
-
+const MODULE_HEIGHT = 416;
 
 interface GainProps extends ModuleProps {
   g: number;
@@ -24,24 +20,11 @@ function Gain(props: GainProps) {
   const [gain, setGain] = useState(props.g);
   const {mode} = useConnection();
   const { menu, setMenu, handleContextMenu } = useContextMenu();
-
-  const moduleStyle = {
-    width: `${MODULE_WIDTH}px`,
-    height: `${MODULE_HEIGHT}px`,
-    ...(position ? { left: `${position.x}px`, top: `${position.y}px` } : {}),
-  };
-
-  const panelStyle = {
-    marginLeft: `${FRAME_INSET_X}px`,
-    marginRight: `${FRAME_INSET_X}px`,
-    marginTop: `${FRAME_INSET_TOP}px`,
-    marginBottom: `${FRAME_INSET_BOTTOM}px`,
-  };
+  const color = "#3852B4"
 
   useEffect(() => {
-    if (!moduleRef.current || position) {
+    if (!moduleRef.current || position)
       return;
-    }
 
     const rect = moduleRef.current.getBoundingClientRect();
     setPosition({ x: rect.left + window.scrollX, y: rect.top + window.scrollY });
@@ -50,40 +33,27 @@ function Gain(props: GainProps) {
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
-    <div
-      ref={moduleRef}
-      data-patch-module="true"
-      data-module-id={props.id}
-      style={moduleStyle}
-      onMouseDown={onMouseDown}
+    <ModuleFrame
+      id={props.id}
+      title="Gain"
+      width={MODULE_WIDTH}
+      height={MODULE_HEIGHT}
+      position={position}
+      baseColor={color}
+      menu={menu}
+      moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
-      className="absolute m-4 top-1/3 left-1/3 flex flex-col bg-blue-500 text-white rounded-3xl overflow-visible font-lexend"
+      onHeaderMouseDown={onMouseDown}
+      onDeleteMenu={() => setMenu(null)}
     >
-    {menu && (
-      <ModuleMenu 
-        id={props.id} 
-        x={menu.x} 
-        y={menu.y}
-        color="#3684ff"
-        onDelete={(id:string) => { console.log("Deleting", id); setMenu(null); }} 
-      />
-    )}
-      <div
-        className="w-full bg-blue-500 px-4 pt-2 cursor-move select-none text-center"
-      >
-        <span className="text-white text-4xl leading-none">Gain</span>
+      <KnobParam id={props.id} name="gain" side="left" color={color}>
+        <Knob max={10} min={-10} step={0.1} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
+      </KnobParam>
+      <div className="w-full flex flex-col gap-4 mt-2">
+        <Param id={props.id} name="input" polarity="target" color={color}/>
+        <Param id={props.id} name="output" polarity="source" color={color}/>
       </div>
-      <div
-        style={panelStyle}
-        className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5"
-      >
-        <KnobParam id={props.id} name="gain" side="left" color="blue-500">
-          <Knob max={10} min={-10} step={0.1} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
-        </KnobParam>
-        <Param id={props.id} name="input" polarity="target" color="blue-500"/>
-        <Param id={props.id} name="output" polarity="source" color="blue-500"/>
-      </div>
-    </div>
+    </ModuleFrame>
   );
 }
 export const GAIN_W = MODULE_WIDTH;

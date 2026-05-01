@@ -5,11 +5,11 @@ import {useDrag} from "../Interactions/useDrag";
 import { useConnection } from "../ConnectionContext";
 import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
-import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
+import ModuleFrame from "./ModuleFrame";
 
-const MODULE_WIDTH = 224
-const MODULE_HEIGHT = 384
+const MODULE_WIDTH = 224;
+const MODULE_HEIGHT = 416;
 
 function SineIcon() {
     return (
@@ -57,6 +57,7 @@ function Oscillator(props: OscillatorProps) {
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
   const {mode} = useConnection();
   const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const color = "#C44A3A"
 
   useEffect(() => {
     if (!moduleRef.current || position) { return; }
@@ -68,50 +69,35 @@ function Oscillator(props: OscillatorProps) {
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
 	return (
-		<div
-      ref={moduleRef}
-      data-patch-module="true"
-      data-module-id={props.id}
-      style={{
-        width: "224px", height: "384px",
-        ...(position ? { left: `${position.x}px`, top: `${position.y}px` } : {}),
-      }}
+		<ModuleFrame
+      id={props.id}
+      title="Oscillator"
+      width={MODULE_WIDTH}
+      height={MODULE_HEIGHT}
+      position={position}
+      baseColor={color}
+      menu={menu}
+      moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
-      className=" absolute m-4 top-1/4 left-1/2 flex flex-col bg-red-500 text-white rounded-3xl overflow-visible font-lexend">
-        {menu && (
-        <ModuleMenu 
-          id={props.id} 
-          x={menu.x} 
-          y={menu.y}
-          color="#f93340"
-          onDelete={(id:string) => { console.log("Deleting", id); setMenu(null); }} 
-        />
-        )}
-        <div
-          className="w-full bg-red-500 px-4 pt-2 cursor-move select-none text-center"
-          onMouseDown={onMouseDown}
-        >
-          <span className="text-white text-4xl leading-none">Oscillator</span>
-        </div>
-        <div className="flex flex-1 min-h-0 flex-col gap-3 items-center rounded-2xl bg-black py-5 m-2">
-          <div className="w-full flex items-center">
-            <span className="h-1 bg-red-500 flex-1" />
-            <KnobParam id={props.id} name="frequency" side="left" color="red-500">
-              <Knob max={5000} min={20} step={1} value={frequency} onChange={setFrequency} size={100} unit="Hz" disabled={mode != "idle"} />
-            </KnobParam>
-            <span className="flex-1" />
-          </div>
-          <div className="mt-1">
-            <RadioSelect name={`${props.id}-radio`} value={waveshape} onChange={setWaveshape}>
-              <RadioSelectOption value="sine"><SineIcon /></RadioSelectOption>
-              <RadioSelectOption value="triangle"><TriangleIcon /></RadioSelectOption>
-              <RadioSelectOption value="square"><SquareIcon/></RadioSelectOption>
-              <RadioSelectOption value="saw"><SawIcon /></RadioSelectOption>
-            </RadioSelect>
-          </div>
-          <Param name="output" id={props.id} polarity="source" color="red-500"/>
-        </div>
-    </div>
+      onHeaderMouseDown={onMouseDown}
+      onDeleteMenu={() => setMenu(null)}
+    >
+      <div className="w-full flex items-center">
+        <KnobParam id={props.id} name="frequency" side="left" color={color}>
+          <Knob max={5000} min={20} step={1} value={frequency} onChange={setFrequency} size={100} unit="Hz" disabled={mode != "idle"} />
+        </KnobParam>
+        <span className="flex-1" />
+      </div>
+      <div className="my-2">
+        <RadioSelect name={`${props.id}-radio`} value={waveshape} onChange={setWaveshape}>
+          <RadioSelectOption value="sine"><SineIcon /></RadioSelectOption>
+          <RadioSelectOption value="triangle"><TriangleIcon /></RadioSelectOption>
+          <RadioSelectOption value="square"><SquareIcon/></RadioSelectOption>
+          <RadioSelectOption value="saw"><SawIcon /></RadioSelectOption>
+        </RadioSelect>
+      </div>
+      <Param name="output" id={props.id} polarity="source" color={color}/>
+    </ModuleFrame>
 	)
 }
 export const OSC_W = MODULE_WIDTH;

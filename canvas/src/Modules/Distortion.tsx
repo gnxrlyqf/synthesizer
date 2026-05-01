@@ -2,12 +2,12 @@ import { useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import {RadioSelect, RadioSelectOption} from "../Interactions/RadioSelect";
 import { useDrag } from "../Interactions/useDrag";
-import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
 import { KnobParam, Param } from "../Interactions/Params";
+import ModuleFrame from "./ModuleFrame";
 
 const MODULE_WIDTH = 224;
-const MODULE_HEIGHT = 448 ;
+const MODULE_HEIGHT = 480 ;
 
 function HardIcon() {
   return (
@@ -121,62 +121,39 @@ function Distortion(props: {
   // const [type, setType] = useState(props.t ?? "saturation");
   const [type, setType] = useState<"soft" | "hard" | "sine" | "downsample">(props.t);
   const { menu, setMenu, handleContextMenu } = useContextMenu();
-
+  const color = "#DDBA7D"
   // const modes = ['saturation', 'hard', 'overdrive', 'phase'];
   // --- DRAG LOGIC ---
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
 
   return (
-    <div
-      ref={moduleRef}
-      data-patch-module="true"
-      data-module-id={props.id}
-      style={{ width: MODULE_WIDTH, height: MODULE_HEIGHT, left: position.x, top: position.y }}
+    <ModuleFrame
+      id={props.id}
+      title="Distortion"
+      width={MODULE_WIDTH}
+      height={MODULE_HEIGHT}
+      position={position}
+      baseColor={color}
+      menu={menu}
+      moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
-      className="absolute m-4 flex flex-col bg-yellow-500 text-white rounded-3xl overflow-visible font-lexend z-10" 
-      // changed overflow-hidden to overflow-visible so the menu doesn't get cut off but the edges of l module
+      onHeaderMouseDown={onMouseDown}
+      onDeleteMenu={() => setMenu(null)}
     >
-      
-      {/* CONDITIONALLY RENDER THE MENU */}
-      {menu && (
-        <ModuleMenu 
-          id={props.id} 
-          x={menu.x} 
-          y={menu.y}
-          color="#eeaf00"
-          onDelete={(id:string) => {console.log("Deleting", id);setMenu(null); }} 
-        />
-      )}
-
-      {/* MODULE HEADER */}
-      <div className="w-full bg-yellow-500 px-4 pt-2 cursor-move select-none text-center rounded-t-3xl" onMouseDown={onMouseDown}>
-        <span className="text-white text-4xl leading-none">Distortion</span>
+      <KnobParam id={props.id} name="drive" side="left" color={color}>
+        <Knob max={100} min={0} step={1} value={amount} onChange={setAmount} size={100} unit="%" />
+      </KnobParam>
+      <div className="w-full flex flex-col gap-4 mt-2">
+        <RadioSelect name={`${props.id}-radio`} value={type} onChange={setType}>
+          <RadioSelectOption value="soft"><SoftIcon/></RadioSelectOption>
+          <RadioSelectOption value="hard"><HardIcon/></RadioSelectOption>
+          <RadioSelectOption value="sine"><SineIcon/></RadioSelectOption>
+          <RadioSelectOption value="downsample"><DownsampleIcon/></RadioSelectOption>
+        </RadioSelect>
+        <Param id={props.id} name="input" polarity="target" color={color}/>
+        <Param id={props.id} name="output" polarity="source" color={color}/>
       </div>
-      
-      {/* MAIN BODY */}
-      <div className="mx-2 mt-2 mb-1.5 flex flex-1 flex-col gap-3 items-center rounded-2xl bg-black py-5 overflow-hidden">
-        
-        {/* PARAMETER KNOB */}
-        <KnobParam id={props.id} name="drive" side="left" color="yellow-500">
-          <Knob max={100} min={0} step={1} value={amount} onChange={setAmount} size={100} unit="%" />
-        </KnobParam>
-
-        {/* WAVESHAPING */}
-        <div className="my-2">
-          <RadioSelect name={`${props.id}-radio`} value={type} onChange={setType}>
-            <RadioSelectOption value="soft"><SoftIcon/></RadioSelectOption>
-            <RadioSelectOption value="hard"><HardIcon/></RadioSelectOption>
-            <RadioSelectOption value="sine"><SineIcon/></RadioSelectOption>
-            <RadioSelectOption value="downsample"><DownsampleIcon/></RadioSelectOption>
-          </RadioSelect>
-        </div>
-
-        {/* PORTS */}
-        {/* <div className="mt-1"></div> */}
-        <Param id={props.id} name="input" polarity="target" color="yellow-500"/>
-        <Param id={props.id} name="output" polarity="source" color="yellow-500"/>
-      </div>
-    </div>
+    </ModuleFrame>
   );
 }
 export const DIST_W = MODULE_WIDTH;

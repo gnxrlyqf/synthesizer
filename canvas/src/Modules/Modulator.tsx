@@ -2,12 +2,12 @@ import { useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import {RadioSelect, RadioSelectOption} from "../Interactions/RadioSelect";
 import { useDrag } from "../Interactions/useDrag";
-import { ModuleMenu } from '../Interactions/ContextMenu';
 import { useContextMenu } from "../Utils/useContextMenu";
 import { Param, KnobParam } from "../Interactions/Params";
+import ModuleFrame from "./ModuleFrame";
 
 const MODULE_WIDTH = 224;
-const MODULE_HEIGHT = 480;
+const MODULE_HEIGHT = 544;
 
 function Modulator(props: {
   id: string,
@@ -18,52 +18,43 @@ function Modulator(props: {
   cameraX: number,
   cameraY: number}) {
   
-  const moduleRef = useRef<HTMLDivElement>(null);
+  const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({ x: props.x, y: props.y });
   const [depth, setDepth] = useState(props.d);
   const [modType, setModType] = useState<"AM" | "FM" | "PM" | "RM">(props.m);
-
+  const color = "#456882";
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
   const { menu, setMenu, handleContextMenu } = useContextMenu();
 
   return (
-    <div 
-      ref={moduleRef} 
-      data-patch-module="true" 
-      data-module-id={props.id}
+    <ModuleFrame
+      id={props.id}
+      title="Modulator"
+      width={MODULE_WIDTH}
+      height={MODULE_HEIGHT}
+      position={position}
+      baseColor={color}
+      menu={menu}
+      moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
-      style={{ width: MODULE_WIDTH, height: MODULE_HEIGHT, left: position.x, top: position.y }}
-      className="absolute m-4 flex flex-col bg-cyan-500 text-white rounded-3xl overflow-visible font-lexend"
+      onHeaderMouseDown={onMouseDown}
+      onDeleteMenu={() => setMenu(null)}
     >
-      {menu && (
-      <ModuleMenu 
-        id={props.id} 
-        x={menu.x} 
-        y={menu.y}
-        color="#0093b6"
-        onDelete={(id: string) => { console.log("Deleting", id); setMenu(null); }} 
-      />
-    )}
-        <div className="w-full bg-cyan-500 px-4 pt-2 text-center cursor-move select-none" onMouseDown={onMouseDown}>
-          <span className="text-white text-4xl leading-none">Modulator</span>
-        </div>
-        <div className="mx-2 mt-2 mb-1.5 flex flex-1 flex-col gap-3 items-center rounded-2xl bg-black pt-5">
-            <KnobParam id={props.id} name="depth" side="left" color="cyan-500">
-              <Knob max={15000} min={20} step={1} value={depth} onChange={setDepth} size={100} unit="Hz" />
-            </KnobParam>
-          <div className="mt-0">
-            <RadioSelect name={`${props.id}-radio`} value={modType} onChange={setModType}>
-              <RadioSelectOption value="FM">FM</RadioSelectOption>
-              <RadioSelectOption value="AM">AM</RadioSelectOption>
-              <RadioSelectOption value="PM">PM</RadioSelectOption>
-              <RadioSelectOption value="RM">RM</RadioSelectOption>
-            </RadioSelect>
-          </div>
-          <Param id={props.id} name="mod in" polarity="target" color="cyan-500"/>
-          <Param id={props.id} name="carrier" polarity="target" color="cyan-500"/>
-          <Param id={props.id} name="output" polarity="source" color="cyan-500"/>
-          </div>
-    </div>
+      <KnobParam id={props.id} name="depth" side="left" color={color}>
+        <Knob max={15000} min={20} step={1} value={depth} onChange={setDepth} size={100} unit="Hz" />
+      </KnobParam>
+      <div className="w-full flex flex-col gap-4 mt-2">
+        <RadioSelect name={`${props.id}-radio`} value={modType} onChange={setModType}>
+          <RadioSelectOption value="FM">FM</RadioSelectOption>
+          <RadioSelectOption value="AM">AM</RadioSelectOption>
+          <RadioSelectOption value="PM">PM</RadioSelectOption>
+          <RadioSelectOption value="RM">RM</RadioSelectOption>
+        </RadioSelect>
+        <Param id={props.id} name="mod in" polarity="target" color={color}/>
+        <Param id={props.id} name="carrier" polarity="target" color={color}/>
+        <Param id={props.id} name="output" polarity="source" color={color}/>
+      </div>
+    </ModuleFrame>
   );
 }
 export const MOD_W = MODULE_WIDTH;

@@ -111,7 +111,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
     >
-      <KnobDial $size={size}>
+      <KnobDial $size={size} className="active:scale-105 hover:scale-105 ease-in-out duration-100">
         <KnobMain position={position} />
       </KnobDial>
       <KnobValue $size={size}>{unit ? `${displayValue} ${unit}` : displayValue}</KnobValue>
@@ -185,7 +185,7 @@ const KnobMain: React.FC<KnobMainProps> = ({ position }) => {
             fill: '#ebebeb',
             fillOpacity: 0,
             stroke: 'currentColor',
-            strokeWidth: '13.2px',
+            strokeWidth: '18px',
           }}
           transform="matrix(1.35193 0 0 1.66166 -109.602 -280.045)"
         />
@@ -194,7 +194,7 @@ const KnobMain: React.FC<KnobMainProps> = ({ position }) => {
           style={{
             fill: 'none',
             stroke: 'currentColor',
-            strokeWidth: 20,
+            strokeWidth: 28,
           }}
         />
         <path
@@ -202,7 +202,7 @@ const KnobMain: React.FC<KnobMainProps> = ({ position }) => {
           style={{
             fill: 'none',
             stroke: 'currentColor',
-            strokeWidth: 20,
+            strokeWidth: 28,
           }}
           transform="matrix(.98664 .01336 .01336 .98664 -11.974 11.974)"
         />
@@ -218,7 +218,7 @@ const KnobMain: React.FC<KnobMainProps> = ({ position }) => {
             fill: '#ebebeb',
             fillOpacity: 0,
             stroke: 'currentColor',
-            strokeWidth: '15.88px',
+            strokeWidth: '22px',
           }}
           transform="matrix(1.12427 0 0 1.38185 -4.929 -146.67)"
         />
@@ -227,7 +227,7 @@ const KnobMain: React.FC<KnobMainProps> = ({ position }) => {
           style={{
             fill: 'none',
             stroke: 'currentColor',
-            strokeWidth: 20,
+            strokeWidth: 28,
           }}
         />
       </g>

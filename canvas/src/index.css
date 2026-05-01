@@ -8,3 +8,8 @@
 @theme {
     --font-lexend: Lexend, "sans-serif";
 }
+
+.card {
+  background: rgb(52, 52, 52);
+  box-shadow: rgb(31, 31, 31) 0px 0px 100px -12px inset, rgb(0, 0, 0) 0px 0px 100px -12px inset;
+}
