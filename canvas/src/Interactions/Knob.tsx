@@ -24,7 +24,9 @@ interface Coords {
 // TODO Directly change values using double click
 const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, min, max, size = 40, unit, disabled = false}) => {
   const touchCoords = useRef<Coords | null>(null)
+  const knobRef = useRef<HTMLDivElement | null>(null)
   const [value, setValue] = useState(inputValue)
+  const [isDragging, setIsDragging] = useState(false)
 
   const handleChange = useCallback(
     (v: number) => {
@@ -43,6 +45,10 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   )
 
   const handleMouseUp = useCallback(() => {
+    setIsDragging(false)
+    if (document.exitPointerLock) {
+      document.exitPointerLock()
+    }
     document.removeEventListener('mousemove', handleDrag)
     document.removeEventListener('mouseup', handleMouseUp)
     document.removeEventListener('mouseleave', handleMouseUp)
@@ -51,6 +57,10 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
 
   const handleMouseDown = useCallback(() => {
     if (disabled) return;
+    setIsDragging(true)
+    if (knobRef.current?.requestPointerLock) {
+      knobRef.current.requestPointerLock()
+    }
     document.addEventListener('mousemove', handleDrag)
     document.addEventListener('mouseup', handleMouseUp)
     document.addEventListener('mouseleave', handleMouseUp)
@@ -71,6 +81,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   )
 
   const handleTouchEnd = useCallback(() => {
+    setIsDragging(false)
     touchCoords.current = null
     document.removeEventListener('touchmove', handleTouchMove)
     document.removeEventListener('touchend', handleTouchEnd)
@@ -79,6 +90,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   const handleTouchStart = useCallback<TouchEventHandler<HTMLDivElement>>(
     (e) => {
       if (disabled) return;
+      setIsDragging(true)
       touchCoords.current = { x: e.touches[0].screenX, y: e.touches[0].screenY }
       document.addEventListener('touchmove', handleTouchMove)
       document.addEventListener('touchend', handleTouchEnd)
@@ -103,15 +115,19 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
 
   return (
     <KnobWrapper
+      ref={knobRef}
       $size={size}
       onWheel={disabled ? undefined : handleMouseWheel}
       onMouseDown={disabled ? undefined : handleMouseDown}
       onTouchStart={disabled ? undefined : handleTouchStart}
-      style={disabled ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'auto' } : {}}
+      style={disabled ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'auto' } : isDragging ? { cursor: 'none' } : {}}
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
     >
-      <KnobDial $size={size} className="active:scale-105 hover:scale-105 ease-in-out duration-100">
+      <KnobDial
+        $size={size}
+        className={`active:scale-105 hover:scale-105 ease-in-out duration-100 ${isDragging ? 'scale-105' : ''}`}
+      >
         <KnobMain position={position} />
       </KnobDial>
       <KnobValue $size={size}>{unit ? `${displayValue} ${unit}` : displayValue}</KnobValue>

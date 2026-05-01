@@ -11,12 +11,13 @@ interface ConnectionState {
   mode: ConnectionMode;
   selectSource: (id: string, param: string) => void;
   selectTarget: (id: string, param: string) => void;
+  isPortConnected: (portId: string) => boolean;
   reset: () => void;
 }
 
 const ConnectionContext = createContext<ConnectionState | undefined>(undefined);
 
-export const ConnectionProvider = (props: { children: React.ReactNode; setCables: React.Dispatch<React.SetStateAction<Cable[]>> }) => {
+export const ConnectionProvider = (props: { children: React.ReactNode; setCables: React.Dispatch<React.SetStateAction<Cable[]>>; cables: Cable[] }) => {
   const [source, setSource] = useState<string | null>(null);
   const [target, setTarget] = useState<string | null>(null);
   const [id, setId] = useState<string | null>(null);
@@ -64,8 +65,11 @@ export const ConnectionProvider = (props: { children: React.ReactNode; setCables
     }
   }, [source, target]);
 
+  const connectedPorts = new Set(props.cables.flatMap((cable) => [cable.from, cable.to]));
+  const isPortConnected = (portId: string) => connectedPorts.has(portId);
+
   return (
-    <ConnectionContext.Provider value={{ source, target, id, mode, selectSource, selectTarget, reset }}>
+    <ConnectionContext.Provider value={{ source, target, id, mode, selectSource, selectTarget, isPortConnected, reset }}>
       {props.children}
     </ConnectionContext.Provider>
   );

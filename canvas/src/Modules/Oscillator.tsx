@@ -86,7 +86,6 @@ function Oscillator(props: OscillatorProps) {
         <KnobParam id={props.id} name="frequency" side="left" color={color}>
           <Knob max={5000} min={20} step={1} value={frequency} onChange={setFrequency} size={100} unit="Hz" disabled={mode != "idle"} />
         </KnobParam>
-        <span className="flex-1" />
       </div>
       <div className="my-2">
         <RadioSelect name={`${props.id}-radio`} value={waveshape} onChange={setWaveshape}>

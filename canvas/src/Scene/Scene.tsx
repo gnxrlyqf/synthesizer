@@ -8,6 +8,7 @@ import { ConnectionProvider } from "../ConnectionContext";
 import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator } from '../Modules/Modules'
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
+import CableMatrix from "./Matrix";
 
 type Cable = {
   id: string;
@@ -166,10 +167,10 @@ function parseScene(): Module[] {
   });
 }
 
-function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number; f: React.Dispatch<React.SetStateAction<Cable[]>>}) {
+function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number; f: React.Dispatch<React.SetStateAction<Cable[]>>; cables: Cable[]}) {
   console.log(props.modules);
   return (
-    <ConnectionProvider setCables={props.f}>
+    <ConnectionProvider setCables={props.f} cables={props.cables}>
       {props.modules.map((m) => {
         switch (m.type) {
           case "oscillator":
@@ -220,6 +221,7 @@ function Scene() {
   const [camera, setCamera] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const panRef = useRef<{ startX: number; startY: number; cameraX: number; cameraY: number } | null>(null);
+  const [matrixToggle, setMatrixToggle] = useState<boolean>(false);
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
@@ -360,7 +362,7 @@ function Scene() {
           transformOrigin: "0 0",
         }}
       >
-        <RenderModules modules={modules} cameraX={camera.x} cameraY={camera.y} f={setCables}/>
+        <RenderModules modules={modules} cameraX={camera.x} cameraY={camera.y} f={setCables} cables={cables}/>
         {ghost && (
           <div className="pointer-events-none"> {/* this one solves the ghost preventing the module instantiation */}
           <GhostModule
@@ -372,13 +374,19 @@ function Scene() {
           </div>
         )}
       </section>
-
 			<section className="pointer-events-none absolute inset-0 z-20">
-				<header className="pointer-events-auto absolute left-3 right-3 top-3 flex items-center justify-between rounded-xl border border-zinc-700/70 bg-zinc-900/85 px-4 py-2 backdrop-blur">
-					<div className="text-sm font-semibold tracking-wide">Modular Scene</div>
-					<div className="text-xs text-zinc-300">{modules.length} modules · 0 cables</div>
+				<header className="pointer-events-auto absolute left-3 right-3 top-3 flex items-center justify-between rounded-xl border border-zinc-700/70 bg-zinc-900/85 pl-2 pr-4 py-2 backdrop-blur">
+          <button
+            onClick={() => setMatrixToggle(!matrixToggle)}
+            className="px-3 py-1 rounded-md cursor-pointer hover:bg-white/50 hover"
+          >Matrix</button>
+					<div className="text-xl text-zinc-300">{modules.length} modules · 0 cables</div>
 				</header>
 			</section>
+      <div className="absolute z-30 inset-y-20">
+        <ul className="flex"></ul>
+        {matrixToggle && <CableMatrix cables={cables} modules={modules} setCables={setCables}/>}
+      </div>
       <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-30">
         <Dock
           items={items}

@@ -35,7 +35,7 @@ function RadioSelect<T extends string>({ value, onChange, name = 'radio-select',
                 className="peer absolute h-px w-px overflow-hidden whitespace-nowrap [clip:rect(0_0_0_0)] [clip-path:inset(100%)]"
               />
               <span
-                className={`relative -ml-px flex h-10 w-12 cursor-pointer items-center justify-center border-2 text-white first:ml-0 peer-focus-visible:z-10 duration-150 ease-in-out peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-white peer-checked:z-1 peer-checked:border-white peer-checked:bg-white peer-checked:text-black ${
+                className={`relative -ml-px flex h-10 w-12 cursor-pointer items-center justify-center border-2 first:ml-0 peer-focus-visible:z-10 duration-150 ease-in-out peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-white peer-checked:z-1 peer-checked:border-white peer-checked:bg-white peer-checked:text-black ${
                   isFirst ? 'ml-0 rounded-l-md' : ''
                 } ${isLast ? 'rounded-r-md' : ''}`}
               >
