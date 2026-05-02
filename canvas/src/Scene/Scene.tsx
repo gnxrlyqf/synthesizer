@@ -1,6 +1,7 @@
 import Dock from "../Dock";
 import type {Module} from './Modules'
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence } from "motion/react";
 import sceneData from "../scene.json";
 import { wouldGhostOverlap } from "../Utils/wouldGhostOverlap";
 import { snapToGrid } from "../Utils/snapToGrid";
@@ -8,7 +9,7 @@ import { ConnectionProvider } from "../ConnectionContext";
 import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator } from '../Modules/Modules'
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
-import CableMatrix from "./Matrix";
+import Matrix from "./Matrix";
 
 type Cable = {
   id: string;
@@ -222,6 +223,7 @@ function Scene() {
   const [isPanning, setIsPanning] = useState(false);
   const panRef = useRef<{ startX: number; startY: number; cameraX: number; cameraY: number } | null>(null);
   const [matrixToggle, setMatrixToggle] = useState<boolean>(false);
+  const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
@@ -376,16 +378,39 @@ function Scene() {
       </section>
 			<section className="pointer-events-none absolute inset-0 z-20">
 				<header className="pointer-events-auto absolute left-3 right-3 top-3 flex items-center justify-between rounded-xl border border-zinc-700/70 bg-zinc-900/85 pl-2 pr-4 py-2 backdrop-blur">
-          <button
-            onClick={() => setMatrixToggle(!matrixToggle)}
-            className="px-3 py-1 rounded-md cursor-pointer hover:bg-white/50 hover"
-          >Matrix</button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setMatrixToggle(!matrixToggle)}
+              className="px-3 py-1 rounded-md cursor-pointer hover:bg-white/50 hover"
+            >Matrix</button>
+            {matrixToggle && (
+              <div className="flex gap-2">
+                <label className="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="matrix-view" checked={matrixView === 'modules'} onChange={() => setMatrixView('modules')} className="cursor-pointer" />
+                  <span className="text-sm">Modules</span>
+                </label>
+                <label className="flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="matrix-view" checked={matrixView === 'cables'} onChange={() => setMatrixView('cables')} className="cursor-pointer" />
+                  <span className="text-sm">Cables</span>
+                </label>
+              </div>
+            )}
+          </div>
 					<div className="text-xl text-zinc-300">{modules.length} modules · 0 cables</div>
 				</header>
 			</section>
       <div className="absolute z-30 inset-y-20">
         <ul className="flex"></ul>
-        {matrixToggle && <CableMatrix cables={cables} modules={modules} setCables={setCables}/>}
+        <AnimatePresence>
+          {matrixToggle &&
+          <Matrix
+          cables={cables}
+          modules={modules}
+          setCables={setCables}
+          setModules={setModules}
+          view={matrixView}
+          />}
+        </AnimatePresence>
       </div>
       <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-30">
         <Dock

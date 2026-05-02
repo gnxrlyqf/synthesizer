@@ -12,8 +12,7 @@ const MODULE_HEIGHT = 480 ;
 function HardIcon() {
   return (
     <svg
-      width="300mm"
-      height="300mm"
+      className="w-10 h-10"
       viewBox="0 0 300 300"
       version="1.1"
       id="svg1"
@@ -45,7 +44,7 @@ function HardIcon() {
 
 function SoftIcon() {
   return (
-    <svg fill="currentColor" width="800px" height="800px" viewBox="-24 -24 300 300" xmlns="http://www.w3.org/2000/svg">
+    <svg fill="currentColor" viewBox="-24 -24 300 300" xmlns="http://www.w3.org/2000/svg">
         <path d="M233 64.5h-28.495c-18.104 0-32.517 4.04-49.695 18.089-15.765 12.892-30.941 31.655-39.559 46.948-12.478 22.144-33.858 39.953-43.54 43.463-9.68 3.51-23.202 3.5-30.711 3.5H25V192h23.5c9.747 0 26.265-.681 39.867-7.61 18.496-9.42 33.507-35.51 47.578-54.853 9.879-13.579 21.773-27.756 32.732-36.034C182.775 82.853 196.637 80 216.5 80H233V64.5z" fill-rule="evenodd"/>
     </svg>
   )
@@ -76,8 +75,7 @@ function SineIcon() {
 function DownsampleIcon() {
   return (
     <svg
-      width="300mm"
-      height="300mm"
+      className="w-10 h-10"
       viewBox="0 0 300 300"
       version="1.1"
       id="svg1"

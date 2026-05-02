@@ -56,7 +56,7 @@ export default function ModuleFrame({
         transition: 'box-shadow 0.2s',
       }}
       onContextMenu={onContextMenu}
-      className="absolute m-4 flex flex-col text-white rounded-2xl overflow-visible font-lexend group"
+      className={`bg-linear-to-b to-zinc-800/30 from-90% to-100% absolute m-4 flex flex-col text-white rounded-2xl overflow-visible font-lexend group`}
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 ${MODULE_SHADOW_SIZE}px 0 ${shadowColor}`; }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; }}
     >
@@ -70,14 +70,14 @@ export default function ModuleFrame({
         />
       )}
       <div
-        className="w-full px-4 pt-2 cursor-move select-none text-center rounded-2xl"
+        className="bg-linear-to-t to-zinc-800/40 w-full px-4 pt-2 cursor-move select-none text-center rounded-2xl"
         onMouseDown={onHeaderMouseDown}
       >
         <span className="text-zinc-800 hover:text-zinc-300 duration-200 text-4xl leading-none">
           {title}
         </span>
       </div>
-      <div className="card flex flex-1 min-h-0 flex-col gap-3 items-center rounded-lg bg-zinc-800 py-6 m-2">
+      <div className="bg-[rgb(52,52,52)] shadow-[inset_0_0_100px_-12px_rgb(31,31,31),inset_0_0_100px_-12px_rgb(0,0,0)] flex flex-1 min-h-0 flex-col gap-3 items-center rounded-lg  py-6 m-2">
         {children}
       </div>
     </div>

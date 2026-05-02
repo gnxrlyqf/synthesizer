@@ -166,12 +166,18 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
   }, [selectedIndex, keyboardNav]);
 
   return (
-    <div className={`relative w-120 ${className}`}>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
+      className={`mx-3 relative w-100 h-[calc(100%-1rem)] bg-zinc-950/70 rounded-2xl overflow-hidden ${className}`}
+    >
       <div
         ref={listRef}
-        className={`h-255 overflow-y-auto p-4 ${
+        className={`overflow-y-auto p-2 pb-8 ${
           displayScrollbar
-            ? '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#120F17] [&::-webkit-scrollbar-thumb]:bg-[#222] [&::-webkit-scrollbar-thumb]:rounded-1'
+            ? '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900/70 [&::-webkit-scrollbar-thumb]:bg-[#222] [&::-webkit-scrollbar-thumb]:rounded-1'
             : 'scrollbar-hide'
         }`}
         onScroll={handleScroll}
@@ -188,7 +194,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
             onMouseEnter={() => handleItemMouseEnter(index)}
             onClick={() => handleItemClick(item, index)}
           >
-            <div className={`p-2 bg-zinc-800 rounded-xl ${itemClassName}`}>
+            <div className={`p-1 bg-zinc-800 rounded-xl ${itemClassName}`}>
               {item}
             </div>
           </AnimatedItem>
@@ -206,11 +212,12 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
           ></div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 };
 
-function CableMatrix(props: {cables: Cable[], modules: Module[], setCables: React.Dispatch<React.SetStateAction<Cable[]>>}) {
+function Matrix(props: {cables: Cable[], modules: Module[], setModules: React.Dispatch<React.SetStateAction<Module[]>>,setCables: React.Dispatch<React.SetStateAction<Cable[]>>, view: 'modules' | 'cables'}) {
+  
   const getModuleType = (portId: string) => {
     const [moduleId, param] = portId.split(".");
     const module = props.modules.find((m) => m.id === moduleId);
@@ -224,12 +231,12 @@ function CableMatrix(props: {cables: Cable[], modules: Module[], setCables: Reac
       <div className="text-white flex flex-row items-center justify-between">
         <div className="flex flex-row gap-1">
           <span
-            className="rounded-l-md w-10 h-10 flex items-center justify-center"
+            className="rounded-l-lg w-10 h-10 flex items-center justify-center"
             style={{ background: modules[from.type].color}}>
             {modules[from.type].icon}
           </span>
           <span
-            className="rounded-r-md py-1 px-2 w-25 flex justify-center items-center"
+            className="rounded-r-lg py-1 px-2 w-25 flex justify-center items-center"
             style={{ background: modules[from.type].color}}>
             {from.param}
           </span>
@@ -237,18 +244,18 @@ function CableMatrix(props: {cables: Cable[], modules: Module[], setCables: Reac
         <div className='w-10 text-white'><Arrow /></div>
         <div className="flex flex-row gap-1">
           <span
-            className="rounded-l-md py-1 px-2 w-25 flex justify-center items-center"
+            className="rounded-l-lg py-1 px-2 w-25 flex justify-center items-center"
             style={{ background: modules[to.type].color}}>
             {to.param}
           </span>
           <span
-            className="rounded-r-md w-10 h-10 flex items-center justify-center"
+            className="rounded-r-lg w-10 h-10 flex items-center justify-center"
             style={{ background: modules[to.type].color}}>
             {modules[to.type].icon}
           </span>
         </div>
         <button
-        className='mr-2 p-1 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
+        className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
         onClick={() => props.setCables(cables => cables.filter((_, i) => i !== idx))}
         >
           <Delete />
@@ -256,9 +263,36 @@ function CableMatrix(props: {cables: Cable[], modules: Module[], setCables: Reac
       </div>
     );
   });
-	return (
-		<AnimatedList items={items} />
-	)
+  
+  const moduleItems = props.modules.map((module, idx) => {
+    return (
+      <div key={module.id} className="text-white flex flex-row items-center w-full">
+        <div className="flex flex-row gap-1 flex-1">
+          <span
+            className="rounded-l-lg w-10 h-10 flex items-center justify-center"
+            style={{ background: modules[module.type].color}}>
+            {modules[module.type].icon}
+          </span>
+          <span
+            className="rounded-r-lg py-1 px-2 flex justify-center items-center"
+            style={{ background: modules[module.type].color}}>
+            {module.type}
+          </span>
+        </div>
+        <button
+        className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
+        onClick={() => props.setModules(mods => mods.filter((_, i) => i !== idx))}
+        >
+          <Delete />
+        </button>
+      </div>
+    );
+  });
+  
+	 return (
+      <AnimatedList items={props.view === 'modules' ? moduleItems : items} showGradients={false}/>
+    )
 }
 
-export default CableMatrix;
+export default Matrix;
+
