@@ -7,11 +7,13 @@ export function useContextMenu() {
 
   useEffect(() => {
     // Listen for clicks and our custom "global close" signal
-    window.addEventListener("click", close);
+    window.addEventListener("mousedown", close);
+    window.addEventListener("contextmenu", close);
     window.addEventListener("closeAllModuleMenus", close);
 
     return () => {
-      window.removeEventListener("click", close);
+      window.addEventListener("mousedown", close);
+      window.addEventListener("contextmenu", close);
       window.removeEventListener("closeAllModuleMenus", close);
     };
   }, [close]);
