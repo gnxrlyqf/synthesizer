@@ -27,6 +27,9 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   const knobRef = useRef<HTMLDivElement | null>(null)
   const [value, setValue] = useState(inputValue)
   const [isDragging, setIsDragging] = useState(false)
+  const displayValue = Math.round(value * 100) / 100
+  const position = (value - min) / (max - min)
+
 
   const handleChange = useCallback(
     (v: number) => {
@@ -109,10 +112,6 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   useEffect(() => {
     handleChange(value)
   }, [handleChange, value])
-
-  const displayValue = Math.round(value * 100) / 100
-  const position = (value - min) / (max - min)
-
   return (
     <KnobWrapper
       ref={knobRef}

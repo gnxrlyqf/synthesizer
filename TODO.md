@@ -11,6 +11,7 @@
 - [ ] implement zoom in and out
 - [ ] bridging the frontend with the audio (inform ysf)
 - [ ] make the values in each module inputs
+- [ ] if u drag a module and the draggable area is hidden the module is stuck
 
 # keyboard
 ghadi ykon keyboard 3rid
@@ -22,4 +23,4 @@ mixer o splitter which are self explanatory
 
 # yousef
 
-- [ ] filter makhdaminch fih cables and distortion they are not consistant mra ykhdmo mra no
+- [ ] filter makhdmainch fih cables and distortion they are not consistant mra ykhdmo mra no
