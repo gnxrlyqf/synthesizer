@@ -7,10 +7,10 @@
 - [x] radio button are weirdly connected to each other and doesnt work across all the modules (because they used the same name now they are seperated by the uid of the module)
 - [x] ghost dimensions were hardcoded now they depend on the value used in the implementation
 - [x] when i right clicked in the grid the menu should disappear
+- [x] make the values in each module inputs
 
-- [ ] implement zoom in and out
+- [ ] implement zoom in and out 
 - [ ] bridging the frontend with the audio (inform ysf)
-- [ ] make the values in each module inputs
 - [ ] if u drag a module and the draggable area is hidden the module is stuck
 
 # keyboard
