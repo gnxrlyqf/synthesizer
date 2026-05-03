@@ -449,7 +449,7 @@ function Scene() {
               </div>
             )}
           </div>
-					<div className="text-xl text-zinc-300">{modules.length} modules · 0 cables</div>
+					<div className="text-xl text-zinc-300">{modules.length} modules · {cables.length} cables</div>
 				</header>
 			</section>
 
