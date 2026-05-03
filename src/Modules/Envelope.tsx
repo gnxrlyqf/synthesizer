@@ -24,7 +24,7 @@ function Envelope(props: EnvelopeProps) {
   const [decay, setDecay] = useState(props.d);
   const [sustain, setSustain] = useState(props.s);
   const [release, setRelease] = useState(props.r);
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
   const color = "#6FAF4F"
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function Envelope(props: EnvelopeProps) {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <div className="flex flex-row w-full">
         <div className="w-full flex flex-col gap-3">

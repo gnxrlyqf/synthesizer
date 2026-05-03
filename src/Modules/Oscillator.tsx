@@ -56,7 +56,7 @@ function Oscillator(props: OscillatorProps) {
   const [frequency, setFrequency] = useState(props.f);
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
   const {mode} = useConnection();
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
   const color = "#C44A3A"
 
   useEffect(() => {
@@ -80,7 +80,7 @@ function Oscillator(props: OscillatorProps) {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <div className="w-full flex items-center">
         <KnobParam id={props.id} name="frequency" side="left" color={color}>

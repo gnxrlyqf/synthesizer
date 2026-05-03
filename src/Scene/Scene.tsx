@@ -10,7 +10,12 @@ import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator 
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
 import Matrix from "./Matrix";
+<<<<<<< HEAD
 import Context from "../Audio/Context";
+=======
+import { ModuleMenu } from "../Interactions/ContextMenu";
+import { useContextMenu } from "../Utils/useContextMenu";
+>>>>>>> refs/remotes/origin/main
 
 type Cable = {
   id: string;
@@ -240,11 +245,36 @@ function Scene() {
       console.error("audio context toggle failed", error);
     }
   };
+  const { menu, handleContextMenu } = useContextMenu();
+  const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
     [cables]
   );
+
+  useEffect(() => {
+    const handleAction = (e: any) => {
+      const { type, id, name } = e.detail;
+      switch (type) {
+        case 'DELETE':
+          setModules((prev) => prev.filter((m) => m.id !== id));
+          setCables((prev) => prev.filter((c) => !c.from.startsWith(id) && !c.to.startsWith(id)));
+          break;
+        case 'RENAME':
+          setModules((prev) => prev.map((m) => (m.id === id ? { ...m, title: name } : m)));
+          break;
+        case 'DISCONNECT':
+          setCables((prev) => prev.filter((c) => !c.from.startsWith(id) && !c.to.startsWith(id)));
+          break;
+        case 'RESET':
+          // Implementation for reset logic
+          break;
+      }
+    };
+    window.addEventListener('MOD_ACTION', handleAction);
+    return () => window.removeEventListener('MOD_ACTION', handleAction);
+  }, [setModules, setCables]);
 
   useEffect(() => {
     let rafId = 0;
@@ -426,17 +456,28 @@ function Scene() {
 					<div className="text-xl text-zinc-300">{modules.length} modules · 0 cables</div>
 				</header>
 			</section>
+
       <div className="absolute z-30 inset-y-20">
         <ul className="flex"></ul>
         <AnimatePresence>
           {matrixToggle &&
-          <Matrix
-          cables={cables}
-          modules={modules}
-          setCables={setCables}
-          setModules={setModules}
-          view={matrixView}
-          />}
+            <Matrix
+            cables={cables}
+            modules={modules}
+            setCables={setCables}
+            setModules={setModules}
+            view={matrixView}
+            handleContextMenu={(e, id) => { setActiveModuleId(id); handleContextMenu(e); }}
+            />}
+          {menu && activeModuleId && (
+          <ModuleMenu 
+            id={activeModuleId} 
+            x={menu.x} 
+            y={menu.y} 
+            color={(modules.find(m => m.id === activeModuleId) as any)?.color || "#C44A3A"}
+            currentName={(modules.find(m => m.id === activeModuleId) as any)?.title || (modules.find(m => m.id === activeModuleId) as any)?.type || "Module"}
+          />
+        )}
         </AnimatePresence>
       </div>
       <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-30">
