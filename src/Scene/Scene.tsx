@@ -10,12 +10,9 @@ import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator 
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
 import Matrix from "./Matrix";
-<<<<<<< HEAD
 import Context from "../Audio/Context";
-=======
 import { ModuleMenu } from "../Interactions/ContextMenu";
 import { useContextMenu } from "../Utils/useContextMenu";
->>>>>>> refs/remotes/origin/main
 
 type Cable = {
   id: string;
@@ -232,6 +229,8 @@ function Scene() {
   const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
   const context = useMemo(() => new Context(modules, cables), [modules, cables]);
   const [audioState, setAudioState] = useState<boolean>(false);
+  const { menu, handleContextMenu } = useContextMenu();
+  const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
   const toggleAudioContext = async () => {
     try {
@@ -245,8 +244,6 @@ function Scene() {
       console.error("audio context toggle failed", error);
     }
   };
-  const { menu, handleContextMenu } = useContextMenu();
-  const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
