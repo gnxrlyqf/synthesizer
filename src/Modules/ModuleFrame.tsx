@@ -12,7 +12,6 @@ interface ModuleFrameProps {
   moduleRef: React.RefObject<HTMLDivElement | null>;
   onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
   onHeaderMouseDown?: React.MouseEventHandler<HTMLDivElement>;
-  onDeleteMenu?: (id: string) => void;
   children: React.ReactNode;
 }
 
@@ -37,7 +36,6 @@ export default function ModuleFrame({
   moduleRef,
   onContextMenu,
   onHeaderMouseDown,
-  onDeleteMenu,
   children,
 }: ModuleFrameProps) {
   const shadowColor = toShadowColor(baseColor);
@@ -66,7 +64,7 @@ export default function ModuleFrame({
           x={menu.x}
           y={menu.y}
           color={baseColor}
-          onDelete={(menuId: string) => onDeleteMenu?.(menuId)}
+          currentName={title}
         />
       )}
       <div

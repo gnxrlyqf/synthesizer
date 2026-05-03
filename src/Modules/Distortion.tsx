@@ -118,7 +118,7 @@ function Distortion(props: {
   const [amount, setAmount] = useState(props.a);
   // const [type, setType] = useState(props.t ?? "saturation");
   const [type, setType] = useState<"soft" | "hard" | "sine" | "downsample">(props.t);
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
   const color = "#DDBA7D"
   // const modes = ['saturation', 'hard', 'overdrive', 'phase'];
   // --- DRAG LOGIC ---
@@ -136,7 +136,7 @@ function Distortion(props: {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <KnobParam id={props.id} name="drive" side="left" color={color}>
         <Knob max={100} min={0} step={1} value={amount} onChange={setAmount} size={100} unit="%" />

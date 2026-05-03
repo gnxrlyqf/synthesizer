@@ -37,5 +37,5 @@ export function useContextMenu() {
     });
   };
 
-  return { menu, setMenu, handleContextMenu };
+  return { menu, handleContextMenu };
 }

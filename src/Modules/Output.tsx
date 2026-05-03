@@ -15,7 +15,7 @@ function Output(props: OutputProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [master, setMaster] = useState(props.m);
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
   const color = "#63748d"
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function Output(props: OutputProps) {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <KnobParam id={props.id} name="master" side="left" color={color}>
         <Knob max={0} min={-30} step={0.1} value={master} onChange={setMaster} size={100} unit="dB" />

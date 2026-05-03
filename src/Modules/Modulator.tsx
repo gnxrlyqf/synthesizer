@@ -5,6 +5,7 @@ import { useDrag } from "../Interactions/useDrag";
 import { useContextMenu } from "../Utils/useContextMenu";
 import { Param, KnobParam } from "../Interactions/Params";
 import ModuleFrame from "./ModuleFrame";
+import type { ModuleActions } from "../Interactions/ContextMenu";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 544;
@@ -16,7 +17,10 @@ function Modulator(props: {
   m: "AM" | "FM" | "PM" | "RM",
   d: number,
   cameraX: number,
-  cameraY: number}) {
+  cameraY: number,
+  actions:ModuleActions,
+  title: string
+}) {
   
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({ x: props.x, y: props.y });
@@ -24,7 +28,7 @@ function Modulator(props: {
   const [modType, setModType] = useState<"AM" | "FM" | "PM" | "RM">(props.m);
   const color = "#456882";
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
 
   return (
     <ModuleFrame
@@ -38,7 +42,7 @@ function Modulator(props: {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <KnobParam id={props.id} name="depth" side="left" color={color}>
         <Knob max={15000} min={20} step={1} value={depth} onChange={setDepth} size={100} unit="Hz" />

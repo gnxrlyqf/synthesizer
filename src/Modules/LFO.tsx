@@ -54,7 +54,7 @@ function LFO(props: {
   const [frequency, setFrequency] = useState(props.f);
   const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>('sine');
   const [isSynced, setIsSynced] = useState(false);
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
   const color = "#8F0177";
 
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
@@ -71,7 +71,7 @@ function LFO(props: {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <div className="flex gap-2 bg-purple-900/50 p-1 rounded-lg">
         <button onClick={() => setIsSynced(false)} className={`px-3 py-1 rounded-md cursor-pointer text-xs ${!isSynced ? 'bg-[#8F0177]' : ''}`}>FREE</button>

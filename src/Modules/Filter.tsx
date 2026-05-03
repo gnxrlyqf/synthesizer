@@ -51,7 +51,7 @@ function Filter(props: {
   const [frequency, setFrequency] = useState(props.f);
   const [resonance, setResonance] = useState(props.r);
   const [filterType, setFilterType] = useState(props.t ?? 'lowpass');
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
   const color = "#F68048";
   // --- DRAG LOGIC ---
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
@@ -68,7 +68,7 @@ function Filter(props: {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <KnobParam id={props.id} name="cutoff" side="left" color={color}>
         <Knob max={15000} min={20} step={1} value={frequency} onChange={setFrequency} size={80} unit="Hz" />

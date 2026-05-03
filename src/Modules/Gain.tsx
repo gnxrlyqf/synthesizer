@@ -19,7 +19,7 @@ function Gain(props: GainProps) {
   const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [gain, setGain] = useState(props.g);
   const {mode} = useConnection();
-  const { menu, setMenu, handleContextMenu } = useContextMenu();
+  const { menu, handleContextMenu } = useContextMenu();
   const color = "#3852B4"
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function Gain(props: GainProps) {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      onDeleteMenu={() => setMenu(null)}
+      
     >
       <KnobParam id={props.id} name="gain" side="left" color={color}>
         <Knob max={10} min={-10} step={0.1} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
