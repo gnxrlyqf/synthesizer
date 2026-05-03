@@ -216,7 +216,14 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
   );
 };
 
-function Matrix(props: {cables: Cable[], modules: Module[], setModules: React.Dispatch<React.SetStateAction<Module[]>>,setCables: React.Dispatch<React.SetStateAction<Cable[]>>, view: 'modules' | 'cables'}) {
+function Matrix(props: {
+  cables: Cable[],
+  modules: Module[],
+  setModules: React.Dispatch<React.SetStateAction<Module[]>>,
+  setCables: React.Dispatch<React.SetStateAction<Cable[]>>, 
+  view: 'modules' | 'cables',
+  handleContextMenu: (e: React.MouseEvent, id: string) => void
+}) {
   
   const getModuleType = (portId: string) => {
     const [moduleId, param] = portId.split(".");
@@ -228,7 +235,7 @@ function Matrix(props: {cables: Cable[], modules: Module[], setModules: React.Di
     const from = getModuleType(item.from);
     const to = getModuleType(item.to);
     return (
-      <div className="text-white flex flex-row items-center justify-between">
+      <div key={idx} className="text-white flex flex-row items-center justify-between">
         <div className="flex flex-row gap-1">
           <span
             className="rounded-l-lg w-10 h-10 flex items-center justify-center"
@@ -255,8 +262,8 @@ function Matrix(props: {cables: Cable[], modules: Module[], setModules: React.Di
           </span>
         </div>
         <button
-        className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
-        onClick={() => props.setCables(cables => cables.filter((_, i) => i !== idx))}
+          className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
+          onClick={() => props.setCables(cables => cables.filter((_, i) => i !== idx))}
         >
           <Delete />
         </button>
@@ -264,34 +271,39 @@ function Matrix(props: {cables: Cable[], modules: Module[], setModules: React.Di
     );
   });
   
-  const moduleItems = props.modules.map((module, idx) => {
-    return (
-      <div key={module.id} className="text-white flex flex-row items-center w-full">
-        <div className="flex flex-row gap-1 flex-1">
-          <span
-            className="rounded-l-lg w-10 h-10 flex items-center justify-center"
-            style={{ background: modules[module.type].color}}>
-            {modules[module.type].icon}
-          </span>
-          <span
-            className="rounded-r-lg py-1 px-2 flex justify-center items-center"
-            style={{ background: modules[module.type].color}}>
-            {module.type}
-          </span>
-        </div>
-        <button
-        className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
-        onClick={() => props.setModules(mods => mods.filter((_, i) => i !== idx))}
-        >
-          <Delete />
-        </button>
+  const moduleItems = props.modules.map((module, idx) => (
+    <div 
+      key={module.id} 
+      className="text-white flex flex-row items-center w-full cursor-pointer hover:bg-white/5 p-1 rounded-xl group" 
+      onClick={(e) => props.handleContextMenu(e, module.id)}
+    >
+      <div className="flex flex-row gap-1 flex-1 pointer-events-none">
+        <span
+          className="rounded-l-lg w-10 h-10 flex items-center justify-center"
+          style={{ background: modules[module.type]?.color }}>
+          {modules[module.type]?.icon}
+        </span>
+        <span
+          className="rounded-r-lg py-1 px-2 flex justify-center items-center"
+          style={{ background: modules[module.type]?.color }}>
+          {(module as any).title || module.type}
+        </span>
       </div>
-    );
-  });
+      <button
+        className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
+        onClick={(e) => {
+          e.stopPropagation(); // Prevents the context menu from opening when deleting
+          props.setModules(mods => mods.filter((_, i) => i !== idx));
+        }}
+      >
+        <Delete />
+      </button>
+    </div>
+  ));
   
-	 return (
-      <AnimatedList items={props.view === 'modules' ? moduleItems : items} showGradients={false}/>
-    )
+  return (
+    <AnimatedList items={props.view === 'modules' ? moduleItems : items} showGradients={false}/>
+  )
 }
 
 export default Matrix;
