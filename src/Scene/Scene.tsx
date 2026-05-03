@@ -231,6 +231,28 @@ function Scene() {
   );
 
   useEffect(() => {
+    const handleAction = (e: any) => {
+      const { type, id, name } = e.detail;
+
+      if (type === 'DELETE') {
+        // Remove the module from state
+        setModules(prev => prev.filter(m => m.id !== id));
+        // Optional: Clear cables connected to this ID here too
+      }
+      if (type === 'RENAME') {
+        // Update the title of the module in state
+        setModules(prev => prev.map(m => m.id === id ? { ...m, title: name } : m));
+      }
+      if (type === 'RESET') {
+        // Logic to reset parameters to default for this id
+      }
+    };
+
+    window.addEventListener('MOD_ACTION', handleAction);
+    return () => window.removeEventListener('MOD_ACTION', handleAction);
+  }, [setModules]);
+
+  useEffect(() => {
     let rafId = 0;
 
     const frame = () => {

@@ -5,7 +5,6 @@ import { useDrag } from "../Interactions/useDrag";
 import { useContextMenu } from "../Utils/useContextMenu";
 import { Param, KnobParam } from "../Interactions/Params";
 import ModuleFrame from "./ModuleFrame";
-import type { ModuleActions } from "../Interactions/ContextMenu";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 544;
@@ -18,8 +17,6 @@ function Modulator(props: {
   d: number,
   cameraX: number,
   cameraY: number,
-  actions:ModuleActions,
-  title: string
 }) {
   
   const moduleRef = useRef<HTMLDivElement | null>(null);
