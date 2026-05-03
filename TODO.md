@@ -17,3 +17,4 @@ mixer o splitter which are self explanatory
 # yousef
 
 - [x] filter makhdmainch fih cables and distortion they are not consistant mra ykhdmo mra no
+LFO moodule crushed the app when i want to instantiate it

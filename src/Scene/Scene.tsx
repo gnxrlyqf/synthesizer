@@ -11,7 +11,6 @@ import { createDockItems, GhostModule, instantiateModule, moduleObjects, type Mo
 import { drawFrame } from "../Patch/Cable";
 import Matrix from "./Matrix";
 import Context from "../Audio/Context";
-import { ModuleMenu } from "../Interactions/ContextMenu";
 import { useContextMenu } from "../Utils/useContextMenu";
 
 type Cable = {
@@ -227,10 +226,10 @@ function Scene() {
   const panRef = useRef<{ startX: number; startY: number; cameraX: number; cameraY: number } | null>(null);
   const [matrixToggle, setMatrixToggle] = useState<boolean>(false);
   const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
-  const context = useMemo(() => new Context(modules, cables), [modules, cables]);
-  const [audioState, setAudioState] = useState<boolean>(false);
   const { menu, handleContextMenu } = useContextMenu();
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  const context = useMemo(() => new Context(modules, cables), [modules, cables]);
+  const [audioState, setAudioState] = useState<boolean>(false);
 
   const toggleAudioContext = async () => {
     try {
@@ -239,6 +238,7 @@ function Scene() {
       } else {
         await context.audioContext.resume();
       }
+
       setAudioState(context.audioContext.state === "running" ? true : false);
     } catch (error) {
       console.error("audio context toggle failed", error);
@@ -255,8 +255,8 @@ function Scene() {
       const { type, id, name } = e.detail;
       switch (type) {
         case 'DELETE':
-          setModules((prev) => prev.filter((m) => m.id !== id));
           setCables((prev) => prev.filter((c) => !c.from.startsWith(id) && !c.to.startsWith(id)));
+          setModules((prev) => prev.filter((m) => m.id !== id));
           break;
         case 'RENAME':
           setModules((prev) => prev.map((m) => (m.id === id ? { ...m, title: name } : m)));
@@ -432,8 +432,7 @@ function Scene() {
               className={`px-3 py-1 rounded-md cursor-pointer border transition-colors duration-150 ${
                 audioState === true
                   ? "border-emerald-500/70 text-emerald-300 hover:bg-emerald-500/15"
-                  : "border-amber-500/70 text-amber-300 hover:bg-amber-500/15"
-              }`}
+                  : "border-amber-500/70 text-amber-300 hover:bg-amber-500/15"}`}
             >
               {audioState === true ? "Running" : "Suspended"}
             </button>
@@ -464,17 +463,10 @@ function Scene() {
             setCables={setCables}
             setModules={setModules}
             view={matrixView}
+            menu={menu}
+            activeModuleId={activeModuleId}
             handleContextMenu={(e, id) => { setActiveModuleId(id); handleContextMenu(e); }}
             />}
-          {menu && activeModuleId && (
-          <ModuleMenu 
-            id={activeModuleId} 
-            x={menu.x} 
-            y={menu.y} 
-            color={(modules.find(m => m.id === activeModuleId) as any)?.color || "#C44A3A"}
-            currentName={(modules.find(m => m.id === activeModuleId) as any)?.title || (modules.find(m => m.id === activeModuleId) as any)?.type || "Module"}
-          />
-        )}
         </AnimatePresence>
       </div>
       <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-30">
