@@ -10,7 +10,6 @@ import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator 
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
 import Matrix from "./Matrix";
-import Context from "../Audio/Context";
 import { useContextMenu } from "../Utils/useContextMenu";
 
 type Cable = {
@@ -228,22 +227,6 @@ function Scene() {
   const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
   const { menu, handleContextMenu } = useContextMenu();
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
-  const context = useMemo(() => new Context(modules, cables), [modules, cables]);
-  const [audioState, setAudioState] = useState<boolean>(false);
-
-  const toggleAudioContext = async () => {
-    try {
-      if (context.audioContext.state === "running") {
-        await context.audioContext.suspend();
-      } else {
-        await context.audioContext.resume();
-      }
-
-      setAudioState(context.audioContext.state === "running" ? true : false);
-    } catch (error) {
-      console.error("audio context toggle failed", error);
-    }
-  };
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
@@ -426,16 +409,6 @@ function Scene() {
               onClick={() => setMatrixToggle(!matrixToggle)}
               className="px-3 py-1 rounded-md cursor-pointer hover:bg-white/50 hover"
             >Matrix</button>
-            <button
-              type="button"
-              onClick={toggleAudioContext}
-              className={`px-3 py-1 rounded-md cursor-pointer border transition-colors duration-150 ${
-                audioState === true
-                  ? "border-emerald-500/70 text-emerald-300 hover:bg-emerald-500/15"
-                  : "border-amber-500/70 text-amber-300 hover:bg-amber-500/15"}`}
-            >
-              {audioState === true ? "Running" : "Suspended"}
-            </button>
             {matrixToggle && (
               <div className="flex gap-2">
                 <label className="flex items-center gap-1 cursor-pointer">
