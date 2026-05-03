@@ -9,7 +9,7 @@ interface ModuleMenuProps {
 }
 
 const optionClass =
-  "w-full text-left px-4 py-3 text-sm rounded-xl flex justify-between \
+  "w-full text-left px-4 py-3 text-base rounded-xl flex justify-between \
   items-center transition-all duration-400 origin-center hover:scale-[1.03] hover:text-white";
 
 const DisconnectOption = ({ onDispatch, color }: { id: string, color: string, onDispatch: (action: string) => void }) => (
@@ -98,7 +98,7 @@ export function ModuleMenu({ id, x, y, color, currentName }: ModuleMenuProps)
     top: y,
     left: x,
     zIndex: 9999,
-    border: `1px solid ${color}55`,
+    border: `5px solid ${color}55`,
   };
 
   return (
