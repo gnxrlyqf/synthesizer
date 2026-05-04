@@ -44,12 +44,12 @@ type LfoModule = BaseModule & {
 
 type FilterModule = BaseModule & {
     type: "filter";
-    params: { f: number; r: number; t: string };
+	params: { f: number; q: number; t: string };
 }
 
 type DistortModule = BaseModule & {
     type: "distortion";
-    params: { a: number; t: "soft" | "hard" | "sine" | "downsample" };
+    params: { d: number; t: "soft" | "hard" | "sine" | "downsample" };
 }
 
 type ModulateModule = BaseModule & {

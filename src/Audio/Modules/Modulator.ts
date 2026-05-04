@@ -14,6 +14,7 @@ class Modulator extends Module {
 
     modulatorInput: Patch | null = null;
     depthInput: Patch | null = null;
+    depthModDepth: GainNode;
     mode: ModulationMode = "AM";
 
     constructor(audioContext: AudioContext) {
@@ -21,6 +22,8 @@ class Modulator extends Module {
         this.amRingNode = new GainNode(this.audioContext, { gain: 0 });
         this.pmNode = new DelayNode(this.audioContext, { maxDelayTime: 1, delayTime: 0.001 });
         this.depthNode = new GainNode(this.audioContext, { gain: 1 });
+        this.depthModDepth = new GainNode(this.audioContext, { gain: 0.5 });
+        this.depthModDepth.connect(this.depthNode.gain);
         this.signal = new GainNode(this.audioContext, { gain: 1 });
         this.amRingNode.connect(this.signal);
     }
@@ -90,9 +93,9 @@ class Modulator extends Module {
     }
 
     setDepth(modulator: Patch | null) {
-        this.depthInput?.getSignal()?.disconnect(this.depthNode.gain);
+        this.depthInput?.getSignal()?.disconnect(this.depthModDepth);
         this.depthInput = modulator;
-        modulator?.getSignal()?.connect(this.depthNode.gain);
+        modulator?.getSignal()?.connect(this.depthModDepth);
     }
 
     setMod(key: string, patch: Patch | null): void {

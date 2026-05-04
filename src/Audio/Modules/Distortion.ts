@@ -6,6 +6,7 @@ export type DistortionType = "sine" | "soft" | "hard" | "downsample";
 class Distortion extends Module {
     signal: WaveShaperNode;
     amount: AudioParam;
+    amountModDepth: GainNode;
     amountInput: Patch | null = null;
     type: DistortionType = "soft";
 
@@ -14,6 +15,8 @@ class Distortion extends Module {
         // Using a dummy gain node to hold the 'amount' value for the curve math
         const amountControl = new GainNode(this.audioContext, { gain: 50 });
         this.amount = amountControl.gain;
+        this.amountModDepth = new GainNode(this.audioContext, { gain: 80 });
+        this.amountModDepth.connect(this.amount);
         this.signal = new WaveShaperNode(this.audioContext);
         this.setCurve();
     }
@@ -23,16 +26,16 @@ class Distortion extends Module {
         this.setCurve();
     }
 
-    setAmount(value: number) {
+    setDrive(value: number) {
         // Clamp 0-100
         this.amount.value = Math.max(0, Math.min(100, value));
         this.setCurve();
     }
 
-    setAmountModulator(modulator: Patch | null) {
-        this.amountInput?.getSignal()?.disconnect(this.amount);
+    setDriveModulator(modulator: Patch | null) {
+        this.amountInput?.getSignal()?.disconnect(this.amountModDepth);
         this.amountInput = modulator;
-        modulator?.getSignal()?.connect(this.amount);
+        modulator?.getSignal()?.connect(this.amountModDepth);
     }
 
     private setCurve() {
@@ -88,8 +91,8 @@ class Distortion extends Module {
 
     setMod(key: string, patch: Patch | null): void {
         switch (key) {
-            case "amount":
-                this.setAmountModulator(patch);
+            case "drive":
+                this.setDriveModulator(patch);
                 break;
             case "input":
                 this.setInput(patch);
@@ -99,8 +102,8 @@ class Distortion extends Module {
 
     setParam(key: string, value: number | string): void {
         switch (key) {
-            case "amount":
-                this.setAmount(value as number);
+            case "drive":
+                this.setDrive(value as number);
                 break;
             case "type":
                 this.setDistortionType(value as DistortionType);

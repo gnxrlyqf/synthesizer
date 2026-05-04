@@ -31,7 +31,7 @@ class LFOscillator extends Module {
 			frequency: this.mode ? this.mode.getFrequency() : this.tempo,
 			type: "sine"
 		});
-		this.freqModDepth = new GainNode(this.audioContext, { gain: 2 });
+		this.freqModDepth = new GainNode(this.audioContext, { gain: 80 });
 		this.freqModDepth.connect(this.signal.frequency);
 		this.signal.start();
 	}

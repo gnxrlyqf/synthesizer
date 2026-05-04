@@ -125,8 +125,8 @@ function parseScene(): Module[] {
           x: m.x,
           y: m.y,
           params: {
-            f: m.params.frequency ?? 1000,
-            r: m.params.resonance ?? 1,
+            f: m.params.cutoff ?? 1000,
+            q: m.params.q ?? 1,
             t: m.params.type ?? "lowpass",
           },
         };
@@ -137,7 +137,7 @@ function parseScene(): Module[] {
           x: m.x,
           y: m.y,
           params: {
-            a: m.params.a ?? 50,
+            d: m.params.d ?? 50,
             t: m.params.t ?? "saturation",
             w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "saw",
           },
@@ -202,11 +202,11 @@ function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: num
             );
           case "filter":
             return (
-              <Filter key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} r={m.params.r} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
+              <Filter key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} q={m.params.q} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           case "distortion":
             return (
-              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} a={m.params.a} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
+              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} d={m.params.d} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
             );
           case "modulator":
             return (

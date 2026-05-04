@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import {RadioSelect, RadioSelectOption} from "../Interactions/RadioSelect";
 import { useDrag } from "../Interactions/useDrag";
 import { useContextMenu } from "../Utils/useContextMenu";
 import { KnobParam, Param } from "../Interactions/Params";
 import ModuleFrame from "./ModuleFrame";
+import { audioContext } from "../Scene/Scene";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 480 ;
@@ -107,7 +108,7 @@ function Distortion(props: {
   id: string,
   x: number,
   y: number,
-  a: number,
+  d: number,
   t: "soft" | "hard" | "sine" | "downsample",
   cameraX: number,
   cameraY: number
@@ -115,7 +116,7 @@ function Distortion(props: {
   // --- STATE ---
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({ x: props.x, y: props.y });
-  const [amount, setAmount] = useState(props.a);
+  const [drive, setDrive] = useState(props.d);
   // const [type, setType] = useState(props.t ?? "saturation");
   const [type, setType] = useState<"soft" | "hard" | "sine" | "downsample">(props.t);
   const { menu, handleContextMenu } = useContextMenu();
@@ -123,6 +124,14 @@ function Distortion(props: {
   // const modes = ['saturation', 'hard', 'overdrive', 'phase'];
   // --- DRAG LOGIC ---
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "drive", drive);
+  }, [drive])
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "type", type);
+  }, [type])
 
   return (
     <ModuleFrame
@@ -139,7 +148,7 @@ function Distortion(props: {
       
     >
       <KnobParam id={props.id} name="drive" side="left" color={color}>
-        <Knob max={100} min={0} step={1} value={amount} onChange={setAmount} size={100} unit="%" />
+        <Knob max={100} min={0} step={1} value={drive} onChange={setDrive} size={100} unit="%" />
       </KnobParam>
       <div className="w-full flex flex-col gap-4 mt-2">
         <RadioSelect name={`${props.id}-radio`} value={type} onChange={setType}>

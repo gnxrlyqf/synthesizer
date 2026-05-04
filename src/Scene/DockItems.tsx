@@ -169,9 +169,9 @@ function instantiateModule(type: ModuleType, x: number, y: number): Module {
     case "lfo":
       return { id, type: "lfo", x, y, params: { f: 1, w: "sine", s: false } };
     case "filter":
-      return { id, type: "filter", x, y, params: { f: 1000, r: 1, t: "lowpass" } };
+      return { id, type: "filter", x, y, params: { f: 1000, q: 1, t: "lowpass" } };
     case "distortion":
-      return { id, type: "distortion", x, y, params: { a: 50, t: "soft" } };
+      return { id, type: "distortion", x, y, params: { d: 50, t: "soft" } };
     case "modulator":
       return { id, type: "modulator", x, y, params: { m: "AM", d: 50 } };
     default:

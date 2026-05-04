@@ -1,8 +1,10 @@
 import { Module } from "../Abstractions";
 import Patch from "./Patch";
 
-class VCF extends Module {
+class Filter extends Module {
     signal: BiquadFilterNode;
+    freqModDepth: GainNode;
+    qModDepth: GainNode;
     
     freqModulator: Patch | null = null;
     qModulator: Patch | null = null;
@@ -14,6 +16,10 @@ class VCF extends Module {
             frequency: 1000,
             Q: 1
         });
+        this.freqModDepth = new GainNode(this.audioContext, { gain: 80 });
+        this.freqModDepth.connect(this.signal.frequency);
+        this.qModDepth = new GainNode(this.audioContext, { gain: 80 });
+        this.qModDepth.connect(this.signal.Q);
     }
 
     setType(type: BiquadFilterType) {
@@ -28,14 +34,12 @@ class VCF extends Module {
         this.signal.Q.setValueAtTime(value, this.audioContext.currentTime);
     }
 
-    // Allows an LFO or Envelope to modulate the cutoff frequency
     setFreqModulator(modulator: Patch | null) {
-        this.freqModulator?.getSignal()?.disconnect(this.signal.frequency);
+        this.freqModulator?.getSignal()?.disconnect(this.freqModDepth);
         this.freqModulator = modulator;
-        this.freqModulator?.getSignal()?.connect(this.signal.frequency);
+        this.freqModulator?.getSignal()?.connect(this.freqModDepth);
     }
 
-    // Standard input routing
     setInput(input: Patch | null) {
         this.input?.getSignal()?.disconnect(this.signal);
         this.input = input;
@@ -43,14 +47,14 @@ class VCF extends Module {
     }
 
     setQModulator(modulator: Patch | null) {
-        this.qModulator?.getSignal()?.disconnect(this.signal.Q);
+        this.qModulator?.getSignal()?.disconnect(this.qModDepth);
         this.qModulator = modulator;
-        this.qModulator?.getSignal()?.connect(this.signal.Q);
+        this.qModulator?.getSignal()?.connect(this.qModDepth);
     }
 
     setMod(key: string, patch: Patch | null): void {
         switch (key) {
-            case "frequency":
+            case "cutoff":
                 this.setFreqModulator(patch);
                 break;
             case "freqModulator":
@@ -87,4 +91,4 @@ class VCF extends Module {
     }
 }
 
-export default VCF;
+export default Filter;

@@ -1,10 +1,11 @@
-import {useRef, useState } from "react";
+import {useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import {RadioSelect, RadioSelectOption} from "../Interactions/RadioSelect";
 import { useDrag } from "../Interactions/useDrag";
 import { useContextMenu } from "../Utils/useContextMenu";
 import { Param, KnobParam } from "../Interactions/Params";
 import ModuleFrame from "./ModuleFrame";
+import { audioContext } from "../Scene/Scene";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 608;
@@ -42,19 +43,31 @@ function Notch() {
 }
 function Filter(props: {
   id: string, x: number, y: number,
-  f: number, r: number, t: string,
+  f: number, q: number, t: string,
   cameraX: number, cameraY: number
 }) {
   // --- STATE & REFS ---
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({ x: props.x, y: props.y });
   const [frequency, setFrequency] = useState(props.f);
-  const [resonance, setResonance] = useState(props.r);
+  const [q, setQ] = useState(props.q);
   const [filterType, setFilterType] = useState(props.t ?? 'lowpass');
   const { menu, handleContextMenu } = useContextMenu();
   const color = "#F68048";
   // --- DRAG LOGIC ---
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "frequency", frequency);
+  }, [frequency])
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "Q", q);
+  }, [q])
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "type", filterType);
+  }, [filterType])
 
   return (
     <ModuleFrame
@@ -74,8 +87,8 @@ function Filter(props: {
         <Knob max={15000} min={20} step={1} value={frequency} onChange={setFrequency} size={80} unit="Hz" />
       </KnobParam>
 
-      <KnobParam id={props.id} name="Q" side="left" color={color}>
-        <Knob max={20} min={0.1} step={0.1} value={resonance} onChange={setResonance} size={80} unit="Q" />
+      <KnobParam id={props.id} name="q" side="left" color={color}>
+        <Knob max={20} min={0.1} step={0.1} value={q} onChange={setQ} size={80} unit="Q" />
       </KnobParam>
 
       <div className="w-full flex flex-col gap-4 mt-2">

@@ -3,7 +3,7 @@ import Gain from "./Modules/Gain";
 import Envelope from "./Modules/Envelope";
 import Output from "./Modules/Output";
 import LFOscillator from "./Modules/LFO";
-import VCF from "./Modules/VCF";
+import VCF from "./Modules/Filter";
 import Distortion from "./Modules/Distortion";
 import Modulator from "./Modules/Modulator";
 import { type Module } from "../Scene/Modules";
@@ -67,13 +67,13 @@ class Context {
 			case "filter": {
 				const vcf = new VCF(this.audioContext);
 				vcf.setFrequency(module.params.f);
-				vcf.setQ(module.params.r);
+				vcf.setQ(module.params.q);
 				vcf.setType(module.params.t as any);
 				return vcf;
 			}
 			case "distortion": {
 				const dist = new Distortion(this.audioContext);
-				dist.setAmount(module.params.a);
+				dist.setDrive(module.params.d);
 				dist.setDistortionType(module.params.t);
 				return dist;
 			}
