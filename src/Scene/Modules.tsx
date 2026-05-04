@@ -9,7 +9,7 @@ type OscModule = BaseModule & {
 	type: "oscillator";
 	params: {
 		f: number;
-		w: "sine" | "square" | "triangle" | "saw";
+		w: "sine" | "square" | "triangle" | "sawtooth";
 	};
 }
 
@@ -39,7 +39,7 @@ type OutModule = BaseModule & {
 
 type LfoModule = BaseModule & {
     type: "lfo";
-    params: { f: number; w: "sine" | "square" | "triangle" | "saw"; s: boolean };
+    params: { f: number; w: "sine" | "square" | "triangle" | "sawtooth"; s: boolean };
 }
 
 type FilterModule = BaseModule & {

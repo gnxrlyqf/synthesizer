@@ -17,7 +17,9 @@ class Sync {
 
 
 class LFOscillator extends Module {
+	freqModulator: Patch | null = null;
 	signal: OscillatorNode;
+	freqModDepth: GainNode;
 	mode: Sync | null;
 	protected tempo: number;
 
@@ -29,18 +31,19 @@ class LFOscillator extends Module {
 			frequency: this.mode ? this.mode.getFrequency() : this.tempo,
 			type: "sine"
 		});
+		this.freqModDepth = new GainNode(this.audioContext, { gain: 2 });
+		this.freqModDepth.connect(this.signal.frequency);
+		this.signal.start();
 	}
 
-	setSync(div: 0 | 1 | 2 | 4 | 8 | 16 | 32): void {
-		let frequency = this.tempo;
-
-		if (div === 0) {
+	setSync(div: 0 | false | 1 | 2 | 4 | 8 | 16 | 32): void {
+		if (!div) {
 			this.mode = null;
-		} else {
-			this.mode = new Sync(div as any, this.tempo);
-			frequency = this.mode.getFrequency();
+			return;
 		}
-		this.setFrequency(frequency);
+
+		this.mode = new Sync(div as any, this.tempo);
+		this.setFrequency(this.mode.getFrequency());
 	}
 
 	setFrequency(newFrequency: number): void {
@@ -52,24 +55,31 @@ class LFOscillator extends Module {
 	}
 
 	setFreqModulator(modulator: Patch | null) {
-		modulator?.getSignal()?.connect(this.signal.frequency);
+		this.freqModulator?.getSignal()?.disconnect(this.freqModDepth);
+		this.freqModulator = modulator;
+		this.freqModulator?.getSignal()?.connect(this.freqModDepth);
 	}
 
-	setParam(key: string, patch: Patch | null): void {
+	setMod(key: string, patch: Patch | null): void {
 		switch (key) {
 			case "frequency":
 				this.setFreqModulator(patch);
 				break;
-			case "input":
-				this.setInput(patch);
-				break;
 		}
 	}
 
-	setInput(input: Patch | null) {
-		this.input?.getSignal()?.disconnect(this.signal);
-		this.input = input;
-		this.input?.getSignal()?.connect(this.signal);
+	setParam(key: string, value: number | string): void {
+		switch (key) {
+			case "frequency":
+				this.setFrequency(value as number);
+				break;
+			case "wave":
+				this.setShape(value as OscillatorType);
+				break;
+			case "sync":
+				this.setSync(value as any);
+				break;
+		}
 	}
 
 	getSignal(): OscillatorNode {

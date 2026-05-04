@@ -48,7 +48,7 @@ class VCF extends Module {
         this.qModulator?.getSignal()?.connect(this.signal.Q);
     }
 
-    setParam(key: string, patch: Patch | null): void {
+    setMod(key: string, patch: Patch | null): void {
         switch (key) {
             case "frequency":
                 this.setFreqModulator(patch);
@@ -64,6 +64,20 @@ class VCF extends Module {
                 break;
             case "input":
                 this.setInput(patch);
+                break;
+        }
+    }
+
+    setParam(key: string, value: number | string): void {
+        switch (key) {
+            case "frequency":
+                this.setFrequency(value as number);
+                break;
+            case "Q":
+                this.setQ(value as number);
+                break;
+            case "type":
+                this.setType(value as BiquadFilterType);
                 break;
         }
     }

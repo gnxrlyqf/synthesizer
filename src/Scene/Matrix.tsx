@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, type ReactNode, type MouseEventHandler, type UIEvent, type JSX } from 'react';
 import { motion, useInView } from 'motion/react';
-import type {Cable} from './Scene';
+import {audioContext, type Cable} from './Scene';
 import type {Module} from './Modules'
 import { OscIcon, GainIcon, EnvelopeIcon, OutputIcon, LfoIcon, FilterIcon, DistIcon, ModIcon } from './DockItems';
 import { ModuleMenu } from '../Interactions/ContextMenu';
@@ -266,7 +266,10 @@ function Matrix(props: {
         </div>
         <button
           className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
-          onClick={() => props.setCables(cables => cables.filter((_, i) => i !== idx))}
+          onClick={() => {
+            props.setCables(cables => cables.filter((_, i) => i !== idx));
+            audioContext.delCable(props.cables[idx]);
+          }}
         >
           <Delete />
         </button>
@@ -302,7 +305,7 @@ function Matrix(props: {
         <Delete />
       </button>
       {props.menu && props.activeModuleId === module.id && (
-        <div className="absolute z-[9999]">
+        <div className="absolute z-9999">
           <ModuleMenu 
             id={module.id} 
             x={props.menu.x} 

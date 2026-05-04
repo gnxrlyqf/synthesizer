@@ -95,7 +95,7 @@ class Modulator extends Module {
         modulator?.getSignal()?.connect(this.depthNode.gain);
     }
 
-    setParam(key: string, patch: Patch | null): void {
+    setMod(key: string, patch: Patch | null): void {
         switch (key) {
             case "input":
                 this.setInput(patch);
@@ -105,6 +105,17 @@ class Modulator extends Module {
                 break;
             case "depth":
                 this.setDepth(patch);
+                break;
+        }
+    }
+
+    setParam(key: string, value: number | string): void {
+        switch (key) {
+            case "mode":
+                this.setMode(value as ModulationMode);
+                break;
+            case "depth":
+                this.depthNode.gain.value = value as number;
                 break;
         }
     }

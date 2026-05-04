@@ -86,13 +86,24 @@ class Distortion extends Module {
         this.input?.getSignal()?.connect(this.signal);
     }
 
-    setParam(key: string, patch: Patch | null): void {
+    setMod(key: string, patch: Patch | null): void {
         switch (key) {
             case "amount":
                 this.setAmountModulator(patch);
                 break;
             case "input":
                 this.setInput(patch);
+                break;
+        }
+    }
+
+    setParam(key: string, value: number | string): void {
+        switch (key) {
+            case "amount":
+                this.setAmount(value as number);
+                break;
+            case "type":
+                this.setDistortionType(value as DistortionType);
                 break;
         }
     }

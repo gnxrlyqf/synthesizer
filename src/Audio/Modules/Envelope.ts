@@ -43,13 +43,30 @@ class Envelope extends Module {
 		modulator?.getSignal()?.connect(this.signal.offset);
 	}
 
-	setParam(key: string, patch: Patch | null): void {
+	setMod(key: string, patch: Patch | null): void {
 		switch (key) {
 			case "offset":
 				this.setOffsetModulator(patch);
 				break;
 			case "input":
 				this.setInput(patch);
+				break;
+		}
+	}
+
+	setParam(key: string, value: number | string): void {
+		switch (key) {
+			case "attack":
+				this.attack = value as number;
+				break;
+			case "decay":
+				this.decay = value as number;
+				break;
+			case "sustain":
+				this.sustain = value as number;
+				break;
+			case "release":
+				this.release = value as number;
 				break;
 		}
 	}

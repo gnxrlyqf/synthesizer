@@ -5,6 +5,7 @@ import {useDrag} from "../Interactions/useDrag";
 import { KnobParam, Param } from "../Interactions/Params";
 import { useContextMenu } from "../Utils/useContextMenu";
 import ModuleFrame from "./ModuleFrame";
+import { audioContext } from "../Scene/Scene";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 352;
@@ -26,6 +27,10 @@ function Output(props: OutputProps) {
   }, [position]);
 
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "master", master);
+  }, [master]);
 
   return (
     <ModuleFrame

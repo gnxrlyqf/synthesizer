@@ -7,6 +7,7 @@ import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
 import { useContextMenu } from "../Utils/useContextMenu";
 import ModuleFrame from "./ModuleFrame";
+import { audioContext } from "../Scene/Scene";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 416;
@@ -47,14 +48,14 @@ function SawIcon() {
 
 interface OscillatorProps extends ModuleProps {
   f: number;
-  w: 'sine' | 'square' | 'triangle' | 'saw';
+  w: 'sine' | 'square' | 'triangle' | 'sawtooth';
 }
 
 function Oscillator(props: OscillatorProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
   const [frequency, setFrequency] = useState(props.f);
-  const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>(props.w);
+  const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'sawtooth'>(props.w);
   const {mode} = useConnection();
   const { menu, handleContextMenu } = useContextMenu();
   const color = "#C44A3A"
@@ -67,6 +68,14 @@ function Oscillator(props: OscillatorProps) {
   }, [position]);
 
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "frequency", frequency);
+  }, [frequency])
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "wave", waveshape);
+  }, [waveshape])
 
 	return (
 		<ModuleFrame
@@ -84,7 +93,7 @@ function Oscillator(props: OscillatorProps) {
     >
       <div className="w-full flex items-center">
         <KnobParam id={props.id} name="frequency" side="left" color={color}>
-          <Knob max={5000} min={20} step={1} value={frequency} onChange={setFrequency} size={100} unit="Hz" disabled={mode != "idle"} />
+          <Knob max={5000} min={20} step={1} value={frequency} size={100} unit="Hz" disabled={mode != "idle"} onChange={setFrequency}/>
         </KnobParam>
       </div>
       <div className="my-2">

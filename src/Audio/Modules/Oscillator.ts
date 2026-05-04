@@ -2,7 +2,9 @@ import { Module } from "../Abstractions";
 import Patch from "./Patch";
 
 class Oscillator extends Module {
+	freqModulator: Patch | null = null;
 	signal: OscillatorNode;
+	freqModDepth: GainNode;
 
     constructor(audioContext: AudioContext) {
         super(audioContext);
@@ -10,7 +12,9 @@ class Oscillator extends Module {
             frequency: 440,
             type: "sine"
         });
-		this.oscillate();
+		this.freqModDepth = new GainNode(this.audioContext, { gain: 80 });
+		this.freqModDepth.connect(this.signal.frequency);
+		this.signal.start();
     }
 
 	setFrequency(newFrequency: number): void {
@@ -21,30 +25,29 @@ class Oscillator extends Module {
 		this.signal.type = newShape;
 	}
 
-	oscillate() {
-		this.signal.start();
-		// this.signal.stop(this.audioContext.currentTime + 2);
-	}
-
 	setFreqModulator(modulator: Patch | null) {
-		modulator?.getSignal()?.connect(this.signal.frequency);
+		this.freqModulator?.getSignal()?.disconnect(this.freqModDepth);
+		this.freqModulator = modulator;
+		this.freqModulator?.getSignal()?.connect(this.freqModDepth);
 	}
 
-	setParam(key: string, patch: Patch | null): void {
+	setMod(key: string, patch: Patch | null): void {
 		switch (key) {
 			case "frequency":
 				this.setFreqModulator(patch);
 				break;
-			case "input":
-				this.setInput(patch);
-				break;
 		}
 	}
 
-	setInput(input: Patch | null) {
-		this.input?.getSignal()?.disconnect(this.signal);
-		this.input = input;
-		this.input?.getSignal()?.connect(this.signal);
+	setParam(key: string, value: number | string): void {
+		switch (key) {
+			case "frequency":
+				this.setFrequency(value as number);
+				break;
+			case "wave":
+				this.setShape(value as OscillatorType);
+				break;
+		}
 	}
 	
 	getSignal(): OscillatorNode {

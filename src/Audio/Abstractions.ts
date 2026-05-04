@@ -11,7 +11,9 @@ abstract class Module {
 
 	abstract getSignal(): AudioNode;
 
-	abstract setParam(key: string, patch: Patch | null): void;
+	abstract setMod(key: string, patch: Patch | null): void;
+
+	abstract setParam(key: string, value: number | string): void;
 }
 
 export { Module };

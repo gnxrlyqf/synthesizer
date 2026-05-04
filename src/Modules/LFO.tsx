@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import {RadioSelect, RadioSelectOption} from "../Interactions/RadioSelect";
 import { useDrag } from "../Interactions/useDrag";
 import { useContextMenu } from "../Utils/useContextMenu";
 import { KnobParam, Param } from "../Interactions/Params";
 import ModuleFrame from "./ModuleFrame";
+import { audioContext } from "../Scene/Scene";
 
 function SineIcon() {
     return (
@@ -44,20 +45,26 @@ const MODULE_HEIGHT = 448;
 
 function LFO(props: {
   id: string, x: number, y: number,
-  f: number, w: "sine" | "square" | "triangle" | "saw", s: boolean,
+  f: number, w: "sine" | "square" | "triangle" | "sawtooth", s: boolean,
   cameraX: number, cameraY: number
 }) {
-
-
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState({x: props.x, y: props.y});
   const [frequency, setFrequency] = useState(props.f);
-  const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'saw'>('sine');
-  const [isSynced, setIsSynced] = useState(false);
+  const [waveshape, setWaveshape] = useState<'sine' | 'square' | 'triangle' | 'sawtooth'>(props.w);
+  const [isSynced, setIsSynced] = useState(props.s);
   const { menu, handleContextMenu } = useContextMenu();
   const color = "#8F0177";
 
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "frequency", frequency);
+  }, [frequency])
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "wave", waveshape);
+  }, [waveshape])
 
   return (
     <ModuleFrame
@@ -79,7 +86,7 @@ function LFO(props: {
       </div>
       <div className="w-full flex items-center">
         <KnobParam id={props.id} name={isSynced ? "sync" : "freq" } side="left" color={color}>
-          <Knob max={isSynced ? 32 : 20} min={isSynced ? 1 : 0.1} step={0.1} value={frequency} onChange={setFrequency} size={100} unit={isSynced ? "Div" : "Hz"} />
+          <Knob max={isSynced ? 32 : 20} min={1} step={1} value={frequency} onChange={setFrequency} size={100} unit={isSynced ? ": 1" : "Hz"} />
         </KnobParam>
         <span className="flex-1" />
       </div>
@@ -87,7 +94,7 @@ function LFO(props: {
         <RadioSelectOption value="sine"><SineIcon /></RadioSelectOption>
         <RadioSelectOption value="triangle"><TriangleIcon /></RadioSelectOption>
         <RadioSelectOption value="square"><SquareIcon/></RadioSelectOption>
-        <RadioSelectOption value="saw"><SawIcon /></RadioSelectOption>
+        <RadioSelectOption value="sawtooth"><SawIcon /></RadioSelectOption>
       </RadioSelect>
       <Param name="output" id={props.id} polarity="source" color={color}/>
     </ModuleFrame>

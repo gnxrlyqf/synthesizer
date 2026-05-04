@@ -80,7 +80,7 @@ function parseScene(): Module[] {
           y: m.y,
           params: {
             f: m.params.frequency ?? 440,
-            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "saw",
+            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "sawtooth",
           },
         };
       case "gain":
@@ -114,7 +114,7 @@ function parseScene(): Module[] {
           y: m.y,
           params: {
             f: m.params.frequency ?? 1,
-            w: (m.params.wave ?? "sine") as "sine" | "square" | "triangle" | "saw",
+            w: (m.params.wave ?? "sine") as "sine" | "square" | "triangle" | "sawtooth",
             s: m.params.sync ?? false,
           },
         };
@@ -151,7 +151,7 @@ function parseScene(): Module[] {
           params: {
             m: (m.params.m ?? "FM") as "AM" | "FM" | "PM" | "RM",
             d: m.params.d ?? 50,
-            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "saw",
+            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "sawtooth",
           },
         };
       case "output":
@@ -339,7 +339,9 @@ function Scene() {
     if (e.button === 0 && ghost) {
       e.preventDefault();
       if (!canPlaceGhost) return;
-      setModules((prev) => [...prev, instantiateModule(ghost.type, ghost.x, ghost.y)]);
+      const module = instantiateModule(ghost.type, ghost.x, ghost.y);
+      audioContext.addModule(module);
+      setModules((prev) => [...prev, module]);
       setGhost(null);
       return;
     }
@@ -506,4 +508,5 @@ function Scene() {
 }
 
 export type {Cable};
+export {audioContext};
 export default Scene;

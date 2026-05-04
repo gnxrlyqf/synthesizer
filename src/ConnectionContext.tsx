@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type { Cable } from "./Scene/Scene";
+import { audioContext } from "./Scene/Scene";
 
 export type ConnectionMode = "idle" | "selecting-source" | "selecting-target";
 
@@ -59,6 +60,8 @@ export const ConnectionProvider = (props: { children: React.ReactNode; setCables
 
         if (prev.find(obj => obj.from === cable.from && obj.to === cable.to))
           return prev;
+
+        audioContext.addCable(cable);
         return [...prev, {id: uuidv4(), from: source, to: target}]
       });
       reset();

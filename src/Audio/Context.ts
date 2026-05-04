@@ -32,21 +32,12 @@ class Context {
 		})
 	}
 
-	private convertWaveform(wave: "sine" | "square" | "triangle" | "saw"): OscillatorType {
-		switch (wave) {
-			case "saw":
-				return "sawtooth";
-			default:
-				return wave;
-		}
-	}
-
 	parseModule(module: Module): AudioModule {
 		switch (module.type) {
 			case "oscillator": {
 				const osc = new Oscillator(this.audioContext);
 				osc.setFrequency(module.params.f);
-				osc.setShape(this.convertWaveform(module.params.w));
+				osc.setShape(module.params.w);
 				return osc;
 			}
 			case "gain": {
@@ -69,7 +60,7 @@ class Context {
 			case "lfo": {
 				const lfo = new LFOscillator(this.audioContext, this.tempo);
 				lfo.setFrequency(module.params.f);
-				lfo.setShape(this.convertWaveform(module.params.w));
+				lfo.setShape(module.params.w);
 				lfo.setSync(module.params.s as any);
 				return lfo;
 			}
@@ -110,7 +101,7 @@ class Context {
 		void(fromParam);
 		const patch = new Patch(this.modules.get(fromId));
 		this.cables.set(id, patch);
-		this.modules.get(toId)?.setParam(toParam, patch);
+		this.modules.get(toId)?.setMod(toParam, patch);
 	}
 
 	delCable(cable: Cable) {
@@ -118,9 +109,13 @@ class Context {
 		const [toId, toParam] = cable.to.split('.');
 
 		this.cables.delete(id);
-		this.modules.get(toId)?.setParam(toParam, null);
+		this.modules.get(toId)?.setMod(toParam, null);
 	}
 	
+	setParam(id: string, param: string, value: any) {
+		this.modules.get(id)?.setParam(param, value);
+	}
+
 	setTempo(newTempo: number): void {
 		this.tempo = newTempo
 	}

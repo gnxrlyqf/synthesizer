@@ -11,7 +11,7 @@ class Gain extends Module {
 	}
 
 	setGain(value: number) {
-		this.signal.gain.value = value;
+		this.signal.gain.setValueAtTime(10 ** (value / 20), this.audioContext.currentTime);
 	}
 
 
@@ -27,7 +27,7 @@ class Gain extends Module {
         this.input?.getSignal()?.connect(this.signal);
     }
 
-	setParam(key: string, patch: Patch | null): void {
+	setMod(key: string, patch: Patch | null): void {
 		switch (key) {
 			case "gain":
 				this.setModulator(patch);
@@ -37,6 +37,14 @@ class Gain extends Module {
 				break;
 			case "input":
 				this.setInput(patch);
+				break;
+		}
+	}
+
+	setParam(key: string, value: number | string): void {
+		switch (key) {
+			case "gain":
+				this.setGain(value as number);
 				break;
 		}
 	}

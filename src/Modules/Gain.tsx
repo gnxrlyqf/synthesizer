@@ -6,6 +6,7 @@ import { KnobParam, Param } from "../Interactions/Params";
 import type { ModuleProps } from "./Modules";
 import { useContextMenu } from "../Utils/useContextMenu";
 import ModuleFrame from "./ModuleFrame";
+import { audioContext } from "../Scene/Scene";
 
 const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 416;
@@ -21,6 +22,10 @@ function Gain(props: GainProps) {
   const {mode} = useConnection();
   const { menu, handleContextMenu } = useContextMenu();
   const color = "#3852B4"
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "gain", gain);
+  }, [gain]);
 
   useEffect(() => {
     if (!moduleRef.current || position)
@@ -47,7 +52,7 @@ function Gain(props: GainProps) {
       
     >
       <KnobParam id={props.id} name="gain" side="left" color={color}>
-        <Knob max={10} min={-10} step={0.1} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
+        <Knob max={30} min={-30} step={0.25} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
       </KnobParam>
       <div className="w-full flex flex-col gap-4 mt-2">
         <Param id={props.id} name="input" polarity="target" color={color}/>
