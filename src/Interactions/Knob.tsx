@@ -130,7 +130,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   const [isEditing, setIsEditing] = useState(false)
   const [inputValueState, setInputValueState] = useState(String(inputValue))
 
-  const displayValue = Math.round(value * 100) / 100
+  const displayValue = Math.round(value * 10) / 10
   const position = (value - min) / (max - min)
 
   useEffect(() => { // to chnage the actual value of the knob
@@ -156,13 +156,15 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
 
       e.preventDefault()
 
-      setValue((prev) =>
-        clampValue(
+      setValue((prev) => {
+        const newValue = clampValue(
           prev + -e.movementY * ((max - min) / DRAGGING_DENOMINATOR)
         )
-      )
+        handleChange(newValue)
+        return newValue
+      })
     },
-    [max, min, disabled, clampValue]
+    [max, min, disabled, clampValue, handleChange]
   )
 
   const handleMouseUp = useCallback(() => {
@@ -206,11 +208,13 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
         y: e.touches[0].screenY,
       }
 
-      setValue((prev) =>
-        clampValue(prev + delta * ((max - min) / DRAGGING_DENOMINATOR))
-      )
+      setValue((prev) => {
+        const newValue = clampValue(prev + delta * ((max - min) / DRAGGING_DENOMINATOR))
+        handleChange(newValue)
+        return newValue
+      })
     },
-    [max, min, disabled, clampValue]
+    [max, min, disabled, clampValue, handleChange]
   )
 
   const handleTouchEnd = useCallback(() => {
@@ -242,13 +246,15 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
     (e) => {
       if (disabled || isEditing) return
 
-      setValue(
+      const newValue = clampValue(
         e.deltaY < 0
-          ? clampValue(value - step)
-          : clampValue(value + step)
+          ? value - step
+          : value + step
       )
+      setValue(newValue)
+      handleChange(newValue)
     },
-    [step, value, disabled, isEditing, clampValue]
+    [step, value, disabled, isEditing, clampValue, handleChange]
   )
 
   const commitInputValue = useCallback(() => {
@@ -265,11 +271,8 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
     setValue(clamped)
     setInputValueState(String(clamped))
     setIsEditing(false)
-  }, [inputValueState, clampValue, value])
-
-  useEffect(() => {
-    handleChange(value)
-  }, [handleChange, value])
+    handleChange(clamped)
+  }, [inputValueState, clampValue, value, handleChange])
 
   return (
     <KnobContainer>

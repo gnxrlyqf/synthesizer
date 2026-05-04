@@ -1,4 +1,44 @@
 {
-  "modules": [],
-  "cables": []
+  "modules": [
+    {
+      "id": "e45b1dda-eeed-4ae5-ab96-6dc903d4cfc9",
+      "type": "oscillator",
+      "x": 368,
+      "y": 144,
+      "params": {
+        "f": 440,
+        "w": "saw"
+      }
+    },
+    {
+      "id": "34ee9db6-acdb-43af-888b-02f15477a2c9",
+      "type": "gain",
+      "x": 864,
+      "y": 208,
+      "params": {
+        "g": 0.1
+      }
+    },
+    {
+      "id": "dccb51a3-21fd-4f6a-bc43-ce6e6f5b71ab",
+      "type": "output",
+      "x": 1392,
+      "y": 208,
+      "params": {
+        "m": -10
+      }
+    }
+  ],
+  "cables": [
+    {
+      "id": "91b6d8db-51a0-4127-82f9-eb051703936e",
+      "from": "e45b1dda-eeed-4ae5-ab96-6dc903d4cfc9.output",
+      "to": "34ee9db6-acdb-43af-888b-02f15477a2c9.input"
+    },
+    {
+      "id": "f75d09da-1d33-4a6b-bb5e-10aaed96696a",
+      "from": "34ee9db6-acdb-43af-888b-02f15477a2c9.output",
+      "to": "dccb51a3-21fd-4f6a-bc43-ce6e6f5b71ab.input"
+    }
+  ]
 }

@@ -20,7 +20,10 @@ class Context {
 	constructor(modules: Module[], cables: Cable[]) {
 		this.audioContext = new AudioContext();
 		this.tempo = 120;
+		this.initContext(modules, cables);
+	}
 
+	initContext(modules: Module[], cables: Cable[]) {
 		modules.forEach((m) => {
 			this.modules.set(m.id, this.parseModule(m))
 		});

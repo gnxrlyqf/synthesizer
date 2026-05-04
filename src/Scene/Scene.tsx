@@ -11,6 +11,7 @@ import { createDockItems, GhostModule, instantiateModule, moduleObjects, type Mo
 import { drawFrame } from "../Patch/Cable";
 import Matrix from "./Matrix";
 import { useContextMenu } from "../Utils/useContextMenu";
+import Context from "../Audio/Context";
 
 type Cable = {
   id: string;
@@ -79,7 +80,7 @@ function parseScene(): Module[] {
           y: m.y,
           params: {
             f: m.params.frequency ?? 440,
-            w: (m.params.wave ?? "sine") as "sine" | "square" | "triangle" | "saw",
+            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "saw",
           },
         };
       case "gain":
@@ -89,7 +90,7 @@ function parseScene(): Module[] {
           x: m.x,
           y: m.y,
           params: {
-            g: m.params.gain ?? 0,
+            g: m.params.g ?? 0,
           },
         };
       case "envelope":
@@ -160,7 +161,7 @@ function parseScene(): Module[] {
           x: m.x,
           y: m.y,
           params: {
-            m: m.params.master ?? -6,
+            m: m.params.m ?? -6,
           },
         };
       default:
@@ -168,6 +169,10 @@ function parseScene(): Module[] {
     }
   });
 }
+
+const initModules: Module[] = parseScene();
+const initCables: Cable[] = sceneData.cables as Cable[]
+const audioContext = new Context(initModules, initCables);
 
 function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number; f: React.Dispatch<React.SetStateAction<Cable[]>>; cables: Cable[]}) {
   console.log(props.modules);
@@ -217,8 +222,8 @@ function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: num
 function Scene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cableDotCanvasRef = useRef<HTMLCanvasElement>(null);
-  const [modules, setModules] = useState<Module[]>(parseScene());
-  const [cables, setCables] = useState<Cable[]>(sceneData.cables as Cable[]);
+  const [modules, setModules] = useState<Module[]>(initModules);
+  const [cables, setCables] = useState<Cable[]>(initCables);
   const [ghost, setGhost] = useState<{ type: ModuleType; x: number; y: number } | null>(null);
   const [camera, setCamera] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -227,11 +232,29 @@ function Scene() {
   const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
   const { menu, handleContextMenu } = useContextMenu();
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  const [audioStatus, setAudioStatus] = useState<boolean>(false);
+  const [tempo, setTempo] = useState<number>(120);
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
     [cables]
   );
+
+  useEffect(() => {
+    const syncAudioContext = async () => {
+      try {
+        if (!audioStatus && audioContext.audioContext.state === "running")
+          await audioContext.audioContext.suspend();
+
+        if (audioStatus && audioContext.audioContext.state === "suspended")
+          await audioContext.audioContext.resume();
+      } catch (error) {
+        console.error("Failed to change audio context state", error);
+      }
+    };
+
+    void syncAudioContext();
+  }, [audioStatus])
 
   useEffect(() => {
     const handleAction = (e: any) => {
@@ -421,6 +444,34 @@ function Scene() {
                 </label>
               </div>
             )}
+          </div>
+          <div className="inline-flex w-fit flex-row items-center gap-2">
+            <button
+            className={`cursor-pointer transition-colors rounded-md border-2 ${audioStatus ? 'text-red-500 p-1' : 'text-green-500 p-1.5'}`}
+            onClick={() => {setAudioStatus(!audioStatus)}}
+            >
+              {audioStatus
+              ? <svg className="w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="1"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill-rule="evenodd" clip-rule="evenodd" d="M4 18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12z" fill="currentColor"></path></g></svg>
+              : <svg className="w-4" viewBox="-0.5 0 7 7" version="1.1" xmlns="http://www.w3.org/2000/svg"  fill="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="20"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-347.000000, -3766.000000)" fill="currentColor"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M296.494737,3608.57322 L292.500752,3606.14219 C291.83208,3605.73542 291,3606.25002 291,3607.06891 L291,3611.93095 C291,3612.7509 291.83208,3613.26444 292.500752,3612.85767 L296.494737,3610.42771 C297.168421,3610.01774 297.168421,3608.98319 296.494737,3608.57322" id="play-[#1003]"> </path> </g> </g> </g> </g></svg>}
+            </button>
+            <div className="inline-flex items-center gap-1">
+              <label className="px-2 text-sm">Tempo</label>
+              <input
+                className="bg-zinc-300 text-black w-14 px-1 py-0.5 text-sm rounded"
+                type="number"
+                value={tempo}
+                onChange={(e) => {
+                  const n = Number(e.target.value);
+                  if (n < 0)
+                    setTempo(0);
+                  else if (n > 500)
+                    setTempo(500);
+                  else
+                    setTempo(n);
+                  audioContext.tempo = n;
+                }}
+              />
+            </div>
           </div>
 					<div className="text-xl text-zinc-300">{modules.length} modules · {cables.length} cables</div>
 				</header>
