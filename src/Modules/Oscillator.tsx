@@ -101,7 +101,7 @@ function Oscillator(props: OscillatorProps) {
           <RadioSelectOption value="sine"><SineIcon /></RadioSelectOption>
           <RadioSelectOption value="triangle"><TriangleIcon /></RadioSelectOption>
           <RadioSelectOption value="square"><SquareIcon/></RadioSelectOption>
-          <RadioSelectOption value="saw"><SawIcon /></RadioSelectOption>
+          <RadioSelectOption value="sawtooth"><SawIcon /></RadioSelectOption>
         </RadioSelect>
       </div>
       <Param name="output" id={props.id} polarity="source" color={color}/>

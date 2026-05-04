@@ -130,7 +130,9 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   const [isEditing, setIsEditing] = useState(false)
   const [inputValueState, setInputValueState] = useState(String(inputValue))
 
-  const displayValue = Math.round(value * 10) / 10
+  const displayValue = unit === 'dB' && value === min
+    ? '-inf'
+    : Math.round(value * 10) / 10
   const position = (value - min) / (max - min)
 
   useEffect(() => { // to chnage the actual value of the knob
@@ -320,7 +322,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
           onClick={() => {
             if (disabled) return
 
-            setInputValueState(String(displayValue))
+            setInputValueState(String(value))
             setIsEditing(true)
           }}
         >

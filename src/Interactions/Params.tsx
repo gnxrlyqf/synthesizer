@@ -71,7 +71,7 @@ function Param(props: {id: string; name: string; polarity: "target" | "source"; 
 	const portId = `${props.id}.${props.name}`;
 	const isConnected = isPortConnected(portId);
 	const isSelected = (mode === "selecting-target" && target === portId) || (mode === "selecting-source" && source === portId);
-	const isDisabled = mode == type || id == props.id || isConnected;
+	const isDisabled = mode == type || id == props.id;
 	const textColorClass = isConnected
 		? "text-zinc-800"
 		: isSelected
@@ -104,7 +104,6 @@ function Param(props: {id: string; name: string; polarity: "target" | "source"; 
 		  onMouseEnter={() => setDivHighlight(true)}
 		  onMouseLeave={() => setDivHighlight(false)}
 		    onClick={() => {
-		      if (isConnected) return;
 		      if (props.polarity == "target")
 		        selectTarget(props.id, props.name)
 		      if (props.polarity == "source")

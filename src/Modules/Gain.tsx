@@ -18,7 +18,7 @@ interface GainProps extends ModuleProps {
 function Gain(props: GainProps) {
   const moduleRef = useRef<HTMLDivElement | null>(null);
   const [position, setPosition] = useState<{ x: number; y: number }>({x: props.x, y: props.y});
-  const [gain, setGain] = useState(props.g);
+  const [gain, setGain] = useState<number>(props.g);
   const {mode} = useConnection();
   const { menu, handleContextMenu } = useContextMenu();
   const color = "#3852B4"
@@ -52,7 +52,7 @@ function Gain(props: GainProps) {
       
     >
       <KnobParam id={props.id} name="gain" side="left" color={color}>
-        <Knob max={30} min={-30} step={0.25} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
+        <Knob max={10} min={-30} step={0.25} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
       </KnobParam>
       <div className="w-full flex flex-col gap-4 mt-2">
         <Param id={props.id} name="input" polarity="target" color={color}/>

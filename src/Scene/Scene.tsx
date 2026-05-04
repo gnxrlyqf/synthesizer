@@ -232,7 +232,7 @@ function Scene() {
   const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
   const { menu, handleContextMenu } = useContextMenu();
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
-  const [audioStatus, setAudioStatus] = useState<boolean>(false);
+  const [audioStatus, setAudioStatus] = useState<boolean>(true);
   const [tempo, setTempo] = useState<number>(120);
 
   const cableColors = useMemo(
