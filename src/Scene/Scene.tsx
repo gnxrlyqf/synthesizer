@@ -227,23 +227,23 @@ function Scene() {
   const panRef = useRef<{ startX: number; startY: number; cameraX: number; cameraY: number } | null>(null);
   const [matrixToggle, setMatrixToggle] = useState<boolean>(false);
   const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
-  const context = useMemo(() => new Context(modules, cables), [modules, cables]);
-  const [audioState, setAudioState] = useState<boolean>(false);
+  // const context = useMemo(() => new Context(modules, cables), [modules, cables]);
+  // const [audioState, setAudioState] = useState<boolean>(false);
   const { menu, handleContextMenu } = useContextMenu();
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
-  const toggleAudioContext = async () => {
-    try {
-      if (context.audioContext.state === "running") {
-        await context.audioContext.suspend();
-      } else {
-        await context.audioContext.resume();
-      }
-      setAudioState(context.audioContext.state === "running" ? true : false);
-    } catch (error) {
-      console.error("audio context toggle failed", error);
-    }
-  };
+  // const toggleAudioContext = async () => {
+  //   try {
+  //     if (context.audioContext.state === "running") {
+  //       await context.audioContext.suspend();
+  //     } else {
+  //       await context.audioContext.resume();
+  //     }
+  //     setAudioState(context.audioContext.state === "running" ? true : false);
+  //   } catch (error) {
+  //     console.error("audio context toggle failed", error);
+  //   }
+  // };
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
@@ -426,7 +426,7 @@ function Scene() {
               onClick={() => setMatrixToggle(!matrixToggle)}
               className="px-3 py-1 rounded-md cursor-pointer hover:bg-white/50 hover"
             >Matrix</button>
-            <button
+            {/* <button
               type="button"
               onClick={toggleAudioContext}
               className={`px-3 py-1 rounded-md cursor-pointer border transition-colors duration-150 ${
@@ -436,7 +436,7 @@ function Scene() {
               }`}
             >
               {audioState === true ? "Running" : "Suspended"}
-            </button>
+            </button> */}
             {matrixToggle && (
               <div className="flex gap-2">
                 <label className="flex items-center gap-1 cursor-pointer">
