@@ -3,6 +3,7 @@ import { motion, useInView } from 'motion/react';
 import type {Cable} from './Scene';
 import type {Module} from './Modules'
 import { OscIcon, GainIcon, EnvelopeIcon, OutputIcon, LfoIcon, FilterIcon, DistIcon, ModIcon } from './DockItems';
+import { ModuleMenu } from '../Interactions/ContextMenu';
 
 const modules: {
   [key: string]: {
@@ -171,7 +172,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className={`mx-3 relative w-100 h-[calc(100%-1rem)] bg-zinc-950/70 rounded-2xl overflow-hidden ${className}`}
+      className={`mx-3 relative w-100 h-[calc(100%-1rem)] bg-zinc-950/70 rounded-2xl overflow-visible ${className}`}
     >
       <div
         ref={listRef}
@@ -222,6 +223,8 @@ function Matrix(props: {
   setModules: React.Dispatch<React.SetStateAction<Module[]>>,
   setCables: React.Dispatch<React.SetStateAction<Cable[]>>, 
   view: 'modules' | 'cables',
+  menu: { x: number, y: number } | null,
+  activeModuleId: string | null
   handleContextMenu: (e: React.MouseEvent, id: string) => void
 }) {
   
@@ -292,12 +295,23 @@ function Matrix(props: {
       <button
         className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
         onClick={(e) => {
-          e.stopPropagation(); // Prevents the context menu from opening when deleting
+          e.stopPropagation();
           props.setModules(mods => mods.filter((_, i) => i !== idx));
         }}
       >
         <Delete />
       </button>
+      {props.menu && props.activeModuleId === module.id && (
+        <div className="absolute z-[9999]">
+          <ModuleMenu 
+            id={module.id} 
+            x={props.menu.x} 
+            y={props.menu.y} 
+            color={(modules[module.type] as any)?.color || "#C44A3A"}
+            currentName={(module as any).title || module.type}
+          />
+        </div>
+      )}
     </div>
   ));
   

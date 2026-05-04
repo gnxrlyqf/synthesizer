@@ -11,6 +11,7 @@ class Distortion extends Module {
 
     constructor(audioContext: AudioContext) {
         super(audioContext);
+        // Using a dummy gain node to hold the 'amount' value for the curve math
         const amountControl = new GainNode(this.audioContext, { gain: 50 });
         this.amount = amountControl.gain;
         this.signal = new WaveShaperNode(this.audioContext);
@@ -23,7 +24,7 @@ class Distortion extends Module {
     }
 
     setAmount(value: number) {
-        // Clamp amount between 0-100 for safety
+        // Clamp 0-100
         this.amount.value = Math.max(0, Math.min(100, value));
         this.setCurve();
     }
@@ -37,37 +38,42 @@ class Distortion extends Module {
     private setCurve() {
         const n_samples = 44100;
         const curve = new Float32Array(n_samples);
+        const amt = this.amount.value; // 0 to 100
         
         for (let i = 0; i < n_samples; ++i) {
-            const x = (i * 2) / n_samples - 1; // Input signal from -1 to 1
+            const x = (i * 2) / n_samples - 1; // Input range -1 to 1
 
             switch (this.type) {
                 case "sine":
-                    // Smooth hyperbolic tangent curve (Analog feel)
-                    // Formula: f(x) = tanh(k * x) / tanh(k)
-                    const k = this.amount.value / 10;
-                    curve[i] = Math.tanh(x * k) / Math.tanh(k);
+                    // Sine Fold: Folds the wave back on itself
+                    // Higher amount = more folds (harmonics)
+                    const frequency = 1 + (amt / 20);
+                    curve[i] = Math.sin(x * Math.PI * frequency);
                     break;
 
                 case "soft":
-                    // Aggressive digital clipping
-                    const threshold = 1 - (this.amount.value / 105); 
-                    if (x > threshold) curve[i] = threshold;
-                    else if (x < -threshold) curve[i] = -threshold;
-                    else curve[i] = x;
+                    // Proper Soft Clip (Tanh): Rounds the peaks
+                    // Scale amt to a usable gain factor (1 to 20)
+                    const k = 1 + (amt / 5);
+                    curve[i] = Math.tanh(x * k) / Math.tanh(k);
                     break;
 
                 case "hard":
-                    // Soft-clipping with gain boost
-                    const drive = this.amount.value / 10;
-                    curve[i] = (1 + drive) * x / (1 + drive * Math.abs(x));
+                    // Proper Hard Clip: Sharp cut at threshold
+                    // Threshold drops as amount increases
+                    const threshold = Math.max(0.1, 1 - (amt / 110));
+                    if (x > threshold) curve[i] = threshold;
+                    else if (x < -threshold) curve[i] = -threshold;
+                    else curve[i] = x;
+                    // Normalize gain so it stays loud
+                    curve[i] /= threshold;
                     break;
 
                 case "downsample":
-                    // Simulates phase warping by using an asymmetric sine-shaper
-                    // This creates the "pinched" harmonic look of PD synths
-                    const warp = (this.amount.value / 100) * Math.PI;
-                    curve[i] = Math.sin(x * Math.PI + warp * Math.sin(x * Math.PI));
+                    // Bitcrush/Sample-rate reduction simulation
+                    // Reducing the 'resolution' of the transfer function
+                    const steps = Math.max(2, 64 - (amt / 1.6)); 
+                    curve[i] = Math.round(x * steps) / steps;
                     break;
             }
         }

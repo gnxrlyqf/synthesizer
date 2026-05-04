@@ -10,8 +10,6 @@ import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator 
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
 import Matrix from "./Matrix";
-import Context from "../Audio/Context";
-import { ModuleMenu } from "../Interactions/ContextMenu";
 import { useContextMenu } from "../Utils/useContextMenu";
 
 type Cable = {
@@ -227,23 +225,8 @@ function Scene() {
   const panRef = useRef<{ startX: number; startY: number; cameraX: number; cameraY: number } | null>(null);
   const [matrixToggle, setMatrixToggle] = useState<boolean>(false);
   const [matrixView, setMatrixView] = useState<'modules' | 'cables'>('cables');
-  // const context = useMemo(() => new Context(modules, cables), [modules, cables]);
-  // const [audioState, setAudioState] = useState<boolean>(false);
   const { menu, handleContextMenu } = useContextMenu();
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
-
-  // const toggleAudioContext = async () => {
-  //   try {
-  //     if (context.audioContext.state === "running") {
-  //       await context.audioContext.suspend();
-  //     } else {
-  //       await context.audioContext.resume();
-  //     }
-  //     setAudioState(context.audioContext.state === "running" ? true : false);
-  //   } catch (error) {
-  //     console.error("audio context toggle failed", error);
-  //   }
-  // };
 
   const cableColors = useMemo(
     () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
@@ -255,8 +238,8 @@ function Scene() {
       const { type, id, name } = e.detail;
       switch (type) {
         case 'DELETE':
-          setModules((prev) => prev.filter((m) => m.id !== id));
           setCables((prev) => prev.filter((c) => !c.from.startsWith(id) && !c.to.startsWith(id)));
+          setModules((prev) => prev.filter((m) => m.id !== id));
           break;
         case 'RENAME':
           setModules((prev) => prev.map((m) => (m.id === id ? { ...m, title: name } : m)));
@@ -426,17 +409,6 @@ function Scene() {
               onClick={() => setMatrixToggle(!matrixToggle)}
               className="px-3 py-1 rounded-md cursor-pointer hover:bg-white/50 hover"
             >Matrix</button>
-            {/* <button
-              type="button"
-              onClick={toggleAudioContext}
-              className={`px-3 py-1 rounded-md cursor-pointer border transition-colors duration-150 ${
-                audioState === true
-                  ? "border-emerald-500/70 text-emerald-300 hover:bg-emerald-500/15"
-                  : "border-amber-500/70 text-amber-300 hover:bg-amber-500/15"
-              }`}
-            >
-              {audioState === true ? "Running" : "Suspended"}
-            </button> */}
             {matrixToggle && (
               <div className="flex gap-2">
                 <label className="flex items-center gap-1 cursor-pointer">
@@ -450,7 +422,7 @@ function Scene() {
               </div>
             )}
           </div>
-					<div className="text-xl text-zinc-300">{modules.length} modules · 0 cables</div>
+					<div className="text-xl text-zinc-300">{modules.length} modules · {cables.length} cables</div>
 				</header>
 			</section>
 
@@ -464,17 +436,10 @@ function Scene() {
             setCables={setCables}
             setModules={setModules}
             view={matrixView}
+            menu={menu}
+            activeModuleId={activeModuleId}
             handleContextMenu={(e, id) => { setActiveModuleId(id); handleContextMenu(e); }}
             />}
-          {menu && activeModuleId && (
-          <ModuleMenu 
-            id={activeModuleId} 
-            x={menu.x} 
-            y={menu.y} 
-            color={(modules.find(m => m.id === activeModuleId) as any)?.color || "#C44A3A"}
-            currentName={(modules.find(m => m.id === activeModuleId) as any)?.title || (modules.find(m => m.id === activeModuleId) as any)?.type || "Module"}
-          />
-        )}
         </AnimatePresence>
       </div>
       <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-30">

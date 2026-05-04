@@ -1,10 +1,10 @@
 # amine
+- [x] implement the context menu options
+- [x] context menu should also appear when the module is clicked in the matrix, with the same options and controls
 - [ ] ghost module instantiation bug
 - [ ] implement zoom in and out 
 - [ ] bridging the frontend with the audio
 - [ ] if u drag a module and the draggable area is hidden the module is stuck
-- [ ] implement the context menu options
-- [ ] context menu should also appear when the module is clicked in the matrix, with the same options and controls
 
 # keyboard
 ghadi ykon keyboard 3rid
@@ -17,3 +17,4 @@ mixer o splitter which are self explanatory
 # yousef
 
 - [x] filter makhdmainch fih cables and distortion they are not consistant mra ykhdmo mra no
+- [ ] the delete button li kayna f matrix crushes the app 
