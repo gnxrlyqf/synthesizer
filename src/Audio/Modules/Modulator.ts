@@ -4,28 +4,104 @@ import Patch from "./Patch";
 export type ModulationMode = "AM" | "FM" | "PM" | "RM";
 
 class Modulator extends Module {
-    // Internal nodes for different mathematical routing
-    amRingNode: GainNode;
-    pmNode: DelayNode;
-    depthNode: GainNode;
-
-    // The final output node
     signal: GainNode;
-
+    depthNode: GainNode;
+    ringNode: GainNode;
+    pmNode: DelayNode;
+    amOffset: ConstantSourceNode;
+    amOffsetGain: GainNode;
+    depthModDepth: GainNode;
     modulatorInput: Patch | null = null;
     depthInput: Patch | null = null;
-    depthModDepth: GainNode;
     mode: ModulationMode = "AM";
 
-    constructor(audioContext: AudioContext) {
+    constructor(audioContext: AudioContext)
+    {
         super(audioContext);
-        this.amRingNode = new GainNode(this.audioContext, { gain: 0 });
-        this.pmNode = new DelayNode(this.audioContext, { maxDelayTime: 1, delayTime: 0.001 });
-        this.depthNode = new GainNode(this.audioContext, { gain: 1 });
-        this.depthModDepth = new GainNode(this.audioContext, { gain: 0.5 });
+        this.signal = new GainNode(audioContext, { gain: 1 });
+        this.depthNode = new GainNode(audioContext, { gain: 1 });
+        this.ringNode = new GainNode(audioContext, { gain: 0 });
+        this.pmNode = new DelayNode(audioContext, { maxDelayTime: 0.05, delayTime: 0 });
+        // Used for AM = carrier * (1 + modulator)
+        this.amOffset = new ConstantSourceNode(audioContext, { offset: 1 });
+        this.amOffsetGain = new GainNode(audioContext, { gain: 1 });
+        this.amOffset.connect(this.amOffsetGain);
+        this.amOffset.start();
+        // Modulates modulation depth
+        this.depthModDepth = new GainNode(audioContext, { gain: 0.5 });
         this.depthModDepth.connect(this.depthNode.gain);
-        this.signal = new GainNode(this.audioContext, { gain: 1 });
-        this.amRingNode.connect(this.signal);
+    }
+
+    private disconnectSafely(node: AudioNode) {
+        try { node.disconnect(); }
+        catch {}
+    }
+
+    private cleanRouting() {
+        this.disconnectSafely(this.ringNode);
+        this.disconnectSafely(this.pmNode);
+        this.disconnectSafely(this.depthNode);
+        this.disconnectSafely(this.amOffsetGain);
+
+        const carrierNode = this.input?.getSignal();
+        const modNode = this.modulatorInput?.getSignal();
+
+        if (carrierNode)
+            this.disconnectSafely(carrierNode);
+
+        if (modNode)
+            this.disconnectSafely(modNode);
+    }
+
+    private applyRouting() {
+        const carrierNode = this.input?.getSignal();
+        const modNode = this.modulatorInput?.getSignal();
+
+        if (!carrierNode)
+            return;
+
+        switch (this.mode) {
+            case "AM": {
+                carrierNode.connect(this.ringNode);
+                this.amOffsetGain.connect(this.ringNode.gain);
+                if (modNode) {
+                    modNode.connect(this.depthNode);
+                    this.depthNode.connect(this.ringNode.gain);
+                }
+                this.ringNode.connect(this.signal);
+                break;
+            }
+            case "RM": {
+                carrierNode.connect(this.ringNode);
+                if (modNode) {
+                    modNode.connect(this.depthNode);
+                    this.depthNode.connect(this.ringNode.gain);
+                }
+                this.ringNode.connect(this.signal);
+                break;
+            }
+            case "PM": {
+                carrierNode.connect(this.pmNode);
+                if (modNode) {
+                    modNode.connect(this.depthNode);
+                    this.depthNode.connect(this.pmNode.delayTime);
+                }
+                this.pmNode.connect(this.signal);
+                break;
+            }
+            case "FM": {
+                carrierNode.connect(this.signal);
+                const frequencyParam =
+                    "frequency" in carrierNode
+                        ? (carrierNode as OscillatorNode).frequency
+                        : null;
+                if (modNode && frequencyParam) {
+                    modNode.connect(this.depthNode);
+                    this.depthNode.connect(frequencyParam);
+                }
+                break;
+            }
+        }
     }
 
     setMode(newMode: ModulationMode) {
@@ -34,60 +110,14 @@ class Modulator extends Module {
         this.applyRouting();
     }
 
-    private cleanRouting() {
-        // Disconnect inputs to prevent signal leaking when switching modes
-        this.input?.getSignal()?.disconnect();
-        this.modulatorInput?.getSignal()?.disconnect();
-        this.depthInput?.getSignal()?.disconnect(this.depthNode.gain);
-        
-        this.amRingNode.disconnect();
-        this.pmNode.disconnect();
-        this.depthNode.disconnect();
-    }
-
-    private applyRouting() {
-        const carrierNode = this.input?.getSignal();
-        const modNode = this.modulatorInput?.getSignal();
-
-        if (!carrierNode) return;
-
-        switch (this.mode) {
-            case "AM":
-            case "RM":
-                // Both use a GainNode as a multiplier
-                carrierNode.connect(this.amRingNode);
-                if (modNode)
-                    modNode.connect(this.depthNode);
-                this.depthNode.connect(this.amRingNode.gain);
-                this.amRingNode.connect(this.signal);
-                break;
-            case "PM":
-                // PM modulates delay time at audio rate
-                carrierNode.connect(this.pmNode);
-                if (modNode)
-                    modNode.connect(this.depthNode);
-                this.depthNode.connect(this.pmNode.delayTime);
-                this.pmNode.connect(this.signal);
-                break;
-            case "FM":
-                // Carrier goes straight to output, modulator targets the frequency param
-                carrierNode.connect(this.signal); 
-                if (modNode)
-                    modNode.connect(this.depthNode);
-                if ("frequency" in carrierNode) {
-                    const carrierFrequency = carrierNode.frequency as AudioParam;
-                    this.depthNode.connect(carrierFrequency);
-                }
-                break;
-        }
-    }
-
     setInput(input: Patch | null) {
+        this.cleanRouting();
         this.input = input;
         this.applyRouting();
     }
 
     setModulator(modulator: Patch | null) {
+        this.cleanRouting();
         this.modulatorInput = modulator;
         this.applyRouting();
     }
