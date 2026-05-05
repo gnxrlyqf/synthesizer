@@ -40,7 +40,7 @@ function SawIcon() {
   )
 }
 
-const MODULE_WIDTH = 230;
+const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 448;
 
 function LFO(props: {

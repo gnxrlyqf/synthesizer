@@ -384,8 +384,8 @@ const KnobInput = styled.input<{ $size: number }>`
   margin-top: ${({ $size }) =>
     `${Math.max(2, Math.round($size * 0.06))}px`};
 
-    width: ${({ $size }) =>
-  `${Math.max(38, Math.round($size * 1.2))}px`};
+  width: ${({ $size }) =>
+    `${Math.max(38, Math.round($size * 1))}px`};
 
   min-width: ${({ $size }) =>
     `${Math.max(28, Math.round($size * 0.7))}px`};

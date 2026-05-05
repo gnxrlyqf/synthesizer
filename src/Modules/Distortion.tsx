@@ -7,7 +7,7 @@ import { KnobParam, Param } from "../Interactions/Params";
 import ModuleFrame from "./ModuleFrame";
 import { audioContext } from "../Scene/Scene";
 
-const MODULE_WIDTH = 230;
+const MODULE_WIDTH = 224;
 const MODULE_HEIGHT = 480 ;
 
 function HardIcon() {
