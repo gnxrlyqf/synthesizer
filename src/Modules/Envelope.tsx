@@ -6,7 +6,7 @@ import type { ModuleProps } from "./Modules";
 import { useContextMenu } from "../Utils/useContextMenu";
 import ModuleFrame from "./ModuleFrame";
 
-const MODULE_WIDTH = 224;
+const MODULE_WIDTH = 230;
 const MODULE_HEIGHT = 848;
 
 interface EnvelopeProps extends ModuleProps {

@@ -130,10 +130,11 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
   const [isEditing, setIsEditing] = useState(false)
   const [inputValueState, setInputValueState] = useState(String(inputValue))
 
-  const displayValue = unit === 'dB' && value === min
-    ? '-inf'
-    : Math.round(value * 10) / 10
+  const displayValue = unit === 'dB' && value === min ? '-inf' : Math.round(value * 10) / 10
   const position = (value - min) / (max - min)
+  const displayString = unit ? `${displayValue} ${unit}` : String(displayValue);
+
+  const formatValue = (v: number) => String(Math.round(v * 10) / 10)
 
   useEffect(() => { // to chnage the actual value of the knob
     setValue(inputValue)
@@ -263,7 +264,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
     const parsed = parseFloat(inputValueState)
 
     if (Number.isNaN(parsed)) {
-      setInputValueState(String(value))
+      setInputValueState(formatValue(value))
       setIsEditing(false)
       return
     }
@@ -310,7 +311,7 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
               commitInputValue()
 
             if (e.key === 'Escape') {
-              setInputValueState(String(value))
+              setInputValueState(formatValue(value))
               setIsEditing(false)
             }
           }}
@@ -321,12 +322,12 @@ const Knob: React.FC<KnobProps> = ({ label, onChange, value: inputValue, step, m
           disabled={disabled}
           onClick={() => {
             if (disabled) return
-
-            setInputValueState(String(value))
+            setInputValueState(formatValue(value))
             setIsEditing(true)
           }}
+          style={{ fontVariantNumeric: 'tabular-nums' }}
         >
-          {unit ? `${displayValue} ${unit}` : displayValue}
+          {displayString}
         </KnobValueButton>
       )}
 
@@ -362,11 +363,16 @@ const KnobValueButton = styled.button<{ $size: number }>`
     `${Math.max(2, Math.round($size * 0.05))}px`};
 
   font-size: ${({ $size }) =>
-    `${Math.max(10, Math.round($size * 0.22))}px`};
+    `${Math.max(9, Math.round($size * 0.20))}px`};
 
   line-height: ${({ $size }) =>
     `${Math.max(12, Math.round($size * 0.28))}px`};
 
+  width: ${({ $size }) =>
+  `${Math.max(38, Math.round($size * 1.2))}px`};
+
+  overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
   transition: transform 120ms ease;
   &:hover {transform: scale(1.08); filter: brightness(0.9);}
@@ -378,7 +384,9 @@ const KnobInput = styled.input<{ $size: number }>`
   margin-top: ${({ $size }) =>
     `${Math.max(2, Math.round($size * 0.06))}px`};
 
-  width: auto;
+    width: ${({ $size }) =>
+  `${Math.max(38, Math.round($size * 1.2))}px`};
+
   min-width: ${({ $size }) =>
     `${Math.max(28, Math.round($size * 0.7))}px`};
 
