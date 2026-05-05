@@ -277,7 +277,7 @@ function Matrix(props: {
     );
   });
   
-  const moduleItems = props.modules.map((module, idx) => (
+  const moduleItems = props.modules.map((module) => (
     <div 
       key={module.id} 
       className="text-white flex flex-row items-center w-full cursor-pointer hover:bg-white/5 p-1 rounded-xl group" 
@@ -295,15 +295,6 @@ function Matrix(props: {
           {(module as any).title || module.type}
         </span>
       </div>
-      <button
-        className='mr-0.5 cursor-pointer text-red-500 border-2 border-red-500 rounded-md hover:bg-red-500 hover:text-white ease-in-out duration-100'
-        onClick={(e) => {
-          e.stopPropagation();
-          props.setModules(mods => mods.filter((_, i) => i !== idx));
-        }}
-      >
-        <Delete />
-      </button>
       {props.menu && props.activeModuleId === module.id && (
         <div className="absolute z-9999">
           <ModuleMenu 
