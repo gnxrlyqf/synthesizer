@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback, type ReactNode, type MouseEventHandler, type UIEvent, type JSX } from 'react';
 import { motion, useInView } from 'motion/react';
 import {audioContext, type Cable} from './Scene';
-import type {Module} from './Modules'
+import type {Module} from '../Modules/Modules'
 import { OscIcon, GainIcon, EnvelopeIcon, OutputIcon, LfoIcon, FilterIcon, DistIcon, ModIcon } from './DockItems';
 import { ModuleMenu } from '../Interactions/ContextMenu';
 

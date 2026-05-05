@@ -1,223 +1,22 @@
 import Dock from "../Dock";
-import type {Module} from './Modules'
+import type {Module} from '../Modules/Modules'
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "motion/react";
 import sceneData from "../scene.json";
 import { wouldGhostOverlap } from "../Utils/wouldGhostOverlap";
 import { snapToGrid } from "../Utils/snapToGrid";
-import { ConnectionProvider } from "../ConnectionContext";
-import { Oscillator, Gain, Envelope, Output, LFO, Filter, Distortion, Modulator } from '../Modules/Modules'
 import { createDockItems, GhostModule, instantiateModule, moduleObjects, type ModuleType } from './DockItems'
 import { drawFrame } from "../Patch/Cable";
 import Matrix from "./Matrix";
 import { useContextMenu } from "../Utils/useContextMenu";
+import type {Cable} from '../Patch/Cable'
 import Context from "../Audio/Context";
+import {RenderModules, parseModules} from "../Modules/Modules";
 
-type Cable = {
-  id: string;
-  from: string;
-  to: string;
-};
-
-function randomCableColor() {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue} 85% 65%)`;
-}
-
-const PORT_OFFSETS = {
-  oscillator: {
-    output: { x: moduleObjects.oscillator.w - 4, y: moduleObjects.oscillator.h - 56 },
-    frequency: { x: moduleObjects.oscillator.w / 2, y: 110 },
-  },
-  gain: {
-    input: { x: 4, y: moduleObjects.gain.h - 120 },
-    output: { x: moduleObjects.gain.w - 4, y: moduleObjects.gain.h - 56 },
-    gain: { x: moduleObjects.gain.w / 2, y: 110 },
-  },
-  envelope: {
-    trigger: { x: 4, y: moduleObjects.envelope.h - 120 },
-    output: { x: moduleObjects.envelope.w - 4, y: moduleObjects.envelope.h - 56 },
-    attack: { x: moduleObjects.envelope.w / 2, y: 110 },
-    sustain: { x: moduleObjects.envelope.w / 2, y: 110 },
-    decay: { x: moduleObjects.envelope.w / 2, y: 110 },
-    release: { x: moduleObjects.envelope.w / 2, y: 110 },
-  },
-  output: {
-    input: { x: 4, y: moduleObjects.output.h - 68 },
-    master: { x: moduleObjects.output.w / 2, y: 110 },
-  },
-  lfo: {
-    output: { x: moduleObjects.lfo.w - 4, y: moduleObjects.lfo.h - 56 },
-    freq: { x: moduleObjects.lfo.w / 2, y: 110 },
-  },
-  filter: {
-    input: { x: 4, y: moduleObjects.filter.h - 120 },
-    output: { x: moduleObjects.filter.w - 4, y: moduleObjects.filter.h - 56 },
-    cutoff: { x: moduleObjects.filter.w / 2, y: 110 },
-    q: { x: moduleObjects.filter.w / 2, y: 110 },
-  },
-  distortion: {
-    input: { x: 4, y: moduleObjects.distortion.h - 120 },
-    output: { x: moduleObjects.distortion.w - 4, y: moduleObjects.distortion.h - 56 },
-    drive: { x: moduleObjects.distortion.w / 2, y: 110 },
-  },
-  modulator: {
-    "mod in": { x: 4, y: moduleObjects.modulator.h - 120 },
-    carrier: { x: 4, y: moduleObjects.modulator.h - 120 },
-    output: { x: moduleObjects.modulator.w - 4, y: moduleObjects.modulator.h - 56 },
-    depth: { x: moduleObjects.modulator.w / 2, y: 110 },
-  },
-};
-
-function parseScene(): Module[] {
-  return sceneData.modules.map((m: any) => {
-    switch (m.type) {
-      case "oscillator":
-        return {
-          id: m.id,
-          type: "oscillator",
-          x: m.x,
-          y: m.y,
-          params: {
-            f: m.params.frequency ?? 440,
-            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "sawtooth",
-          },
-        };
-      case "gain":
-        return {
-          id: m.id,
-          type: "gain",
-          x: m.x,
-          y: m.y,
-          params: {
-            g: m.params.g ?? 0,
-          },
-        };
-      case "envelope":
-        return {
-          id: m.id,
-          type: "envelope",
-          x: m.x,
-          y: m.y,
-          params: {
-            a: m.params.attack ?? 100,
-            d: m.params.decay ?? 200,
-            s: m.params.sustain ?? 0.7,
-            r: m.params.release ?? 300,
-          },
-        };
-      case "lfo":
-        return {
-          id: m.id,
-          type: "lfo",
-          x: m.x,
-          y: m.y,
-          params: {
-            f: m.params.frequency ?? 1,
-            w: (m.params.wave ?? "sine") as "sine" | "square" | "triangle" | "sawtooth",
-            s: m.params.sync ?? false,
-          },
-        };
-      case "filter":
-        return {
-          id: m.id,
-          type: "filter",
-          x: m.x,
-          y: m.y,
-          params: {
-            f: m.params.cutoff ?? 1000,
-            q: m.params.q ?? 1,
-            t: m.params.type ?? "lowpass",
-          },
-        };
-      case "distortion":
-        return {
-          id: m.id,
-          type: "distortion",
-          x: m.x,
-          y: m.y,
-          params: {
-            d: m.params.d ?? 50,
-            t: m.params.t ?? "saturation",
-            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "saw",
-          },
-        };
-      case "modulator":
-        return {
-          id: m.id,
-          type: "modulator",
-          x: m.x,
-          y: m.y,
-          params: {
-            m: (m.params.m ?? "FM") as "AM" | "FM" | "PM" | "RM",
-            d: m.params.d ?? 50,
-            w: (m.params.w ?? "sine") as "sine" | "square" | "triangle" | "sawtooth",
-          },
-        };
-      case "output":
-        return {
-          id: m.id,
-          type: "output",
-          x: m.x,
-          y: m.y,
-          params: {
-            m: m.params.m ?? -6,
-          },
-        };
-      default:
-        throw new Error(`Unknown module type: ${m.type}`);
-    }
-  });
-}
-
-const initModules: Module[] = parseScene();
+const initModules: Module[] = parseModules(sceneData.modules);
 const initCables: Cable[] = sceneData.cables as Cable[]
+const initCamera: {x: number, y: number} = sceneData.camera;
 const audioContext = new Context(initModules, initCables);
-
-function RenderModules(props: { modules: Module[]; cameraX: number; cameraY: number; f: React.Dispatch<React.SetStateAction<Cable[]>>; cables: Cable[]}) {
-  console.log(props.modules);
-  return (
-    <ConnectionProvider setCables={props.f} cables={props.cables}>
-      {props.modules.map((m) => {
-        switch (m.type) {
-          case "oscillator":
-            return (
-              <Oscillator key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} w={m.params.w} cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          case "gain":
-            return (
-              <Gain key={m.id} id={m.id} x={m.x} y={m.y} g={m.params.g} cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          case "envelope":
-            return (
-              <Envelope key={m.id} id={m.id} x={m.x} y={m.y} a={m.params.a} d={m.params.d} s={m.params.s} r={m.params.r} cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          case "output":
-            return (
-              <Output key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          case "lfo":
-            return (
-              <LFO key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} w={m.params.w} s={m.params.s}  cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          case "filter":
-            return (
-              <Filter key={m.id} id={m.id} x={m.x} y={m.y} f={m.params.f} q={m.params.q} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          case "distortion":
-            return (
-              <Distortion key={m.id} id={m.id} x={m.x} y={m.y} d={m.params.d} t={m.params.t} cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          case "modulator":
-            return (
-              <Modulator key={m.id} id={m.id} x={m.x} y={m.y} m={m.params.m} d={m.params.d} cameraX={props.cameraX} cameraY={props.cameraY} />
-            );
-          default: return null;
-        }
-      })}
-    </ConnectionProvider>
-  );
-}
 
 function Scene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -225,7 +24,7 @@ function Scene() {
   const [modules, setModules] = useState<Module[]>(initModules);
   const [cables, setCables] = useState<Cable[]>(initCables);
   const [ghost, setGhost] = useState<{ type: ModuleType; x: number; y: number } | null>(null);
-  const [camera, setCamera] = useState({ x: 0, y: 0 });
+  const [camera, setCamera] = useState(initCamera);
   const [isPanning, setIsPanning] = useState(false);
   const panRef = useRef<{ startX: number; startY: number; cameraX: number; cameraY: number } | null>(null);
   const [matrixToggle, setMatrixToggle] = useState<boolean>(false);
@@ -234,11 +33,6 @@ function Scene() {
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [audioStatus, setAudioStatus] = useState<boolean>(true);
   const [tempo, setTempo] = useState<number>(120);
-
-  const cableColors = useMemo(
-    () => new Map(cables.map((cable) => [cable.id, randomCableColor()])),
-    [cables]
-  );
 
   useEffect(() => {
     const syncAudioContext = async () => {
@@ -280,6 +74,13 @@ function Scene() {
   }, [setModules, setCables]);
 
   useEffect(() => {
+    const update = {
+      "camera": camera,
+      "modules": modules,
+      "cables": cables
+    }
+    // api call here to POST this object to the server
+
     let rafId = 0;
 
     const frame = () => {
@@ -289,14 +90,12 @@ function Scene() {
         modules,
         cables,
         camera,
-        cableColors,
-        PORT_OFFSETS,
       });
       rafId = requestAnimationFrame(frame);
     };
     rafId = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(rafId);
-  }, [cables, modules, camera, cableColors]);
+  }, [cables, modules, camera]);
 
   const canPlaceGhost = ghost
     ? !wouldGhostOverlap(modules, moduleObjects, ghost.type, ghost.x, ghost.y)

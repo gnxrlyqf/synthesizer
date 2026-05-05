@@ -27,7 +27,6 @@ class Distortion extends Module {
     }
 
     setDrive(value: number) {
-        // Clamp 0-100
         this.amount.value = Math.max(0, Math.min(100, value));
         this.setCurve();
     }

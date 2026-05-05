@@ -32,7 +32,10 @@ class Output extends Module {
 	setParam(key: string, value: number): void {
 		switch (key) {
 			case "master":
-				this.gain.gain.setValueAtTime(10 ** (value / 20), this.audioContext.currentTime)
+				if (value === -60)
+					this.gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+				else
+					this.gain.gain.setValueAtTime(10 ** (value / 20), this.audioContext.currentTime)
 				break;
 		}
 	}

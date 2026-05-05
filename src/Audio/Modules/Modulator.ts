@@ -130,10 +130,10 @@ class Modulator extends Module {
 
     setMod(key: string, patch: Patch | null): void {
         switch (key) {
-            case "input":
+            case "carrier":
                 this.setInput(patch);
                 break;
-            case "modulator":
+            case "mod in":
                 this.setModulator(patch);
                 break;
             case "depth":

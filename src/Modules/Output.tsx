@@ -47,7 +47,7 @@ function Output(props: OutputProps) {
       
     >
       <KnobParam id={props.id} name="master" side="left" color={color}>
-        <Knob max={0} min={-30} step={0.1} value={master} onChange={setMaster} size={100} unit="dB" />
+        <Knob max={0} min={-60} step={0.1} value={master} onChange={setMaster} size={100} unit="dB" />
       </KnobParam>
       <Param id={props.id} name="input" polarity="target" color={color}/>
     </ModuleFrame>

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import type { DockItemData } from '../Dock'
-import type { Module } from './Modules'
+import type { Module } from '../Modules/Modules'
 
 import Oscillator, { OSC_W, OSC_H } from '../Modules/Oscillator';
 import Gain, { GAIN_W, GAIN_H } from '../Modules/Gain';

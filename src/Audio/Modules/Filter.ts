@@ -60,7 +60,7 @@ class Filter extends Module {
             case "freqModulator":
                 this.setFreqModulator(patch);
                 break;
-            case "Q":
+            case "q":
                 this.setQModulator(patch);
                 break;
             case "qModulator":
@@ -77,7 +77,7 @@ class Filter extends Module {
             case "frequency":
                 this.setFrequency(value as number);
                 break;
-            case "Q":
+            case "q":
                 this.setQ(value as number);
                 break;
             case "type":

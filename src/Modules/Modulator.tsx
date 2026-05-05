@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Knob from "../Interactions/Knob";
 import {RadioSelect, RadioSelectOption} from "../Interactions/RadioSelect";
 import { useDrag } from "../Interactions/useDrag";
 import { useContextMenu } from "../Utils/useContextMenu";
 import { Param, KnobParam } from "../Interactions/Params";
 import ModuleFrame from "./ModuleFrame";
+import { audioContext } from "../Scene/Scene";
 
 const MODULE_WIDTH = 230;
 const MODULE_HEIGHT = 544;
@@ -26,6 +27,14 @@ function Modulator(props: {
   const color = "#456882";
   const onMouseDown = useDrag(props, position, setPosition, moduleRef);
   const { menu, handleContextMenu } = useContextMenu();
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "depth", depth);
+  }, [depth])
+
+  useEffect(() => {
+    audioContext.setParam(props.id, "mode", modType);
+  }, [modType])
 
   return (
     <ModuleFrame

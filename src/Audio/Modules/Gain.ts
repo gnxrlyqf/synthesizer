@@ -11,7 +11,10 @@ class Gain extends Module {
 	}
 
 	setGain(value: number) {
-		this.signal.gain.setValueAtTime(10 ** (value / 20), this.audioContext.currentTime);
+		if (value === -60)
+			this.signal.gain.setValueAtTime(0, this.audioContext.currentTime);
+		else
+			this.signal.gain.setValueAtTime(10 ** (value / 20), this.audioContext.currentTime);
 	}
 
 

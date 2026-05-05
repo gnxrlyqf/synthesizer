@@ -49,10 +49,9 @@ function Gain(props: GainProps) {
       moduleRef={moduleRef}
       onContextMenu={handleContextMenu}
       onHeaderMouseDown={onMouseDown}
-      
     >
       <KnobParam id={props.id} name="gain" side="left" color={color}>
-        <Knob max={30} min={-30} step={0.25} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
+        <Knob max={20} min={-60} step={0.25} value={gain} onChange={setGain} size={100} unit="dB" disabled={mode != "idle"}/>
       </KnobParam>
       <div className="w-full flex flex-col gap-4 mt-2">
         <Param id={props.id} name="input" polarity="target" color={color}/>

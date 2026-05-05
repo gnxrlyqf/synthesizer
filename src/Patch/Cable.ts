@@ -1,7 +1,63 @@
 // Draws all cables and endpoints for the modular scene
 import { getAllPortViewportCoordinates, type ModulePorts } from "../Utils/portViewportCoordinates";
-import type { Module, ModuleType } from "../Scene/Modules";
-import type { Cable } from "../Scene/Scene";
+import type { Module, ModuleType } from "../Modules/Modules";
+import { moduleObjects } from "../Scene/DockItems";
+
+const PORT_OFFSETS = {
+  oscillator: {
+    output: { x: moduleObjects.oscillator.w - 4, y: moduleObjects.oscillator.h - 56 },
+    frequency: { x: moduleObjects.oscillator.w / 2, y: 110 },
+  },
+  gain: {
+    input: { x: 4, y: moduleObjects.gain.h - 120 },
+    output: { x: moduleObjects.gain.w - 4, y: moduleObjects.gain.h - 56 },
+    gain: { x: moduleObjects.gain.w / 2, y: 110 },
+  },
+  envelope: {
+    trigger: { x: 4, y: moduleObjects.envelope.h - 120 },
+    output: { x: moduleObjects.envelope.w - 4, y: moduleObjects.envelope.h - 56 },
+    attack: { x: moduleObjects.envelope.w / 2, y: 110 },
+    sustain: { x: moduleObjects.envelope.w / 2, y: 110 },
+    decay: { x: moduleObjects.envelope.w / 2, y: 110 },
+    release: { x: moduleObjects.envelope.w / 2, y: 110 },
+  },
+  output: {
+    input: { x: 4, y: moduleObjects.output.h - 68 },
+    master: { x: moduleObjects.output.w / 2, y: 110 },
+  },
+  lfo: {
+    output: { x: moduleObjects.lfo.w - 4, y: moduleObjects.lfo.h - 56 },
+    freq: { x: moduleObjects.lfo.w / 2, y: 110 },
+  },
+  filter: {
+    input: { x: 4, y: moduleObjects.filter.h - 120 },
+    output: { x: moduleObjects.filter.w - 4, y: moduleObjects.filter.h - 56 },
+    cutoff: { x: moduleObjects.filter.w / 2, y: 110 },
+    q: { x: moduleObjects.filter.w / 2, y: 110 },
+  },
+  distortion: {
+    input: { x: 4, y: moduleObjects.distortion.h - 120 },
+    output: { x: moduleObjects.distortion.w - 4, y: moduleObjects.distortion.h - 56 },
+    drive: { x: moduleObjects.distortion.w / 2, y: 110 },
+  },
+  modulator: {
+    "mod in": { x: 4, y: moduleObjects.modulator.h - 120 },
+    carrier: { x: 4, y: moduleObjects.modulator.h - 120 },
+    output: { x: moduleObjects.modulator.w - 4, y: moduleObjects.modulator.h - 56 },
+    depth: { x: moduleObjects.modulator.w / 2, y: 110 },
+  },
+};
+
+type Cable = {
+  id: string;
+  from: string;
+  to: string;
+};
+
+function randomCableColor() {
+	const hue = Math.floor(Math.random() * 360);
+	return `hsl(${hue} 85% 65%)`;
+}
 
 function drawFrame({
 	canvas,
@@ -9,18 +65,30 @@ function drawFrame({
 	modules,
 	cables,
 	camera,
-	cableColors,
-	PORT_OFFSETS,
 }: {
 	canvas: HTMLCanvasElement | null;
 	dotCanvas: HTMLCanvasElement | null;
 	modules: Module[];
 	cables: Cable[];
 	camera: { x: number; y: number };
-	cableColors: Map<string, string>;
-	PORT_OFFSETS: Record<ModuleType, ModulePorts>;
 }) {
 	if (!canvas || !dotCanvas) return;
+
+	const frameWithColorState = drawFrame as typeof drawFrame & {
+		cableColors?: Map<string, string>;
+	};
+	const cableColors = frameWithColorState.cableColors ?? new Map<string, string>();
+	frameWithColorState.cableColors = cableColors;
+
+	const currentCableIds = new Set(cables.map((cable) => cable.id));
+	for (const id of Array.from(cableColors.keys())) {
+		if (!currentCableIds.has(id)) cableColors.delete(id);
+	}
+	for (const cable of cables) {
+		if (!cableColors.has(cable.id)) {
+			cableColors.set(cable.id, randomCableColor());
+		}
+	}
 
 	const ctx = canvas.getContext("2d");
 	const dotCtx = dotCanvas.getContext("2d");
@@ -132,4 +200,4 @@ function drawCableEndpointDots(
 	ctx.closePath();
 }
 
-export { drawFrame };
+export { drawFrame, type Cable };

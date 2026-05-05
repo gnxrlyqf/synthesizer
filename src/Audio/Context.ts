@@ -6,7 +6,7 @@ import LFOscillator from "./Modules/LFO";
 import VCF from "./Modules/Filter";
 import Distortion from "./Modules/Distortion";
 import Modulator from "./Modules/Modulator";
-import { type Module } from "../Scene/Modules";
+import { type Module } from "../Modules/Modules";
 import { type Cable } from "../Scene/Scene";
 import type { Module as AudioModule } from "./Abstractions";
 import Patch from './Modules/Patch'
